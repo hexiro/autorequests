@@ -1,11 +1,11 @@
-# parsing stdlib dependencies
-from json import loads
-from pprint import pprint
-from urllib.parse import urlparse
-from urllib.parse import unquote
 import os
 import os.path
 import sys
+from re import sub
+from json import loads
+
+from urllib.parse import urlparse
+from urllib.parse import unquote
 
 
 http_headers = [
@@ -26,10 +26,20 @@ http_headers = [
 ]
 
 
+def find_similarities(_list: list):
+    if len(_list) == 1:
+        return _list[0]
+    _list = [item.lower() for item in _list]
+    for letter_num in range(len(_list[0])):
+        if not all([item.startswith(_list[0][:letter_num + 1]) for item in _list]):
+            if letter_num == 0:
+                return
+            return _list[0][:letter_num]
+
+
 class AutoRequest:
 
-    def __init__(self, class_name):
-        self.class_name = class_name
+    def __init__(self):
         self.functions = [
             {
                 "name": "__init__",
@@ -40,7 +50,7 @@ class AutoRequest:
             }
         ]
 
-    def create_dict(self, fetch):
+    def add_function(self, fetch):
 
         # initial convert to dictionary
         _fetch_json = fetch.split("\", ")
@@ -53,22 +63,44 @@ class AutoRequest:
             .replace(r"\"", "\"") \
             .split(");")[0]
         _dict = loads(fetch_json)
+        _dict["code"] = ""
+        _dict["params"] = ["self"]
+        _dict["method"] = _dict["method"].lower()
 
-        headers = _dict["headers"]
         url = fetch.split("\"")[1]
         url_parsed = urlparse(unquote(url))
+        netloc_split = url_parsed.netloc.split(".")
+        _dict["domain_name"] = url_parsed.netloc.split(".")[len(netloc_split)-2]
         parsed_url = f"{url_parsed.scheme}://{url_parsed.netloc}{url_parsed.path}"
         _dict["url"] = parsed_url
 
+        # try and find good function name
+        reversed_split = parsed_url.replace('.', '/').split('/')[::-1]
+        for subdir in reversed_split:
+            if len(subdir) == 0:
+                continue
+            try:
+                float(subdir)
+                continue
+            except ValueError:
+                pass
+            _dict["name"] = sub(r"[-/\\?|{}\[\]()<>!@#$%^&*+=\"',.`~:;]", "", subdir)
+            break
+        else:
+            _dict["name"] = sub(r"[-/\\?|{}\[\]()<>!@#$%^&*+=\"',.`~:;]", "", reversed_split[-1])
+
         if "?" in url:
             query_dict = {}
-            for query in url.replace("?", "&").split("&"):
+            query_url = url.replace("?", "&").split("&")
+            del query_url[0]
+            for query in query_url:
                 key, value = query.split("=")
                 query_dict[key] = value
             _dict["query"] = query_dict
         else:
             _dict["query"] = {}
 
+        headers = _dict["headers"]
         unique_headers = {}
         for key, value in headers.items():
             if key.lower() in http_headers:
@@ -76,155 +108,121 @@ class AutoRequest:
             unique_headers[key] = value
         _dict["unique_headers"] = unique_headers
 
-        reversed_split = parsed_url.replace('.', '/').split('/')[::-1]
-        for subdir in reversed_split:
-
-            if len(subdir) == 0:
-                continue
-
-            try:
-                float(subdir)
-            except ValueError:
-                pass
-            _dict["name"] = subdir
-            break
-        else:
-            _dict["name"] = reversed_split[-1]
-
         _dict["cookies"] = {}
         if "cookie" in headers.keys():
             for cookie in headers["cookie"].split(";"):
-                key, value = cookie.split("=")
+                try:
+                    key, value = cookie.split("=")
+                except ValueError:
+                    key = cookie.split("=")[0]
+                    value = ""
                 _dict["cookies"][key] = value
             del _dict["headers"]["cookie"]
-
-        if _dict["body"] is not None:
-            if headers["content-type"] != "application/json":
-                _dict["body"] = {}
+        if _dict.get("body") is not None:
+            if headers.get("content-type") != "application/json":
+                new_body = {}
                 for pair in _dict["body"].split("&"):
                     key, value = pair.split("=")
-                    _dict["body"][key] = value
+                    new_body[key] = value
+                _dict["body"] = new_body
         else:
             _dict["body"] = {}
 
+        self.functions.append(_dict)
         return _dict
 
-    def warning_comments(self, _dict):
-        _headers = _dict["unique_headers"]
-        if not _headers:
-            return []
-        comments = ["# possibly unique headers"]
-        for key, value in _headers.items():
-            if len(value) < 50:
-                comments.append(f"# {key}: {value}")
-            else:
-                comments.append(f"# {key}: {value[:47]}...")
-        if "cookie" not in _dict.keys():
-            return comments
-        cookies = _headers["cookie"]
-        comments.append("# possibly important cookies")
-        for cookie in sorted(cookies.split(";"), reverse=True):
-            _semi_parsed = cookie.replace("=", ": ")
-            if len(cookie) < 50:
-                cookies.append(f"# {_semi_parsed}")
-            else:
-                cookies.append(f"# {_semi_parsed[:50]}...")
-        return comments
-
-    def format_dict(self, _dict, _indents=8):
+    def format_dict(self, _dict):
         dict_str = "{\n"
         for key, value in _dict.items():
+            value = unquote(str(value))
             if isinstance(value, int):
+                _value = int(value)
+            elif isinstance(value, dict):
                 _value = value
             elif value in ["True", "False", "None"]:
                 _value = value
+            elif value.startswith("[") and value.endswith("]"):
+                _value = eval(value)
             else:
                 _value = f"\"{value}\""
             dict_str += f"\"{key}\": {_value},\n"
         dict_str += "}"
         return dict_str
 
-    def add_function(self, fetch, _indents=8):
-
-        _dict = self.create_dict(fetch)
-        function_name = _dict["name"]
-
-        payload = {
-            "name": function_name,
-            "params": ["self"],
-            "url": _dict["url"],
-            "method": _dict['method'].lower(),
-            "headers": _dict["headers"],
-            "unique_headers": _dict["unique_headers"],
-            "query": _dict["query"],
-            "body": _dict["body"],
-            "comments": self.warning_comments(_dict),
-            "code": "",
-        }
-
-        # for comment in self.warning_comments(_dict):
-        #     payload["code"] += f"{comment}\n"
-        # 
-        # payload["code"] += f"return self.session.{_dict['method'].lower()}(\"{_dict['url']}\""
-        # if _dict["query"] != {}:
-        #     payload["code"] += ", params="
-        #     payload["code"] += self.format_dict(_dict["query"])
-        # 
-        # if _dict["body"] != {}:
-        #     if "application/json" in _dict["headers"]["content-type"]:
-        #         payload["code"] += f", json="
-        #     else:
-        #         payload["code"] += f", data="
-        #     payload["code"] += self.format_dict(_dict["body"])
-        # 
-        # if _dict["unique_headers"] != {}:
-        #     payload["code"] += ", headers="
-        #     payload["code"] += self.format_dict(_dict["unique_headers"])
-        # payload["code"] += ").json()"
-        # payload["code"] = payload["code"].splitlines()
-        self.functions.append(payload)
-        return payload
-
-    def match_api_url(self):
-        protocols = [_dict["url"].split("://")[0] for _dict in self.functions if _dict.get("url", None) is not None]
-        urls = [_dict["url"].split("://")[1] for _dict in self.functions if _dict.get("url", None) is not None]
-        for protocol_num in range(len(protocols)):
-            if protocols[protocol_num] != protocols[0]:
-                common_protocol = "http"
-                break
-        else:
-            common_protocol = "https"
-        for letter_num in range(len(urls[0])):
-            if not all([url.startswith(urls[0][:letter_num+1]) for url in urls]):
-                final_num = letter_num
-                break
-        # ignore this final_num will always be defined
-        if final_num != 0:
-            self.functions[0]["code"].append(f"self.url = \"{common_protocol}://{urls[0][:final_num]}\"")
-            final_num += len(f"{common_protocol}://")
-            for func_num in range(len(self.functions)-1):  # +1-1 to ignore `init` function
-                num = func_num + 1
-                function_dict = self.functions[num]
-                self.functions[num]["url"] = "{self.url}" + f"{function_dict['url'][final_num:]}"
-        print(self.functions[0])
-
-    def final(self):
+    def final(self, class_name):
         code = \
             "import requests\n" \
             "\n" \
             "\n" \
             "# Code generated from Node.js Fetches\n" \
-            f"class {self.class_name}:\n" \
+            f"class {class_name}:\n" \
             "\n"
-        indent = "    "
-        extra_indent = "        "
-        for func_num in range(len(self.functions)):
-            function_dict = self.functions[func_num]
+
+        protocol = "https" if self.functions[1]["url"].startswith("https") else "http"
+        urls = [_dict["url"].split("://")[1] for _dict in self.functions if "url" in _dict]
+        urls_match = find_similarities(urls)
+        if urls_match:
+            self.functions[0]["code"].append(f"self.url = \"{protocol}://{urls_match}\"")
+            for func_num in range(len(self.functions)-1):  # +1-1 to ignore `init` function
+                num = func_num + 1
+                function_dict = self.functions[num]
+                self.functions[num]["url"] = "{self.url}" + f"{function_dict['url'][len(protocol + urls_match)+3:]}"
+
+        all_cookies = {}
+        compatible_cookies = {}
+        for function in self.functions:
+            if "cookies" not in function:
+                continue
+            all_cookies.update(function["cookies"])
+        for key, value in all_cookies.items():
+            for func_num in range(len(self.functions)-1):
+                num = func_num + 1
+                if not self.functions[num]["cookies"].get(key) == value:
+                    break
+            else:
+                compatible_cookies[key] = value
+        if len(compatible_cookies) > 0:
+            session_cookies = True
+            self.functions[0]["code"].append("self.session.cookies.update({")
+            lines = self.format_dict(compatible_cookies).splitlines()
+            # function needs modifications - could be improved upon.
+            del lines[0]
+            lines[-1] += ")"
+            for line in lines:
+                self.functions[0]["code"].append(line)
+        else:
+            session_cookies = False
+
+        all_headers = {}
+        compatible_headers = {}
+        for function in self.functions:
+            if "headers" not in function:
+                continue
+            all_headers.update(function["unique_headers"])
+        for key, value in all_headers.items():
+            for func_num in range(len(self.functions)-1):
+                num = func_num + 1
+                if not self.functions[num]["headers"].get(key) == value:
+                    break
+            else:
+                compatible_headers[key] = value
+        if len(compatible_headers) > 0:
+            session_headers = True
+            self.functions[0]["code"].append("self.session.headers.update({")
+            lines = self.format_dict(compatible_headers).splitlines()
+            # function needs modifications - could be improved upon.
+            del lines[0]
+            lines[-1] += ")"
+            for line in lines:
+                self.functions[0]["code"].append(line)
+        else:
+            session_headers = False
+
+        indent = " " * 4
+        extra_indent = indent * 2
+        for function_dict in self.functions:
             function_code = function_dict["code"]
-            print(function_code)
-            if func_num != 0:
-                for comment in self.warning_comments(function_dict):
-                    function_code += f"{comment}\n"
+            if function_dict["name"] != "__init__":
                 # check for f string needed
                 url = function_dict["url"]
                 if "{" in url:
@@ -235,47 +233,71 @@ class AutoRequest:
                     function_code += ", params="
                     function_code += self.format_dict(function_dict["query"])
 
-                if function_dict["body"] != {}:
-                    if "application/json" in function_dict["headers"]["content-type"]:
+                if function_dict.get("body"):
+                    if "application/json" in function_dict.get("headers", {}).get("content-type"):
                         function_code += f", json="
                     else:
                         function_code += f", data="
                     function_code += self.format_dict(function_dict["body"])
 
-                if function_dict["unique_headers"] != {}:
-                    function_code += ", headers="
-                    function_code += self.format_dict(function_dict["unique_headers"])
+                if function_dict.get("unique_headers"):
+                    headers = function_dict["unique_headers"]
+                    if session_headers:
+                        headers = {x: headers[x] for x in set(headers) - set(compatible_headers)}
+                    if headers != {}:
+                        function_code += ", headers="
+                        function_code += self.format_dict(headers)
+
+                if function_dict.get("cookies"):
+                    cookies = function_dict["cookies"]
+                    if session_cookies:
+                        cookies = {x: cookies[x] for x in set(cookies) - set(compatible_cookies)}
+                    if cookies != {}:
+                        function_code += ", cookies="
+                        function_code += self.format_dict(cookies)
+
                 function_code += ").json()"
                 function_code = function_code.splitlines()
             name = function_dict["name"]
             params = "".join(function_dict["params"])
             code += f"{indent}def {name}({params}):\n"
             for line in function_code:
-                if line.endswith("{") or line.endswith(","):
-                    code += f"{extra_indent}{line}\n{indent}"
+                if line.startswith("}") and line.endswith("{"):
+                    code += f"{indent}{line}\n{indent}"
                 elif line.startswith("}"):
-                    # here we only need indent because it already has an extra four spaces
                     code += f"{indent}{line}\n"
+                elif line.endswith("{") or line.endswith(","):
+                    code += f"{extra_indent}{line}\n{indent}"
                 else:
                     code += f"{extra_indent}{line}\n"
             code += "\n"
-        with open(f"{os.getcwd()}/{self.class_name}/main.py", "w") as py:
+        with open(f"{os.getcwd()}/{class_name}/main.py", "w") as py:
             py.write(code)
 
 
 if __name__ == "__main__":
-    name = sys.argv[1]
-    autorequest = AutoRequest(name)
-    files = []
-    if not os.path.exists(name):
-        os.mkdir(name)
-    else:
-        [files.append(f"{os.getcwd()}\\{name}\\{file}") for file in os.listdir(f"{os.getcwd()}\\{name}") if file.endswith(".txt")]
-    [files.append(file) for file in os.listdir() if file.endswith(".txt")]
-    for file in files:
+    autorequest = AutoRequest()
+    local_files = [file for file in os.listdir() if file.endswith(".txt")]
+    if len(local_files) == 0:
+        exit()
+    for file in local_files:
         autorequest.add_function(open(file, "r").read())
-        if "\\" not in file:
-            os.rename(f"{file}", f"{name}\\{file}")
-    print(autorequest.match_api_url())
-    print(autorequest.final())
-    pprint(autorequest.functions)
+    if len(sys.argv) > 1:
+        class_name = sys.argv[1]
+    else:
+        domain_names = [autorequest.functions[num+1]["domain_name"] for num in range(len(autorequest.functions)-1)]
+        similarities = find_similarities(domain_names)
+        if similarities:
+            class_name = sub(r"[\\/:*?\"<>|]", "", similarities).capitalize()
+        else:
+            class_name = sub(r"[\\/:*?\"<>|]", "", domain_names[0]).capitalize()
+
+    if not os.path.exists(class_name):
+        os.mkdir(class_name)
+    else:
+        non_local_files = [f"{os.getcwd()}\\{class_name}\\{file}" for file in os.listdir(f"{os.getcwd()}\\{class_name}") if file.endswith(".txt")]
+        for file in non_local_files:
+            autorequest.add_function(open(file, "r").read())
+    for file in local_files:
+        os.rename(f"{file}", f"{class_name}\\{file}")
+    autorequest.final(class_name)
