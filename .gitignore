@@ -1,2 +1,7 @@
 .idea/
-Generations/
+__pycache__/
+*.xml
+*.pyc
+autorequests.egg-info/
+reinstall.bat
+build.bat
