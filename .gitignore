@@ -3,5 +3,7 @@ __pycache__/
 *.xml
 *.pyc
 autorequests.egg-info/
+build/
+dist/
 reinstall.bat
 build.bat
