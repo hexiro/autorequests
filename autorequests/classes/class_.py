@@ -10,6 +10,8 @@ class Class:
     def __init__(self, name: str):
         self.__name = name
         self.__methods = []
+        self.__cookies = {}
+        self.__headers = {}
 
     @property
     def name(self):
@@ -20,12 +22,12 @@ class Class:
         return self.__methods
 
     @property
-    def cookies(self):
-        return compare_dicts([method.cookies for method in self.methods])
+    def headers(self):
+        return self.__headers
 
     @property
-    def headers(self):
-        return compare_dicts([method.headers for method in self.methods])
+    def cookies(self):
+        return self.__cookies
 
     @property
     def constructor(self):
@@ -66,5 +68,9 @@ class Class:
                 old_method.name = old_method.name + "_one"
                 break
 
+        # this line showcases 3 instances of 'method.name' LOL
         method.name = unique_name(method.name, [method.name for method in self.methods])
         self.__methods.append(method)
+        if len(self.methods) >= 2:
+            self.__headers = compare_dicts([method.headers for method in self.methods])
+            self.__cookies = compare_dicts([method.cookies for method in self.methods])
