@@ -103,9 +103,19 @@ class Method:
     def headers(self):
         return self.__headers
 
+    @headers.setter
+    def headers(self, new_headers):
+        if isinstance(new_headers, dict):
+            self.__headers = new_headers
+
     @property
     def cookies(self):
         return self.__cookies
+
+    @cookies.setter
+    def cookies(self, new_cookies):
+        if isinstance(new_cookies, dict):
+            self.__cookies = new_cookies
 
     @property
     def name(self):
