@@ -15,12 +15,14 @@ class Body:
         self.__json = {}
         self.__files = {}
 
-        if self.is_urlencoded:
-            self.__parse_urlencoded()
+        # multipart is the most broad and obvious so it goes first
+        if self.is_multipart_form_data:
+            self.__parse_multipart_form_data()
         elif self.is_json:
             self.__parse_json()
-        elif self.is_multipart_form_data:
-            self.__parse_multipart_form_data()
+        # urlencoded is the simplest (hardest to check) so it goes last
+        elif self.is_urlencoded:
+            self.__parse_urlencoded()
 
     def __repr__(self):
         base = "<Body"
@@ -83,12 +85,7 @@ class Body:
         # urllib.parse.parse_qs doesn't work here btw
         # if a key doesn't have a value then it gets excluded with parse_qs
         for param in self.body.split("&"):
-            if param.count("=") != 2:
-                split = param.split("=")
-                key = split.pop(0)
-                value = "=".join(split)
-            else:
-                key, value = param.split("=")
+            key, value = param.split("=", maxsplit=1)
             self.__data[key] = value
 
     def __parse_multipart_form_data(self):
@@ -100,9 +97,8 @@ class Body:
             if not item or item == "--":
                 continue
             # get two main details
-            separator = item.split("\n\n")
-            details, content = separator[0], "\n\n".join(separator[1:])
-            details_dict = {k: v for k, v in (detail.split(": ") for detail in details.splitlines() if detail)}
+            details, content = item.split("\n\n", maxsplit=1)
+            details_dict = {k: v for k, v in (line.split(": ", maxsplit=1) for line in details.splitlines() if line)}
             content_disposition = details_dict.get("Content-Disposition")
             content_type = details_dict.get("Content-Type")
             if not content_disposition:
@@ -110,7 +106,7 @@ class Body:
             # get filename && name
             content_disposition_dict = {}
             for detail in content_disposition[11:].split("; "):
-                key, value = detail.split("=")
+                key, value = detail.split("=", maxsplit=1)
                 value = value[1:-1]
                 content_disposition_dict[key] = value
             name = content_disposition_dict.get("name")

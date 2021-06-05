@@ -9,6 +9,8 @@ def indent(data: str, spaces: int = 4) -> str:
     return "\n".join(" " * spaces + line for line in data.splitlines())
 
 
+# i'm hoping this is more useful when i add more options besides fetch
+
 def cookies(headers: dict[str]):
     """ :returns: a dict of cookies based off the 'cookie' header """
     cookie_header = headers.pop("cookie", None)
@@ -16,9 +18,7 @@ def cookies(headers: dict[str]):
         return {}
     cookie_dict = {}
     for cookie in cookie_header.split("; "):
-        equal_split = cookie.split("=")
-        key = equal_split.pop(0)
-        value = "=".join(equal_split)
+        key, value = cookie.split("=", maxsplit=1)
         cookie_dict[key] = value
     return cookie_dict
 

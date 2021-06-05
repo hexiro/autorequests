@@ -19,7 +19,7 @@ class URL:
         for param in query.split("&"):
             # sometimes param can be "" :shrug:
             if param:
-                key, value = param.split("=")
+                key, value = param.split("=", maxsplit=1)
                 self.__query[key] = value
 
     def __repr__(self):
