@@ -1,5 +1,5 @@
 import json
-
+import urllib.parse
 
 class Body:
 
@@ -86,7 +86,9 @@ class Body:
     def __parse_urlencoded(self):
         # urllib.parse.parse_qs doesn't work here btw
         # if a key doesn't have a value then it gets excluded with parse_qs
-        for param in self.body.split("&"):
+        # not sure if unquote_plus() would be better
+        body = urllib.parse.unquote(self.body)
+        for param in body.split("&"):
             key, value = param.split("=", maxsplit=1)
             self.__data[key] = value
 
