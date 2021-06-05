@@ -11,7 +11,6 @@ class Parameter:
     def __repr__(self):
         return f"<{self.code}>"
 
-    @property
     def code(self):
         if self.typehint and self.default:
             return f"{self.name}: {self.typehint} = {self.default}"

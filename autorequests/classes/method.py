@@ -58,7 +58,7 @@ class Method:
 
     @property
     def signature(self):
-        return f"def {self.name}({', '.join(param.code for param in self.parameters)}):"
+        return f"def {self.name}({', '.join(param.code() for param in self.parameters)}):"
 
     def code(self,
              banned_headers: dict = None,
