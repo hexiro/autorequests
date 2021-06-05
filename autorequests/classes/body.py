@@ -6,7 +6,10 @@ class Body:
     def __init__(self, body: str):
         body = str(body)
         # parse escape sequences :thumbs_up:
-        body = body.encode("utf-8").decode("unicode_escape")
+        # ignore/replace are kind of just guesses at what i think would be best
+        # if there is a more logical reason to use something else LMK!
+        body = body.encode(encoding="utf8", errors="ignore")\
+                   .decode(encoding="unicode_escape", errors="replace")
         # replace line breaks with \n(s)
         body = "\n".join(body.splitlines())
         self.__body = body
