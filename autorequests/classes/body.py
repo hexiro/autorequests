@@ -4,13 +4,12 @@ import json
 class Body:
 
     def __init__(self, body: str):
-        # if you know a better solution for parsing double backslashes PLEASE LMK
-        # not sure if i need more escape sequences :shrug:
-        self.__body = str(body).replace("\\r\\n", "\n")\
-                               .replace("\\n", "\n")\
-                               .replace("\\r", "\n")\
-                               .replace("\\t", "\t")\
-                               .replace("\\", "")
+        body = str(body)
+        # parse escape sequences :thumbs_up:
+        body = body.encode("utf-8").decode("unicode_escape")
+        # replace ALL line breaks with \n(s)  (\n, \r\n, \r)
+        body = "\n".join(body.splitlines())
+        self.__body = body
         self.__data = {}
         self.__json = {}
         self.__files = {}
