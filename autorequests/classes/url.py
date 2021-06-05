@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 
 class URL:
 
-    def __init__(self, url):
+    def __init__(self, url: str):
         parsed = urlparse(url)
         # `params` are old asf and there is like nooooo resources on them
         # im just gonna append it to the end of path and hope for the best

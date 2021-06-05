@@ -9,7 +9,7 @@ def indent(data: str, spaces: int = 4) -> str:
     return "\n".join(" " * spaces + line for line in data.splitlines())
 
 
-def cookies(headers):
+def cookies(headers: dict[str]):
     """ :returns: a dict of cookies based off the 'cookie' header """
     cookie_header = headers.pop("cookie", None)
     if not cookie_header:

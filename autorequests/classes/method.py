@@ -104,7 +104,7 @@ class Method:
         return self.__headers
 
     @headers.setter
-    def headers(self, new_headers):
+    def headers(self, new_headers: dict[str]):
         if isinstance(new_headers, dict):
             self.__headers = new_headers
 
@@ -113,7 +113,7 @@ class Method:
         return self.__cookies
 
     @cookies.setter
-    def cookies(self, new_cookies):
+    def cookies(self, new_cookies: dict[str]):
         if isinstance(new_cookies, dict):
             self.__cookies = new_cookies
 
