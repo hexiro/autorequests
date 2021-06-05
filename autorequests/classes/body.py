@@ -1,5 +1,4 @@
 import json
-import urllib.parse
 
 
 class Body:
@@ -7,11 +6,11 @@ class Body:
     def __init__(self, body: str):
         # if you know a better solution for parsing double backslashes PLEASE LMK
         # not sure if i need more escape sequences :shrug:
-        self.__body = body.replace("\\r\\n", "\n")\
-                          .replace("\\n", "\n")\
-                          .replace("\\r", "\n")\
-                          .replace("\\t", "\t")\
-                          .replace("\\", "")
+        self.__body = str(body).replace("\\r\\n", "\n")\
+                               .replace("\\n", "\n")\
+                               .replace("\\r", "\n")\
+                               .replace("\\t", "\t")\
+                               .replace("\\", "")
         self.__data = {}
         self.__json = {}
         self.__files = {}
