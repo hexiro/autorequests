@@ -1,9 +1,26 @@
 import json
 
 
+# pretty simplistic names tbf
+# a lot of these aren't super self explanatory so they have docstring
+
 def indent(data: str, spaces: int = 4) -> str:
     """ add spaces by newline """
     return "\n".join(" " * spaces + line for line in data.splitlines())
+
+
+def cookies(headers):
+    """ :returns: a dict of cookies based off the 'cookie' header """
+    cookie_header = headers.pop("cookie", None)
+    if not cookie_header:
+        return {}
+    cookie_dict = {}
+    for cookie in cookie_header.split("; "):
+        equal_split = cookie.split("=")
+        key = equal_split.pop(0)
+        value = "=".join(equal_split)
+        cookie_dict[key] = value
+    return cookie_dict
 
 
 def compare_dicts(dicts: list[dict]) -> dict:
@@ -27,7 +44,6 @@ def compare_lists(lists: list[list]) -> list:
 
     # they ALL have to contain an item for it to be accepted,
     # therefore we can just loop over the first list in the list and check all the other lists share the match
-
     return [p for i, p in enumerate(lists[0]) if all(list_[i] == p for list_ in lists[1:])]
 
 
@@ -119,7 +135,7 @@ def unique_name(name: str, other_names: list[str]) -> str:
 
 
 def combine_dicts(dicts: list[dict]) -> dict:
-    """  combines dicts with unique names """
+    """ combines dicts with unique names """
     combined = {}
     for dict_ in dicts:
         for key, value in dict_.items():
