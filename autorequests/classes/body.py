@@ -91,22 +91,27 @@ class Body:
             self.__data[key] = value
 
     def __parse_multipart_form_data(self):
-        boundary = self.body.split("\n")[0]
-        for item in self.body.split(boundary):
-            # remove trailing /n
+        try:
+            boundary, body = self.body.split("\n", maxsplit=1)
+            body = body.rstrip("--")
+        except ValueError:
+            return
+        for item in body.split(boundary):
+            # remove leading & trailing /n
             if item.endswith("\n"):
                 item = item[:-1]
             if item.startswith("\n"):
                 item = item[1:]
-            # first item will be "" last will be "--" (bad data)
-            if item == "--" or not item:
-                continue
             # get two main details
-            details, content = item.split("\n\n", maxsplit=1)
-            details = details.lstrip(boundary + "\n")
-            details_dict = {k: v for k, v in
-                            (line.split(": ", maxsplit=1) for line in details.splitlines() if ": " in line)}
-            # print(details_dict)
+            try:
+                details, content = item.split("\n\n")
+                details = details.lstrip(boundary + "\n")
+                details_dict = {k: v for k, v in
+                                (line.split(": ", maxsplit=1) for line in details.splitlines() if ": " in line)}
+            except ValueError:
+                # bad data that wasn't caught earlier
+                # this should never be reached, it's kind of just a safeguard in case the data is corrupted asf
+                continue
             content_disposition = details_dict.get("Content-Disposition")
             content_type = details_dict.get("Content-Type")
             if not content_disposition:
