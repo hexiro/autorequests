@@ -4,7 +4,7 @@ from pathlib import Path
 from .classes import Class, File
 
 
-class FetchHandler(argparse.ArgumentParser):
+class AutoRequests(argparse.ArgumentParser):
 
     def __init__(self):
         super().__init__()
@@ -121,9 +121,9 @@ class FetchHandler(argparse.ArgumentParser):
 
 
 def main():
-    handler = FetchHandler()
-    handler.write()
-    handler.print_results()
+    auto_requests = AutoRequests()
+    auto_requests.write()
+    auto_requests.print_results()
 
 
 if __name__ == "__main__":
