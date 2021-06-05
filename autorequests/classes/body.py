@@ -7,7 +7,7 @@ class Body:
         body = str(body)
         # parse escape sequences :thumbs_up:
         body = body.encode("utf-8").decode("unicode_escape")
-        # replace ALL line breaks with \n(s)  (\n, \r\n, \r)
+        # replace line breaks with \n(s)
         body = "\n".join(body.splitlines())
         self.__body = body
         self.__data = {}
@@ -34,7 +34,7 @@ class Body:
         if base == "<Body":
             return "<Body data=None json=None files=None>"
         base += ">"
-        # insecure string (because of self)
+        # technically an insecure string (because of self)
         return base.format(self=self)
 
     @property
@@ -72,7 +72,7 @@ class Body:
 
     @property
     def is_multipart_form_data(self):
-        return "WebKitFormBoundary" in self.body
+        return "------WebKitFormBoundary" in self.body
 
     def __parse_json(self):
         # sometimes body is "null" but we want our json to be a dict and not None
@@ -89,15 +89,21 @@ class Body:
 
     def __parse_multipart_form_data(self):
         boundary = self.body.split("\n")[0]
-        for item in self.body.replace("\r", "").split(boundary):
+        for item in self.body.split(boundary):
             # remove trailing /n
-            item = item[:-1]
+            if item.endswith("\n"):
+                item = item[:-1]
+            if item.startswith("\n"):
+                item = item[1:]
             # first item will be "" last will be "--" (bad data)
-            if not item or item == "--":
+            if item == "--" or not item:
                 continue
             # get two main details
             details, content = item.split("\n\n", maxsplit=1)
-            details_dict = {k: v for k, v in (line.split(": ", maxsplit=1) for line in details.splitlines() if line)}
+            details = details.lstrip(boundary + "\n")
+            details_dict = {k: v for k, v in
+                            (line.split(": ", maxsplit=1) for line in details.splitlines() if ": " in line)}
+            # print(details_dict)
             content_disposition = details_dict.get("Content-Disposition")
             content_type = details_dict.get("Content-Type")
             if not content_disposition:
@@ -113,9 +119,15 @@ class Body:
 
             if not name:
                 pass
-            # if it has a filename it's a file
-            elif filename:
-                self.__files[name] = (filename, content, content_type)
-            # w/o filename it's just a normal piece of data
-            else:
+            elif not filename:
                 self.__data[name] = content
+            # if it has a filename it's a file
+            # tuple of four items
+            # 1. filename
+            # 2. content
+            # 3. content-type
+            # 4. extra headers
+            elif content_type:
+                self.__files[name] = (filename, content, content_type)
+            else:
+                self.__files[name] = (filename, content)
