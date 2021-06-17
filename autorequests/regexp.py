@@ -13,3 +13,12 @@ fetch_regexp = re.compile(
     r"(?:  \"method\": \"(?P<method>[A-Z]+)\",\n|)"
     r"(?:  \"[a-z]+\": \".+\"(?:,|)\n|)*}\);$"
 )
+
+powershell_regexp = re.compile(
+    r"^Invoke-WebRequest -Uri \""
+    r"(?P<url>(?:http|https):\/\/.+?)\"(?: `\n-Method \""
+    r"(?P<method>[A-Z]+)\"|)(?:(?: | `\n)-Headers @{(?:\n\"method\"=\"[A-Z]+\"|)\n"
+    r"(?P<headers>(?:(?:  |)\".+?\"=\".+?\"\n)*)}|)(?: `\n-ContentType \""
+    r"(?P<content_type>.+)\"|)(?: `\n-Body \""
+    r"(?P<body>.+)\"|)$"
+)
