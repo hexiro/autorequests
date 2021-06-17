@@ -1,6 +1,7 @@
 import json
 import urllib.parse
 
+
 class Body:
 
     def __init__(self, body: str):
@@ -29,16 +30,14 @@ class Body:
     def __repr__(self):
         base = "<Body"
         if self.data:
-            base += " data={self.data}"
+            base += f" data={self.data}"
         if self.json:
-            base += " json={self.json}"
+            base += f" json={self.json}"
         if self.files:
-            base += " files={self.files}"
+            base += f" files={self.files}"
         if base == "<Body":
             return "<Body data=None json=None files=None>"
-        base += ">"
-        # technically an insecure string (because of self)
-        return base.format(self=self)
+        return base + ">"
 
     @property
     def body(self):
@@ -61,7 +60,7 @@ class Body:
         try:
             json.loads(self.body)
             return True
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             return False
 
     @property
