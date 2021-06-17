@@ -3,7 +3,8 @@ import re
 from functools import cached_property
 from pathlib import Path
 
-from .. import regexp, utils
+from .. import regexp
+from ..utils import extract_cookies
 from ..classes import URL, Body, Method
 
 # Path() returns type WindowsPath or PosixPath based on os
@@ -66,7 +67,7 @@ class File(superclass):
         if referrer_policy:
             headers["referrer-policy"] = referrer_policy
 
-        cookies = utils.cookies(headers)
+        cookies = extract_cookies(headers)
 
         method = groups["method"]
         url = URL(groups["url"])
@@ -101,7 +102,7 @@ class File(superclass):
                 value = value[1:-1]
                 headers[key] = value
 
-        cookies = utils.cookies(headers)
+        cookies = extract_cookies(headers)
 
         method = powershell["method"] or "GET"
         url = URL(powershell["url"])

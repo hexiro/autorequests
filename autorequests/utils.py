@@ -11,7 +11,7 @@ def indent(data: str, spaces: int = 4) -> str:
 
 # i'm hoping this is more useful when i add more options besides fetch
 
-def cookies(headers: dict[str]):
+def extract_cookies(headers: dict[str]):
     """ :returns: a dict of cookies based off the 'cookie' header """
     cookie_header = headers.pop("cookie", None)
     if not cookie_header:
