@@ -1,25 +1,28 @@
 import json
 import urllib.parse
+from typing import Optional
 
 
 class Body:
 
-    def __init__(self, body: str):
-        body = str(body)
-        # parse escape sequences :thumbs_up:
-        # ignore/replace are kind of just guesses at what i think would be best
-        # if there is a more logical reason to use something else LMK!
-        body = body.encode(encoding="utf8", errors="ignore")\
-                   .decode(encoding="unicode_escape", errors="replace")
-        # replace line breaks with \n(s)
-        body = "\n".join(body.splitlines())
+    def __init__(self, body: Optional[str]):
+        if body:
+            # parse escape sequences :thumbs_up:
+            # ignore/replace are kind of just guesses at what i think would be best
+            # if there is a more logical reason to use something else LMK!
+            body = body.encode(encoding="utf8", errors="ignore")\
+                       .decode(encoding="unicode_escape", errors="replace")
+            # replace line breaks with \n(s)
+            body = "\n".join(body.splitlines())
         self.__body = body
         self.__data = {}
         self.__json = {}
         self.__files = {}
 
         # multipart is the most broad and obvious so it goes first
-        if self.is_multipart_form_data:
+        if not body:
+            pass
+        elif self.is_multipart_form_data:
             self.__parse_multipart_form_data()
         elif self.is_json:
             self.__parse_json()
@@ -29,12 +32,13 @@ class Body:
 
     def __repr__(self):
         base = "<Body"
-        if self.data:
-            base += f" data={self.data}"
-        if self.json:
-            base += f" json={self.json}"
-        if self.files:
-            base += f" files={self.files}"
+        if self.body:
+            if self.data:
+                base += f" data={self.data}"
+            if self.json:
+                base += f" json={self.json}"
+            if self.files:
+                base += f" files={self.files}"
         if base == "<Body":
             return "<Body data=None json=None files=None>"
         return base + ">"
