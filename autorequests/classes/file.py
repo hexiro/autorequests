@@ -104,9 +104,17 @@ class File(superclass):
 
         cookies = extract_cookies(headers)
 
+        # ` is the escape character in powershell
+        # replace two `s with a singular `
+        # replace singular `s with nothing
+
+        raw_body = powershell["body"]
+        raw_body = raw_body.split("`")
+        raw_body = "".join((e if e != "" else "`") for e in raw_body)
+
         method = powershell["method"] or "GET"
         url = URL(powershell["url"])
-        body = Body(powershell["body"])
+        body = Body(raw_body)
 
         return Method(method=method,
                       url=url,
