@@ -60,8 +60,8 @@ class File(superclass):
         headers = json.loads(fetch["headers"])
         # referer is spelled wrong in the HTTP header
         # referrer policy is not
-        referrer = groups["referrer"]
-        referrer_policy = groups["referrer_policy"]
+        referrer = fetch["referrer"]
+        referrer_policy = fetch["referrer_policy"]
         if referrer:
             headers["referer"] = referrer
         if referrer_policy:
@@ -69,9 +69,9 @@ class File(superclass):
 
         cookies = extract_cookies(headers)
 
-        method = groups["method"]
-        url = URL(groups["url"])
-        body = Body(groups["body"] or "")
+        method = fetch["method"]
+        url = URL(fetch["url"])
+        body = Body(fetch["body"])
 
         return Method(method=method,
                       url=url,
