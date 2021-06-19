@@ -9,7 +9,7 @@ class Parameter:
         self.__default = f"\"{default}\"" if default else None
 
     def __repr__(self):
-        return f"<{self.code}>"
+        return f"<{self.code()}>"
 
     def code(self):
         if self.typehint and self.default:
