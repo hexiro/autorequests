@@ -41,21 +41,21 @@ parsing control
   --no-cookies          Removes all cookies from the operation
 ```
 
-# 🚩 Known Issues
+## 🚩 Known Issues
 
 * Method names are parsed from the url, but if the URL doesn't have any paths with a valid method name, an invalid
   method name will be used.
 * Sometimes when copying fetches from the browser, some important headers aren't including, causing the resulting API
   wrapper to fail requests.
 
-# 📅 Planned Features
+## 📅 Planned Features
 
 * converting camelCased method names to snake_case.
 * replace hardcoded values with parameters that have default values.
 * detecting base paths (like /api/v1) and setting that in the class constructor. (maybe).
 * the ability to parse other formats of data from the browser (not just fetches).
 
-# 🐞 Contributing
+## 🐞 Contributing
 
 This project has a lot of room for improvement in optimizing regexps, better OOP, and bug fixes. If you make an issue,
 pr or suggestion, it'll be very appreciated <3.
