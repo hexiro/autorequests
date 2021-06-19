@@ -14,6 +14,7 @@ Autorequests provides an easy way to create a simple API wrapper from data gener
 ### Example Use Cases
 
 * Creating a foundation for an API wrapper
+* Recreating a request outside the browser
 * Testing what cookies or headers are required for a server to understand your request
 
 ### How to Copy Data
