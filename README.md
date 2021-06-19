@@ -14,7 +14,7 @@ Autorequests provides an easy way to create a simple API wrapper from data gener
 ### Example Use Cases
 
 * Creating a foundation for an API wrapper
-* Testing what cookies / headers are required for a server to understand your request
+* Testing what cookies or headers are required for a server to understand your request
 
 ### How to Copy Data
 
@@ -58,4 +58,4 @@ parsing control
 ## 🐞 Contributing
 
 This project has a lot of room for improvement in optimizing regexps, better OOP, and bug fixes. If you make an issue,
-pr or suggestion, it'll be very appreciated <3.
+pr, or suggestion, it'll be very appreciated <3.
