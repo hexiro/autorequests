@@ -17,10 +17,20 @@ Autorequests provides an easy way to create a simple API wrapper from data gener
 * Recreating a request outside the browser
 * Testing what cookies or headers are required for a server to understand your request
 
-### How to Copy Data
 
-1. Do an action on a website that causes a web request to be sent.
-2. Right-click --> Copy-As --> Node.JS Fetch
+### ✂️ How to Copy
+1. Inspect Element
+2. Go to `Network` tab
+3. Find web request
+4. Right-Click
+5. Copy
+6. Choose A `Copying Method`:
+
+### Supported Copying Methods
+
+* Powershell
+* Node.JS fetch
+
 
 ## 🖥️ Command Line
 
