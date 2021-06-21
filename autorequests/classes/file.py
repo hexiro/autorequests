@@ -1,6 +1,6 @@
 import json
-import re
 from pathlib import Path
+from typing import Match
 
 from .. import regexp
 from ..utils import extract_cookies
@@ -51,7 +51,7 @@ class File(superclass):
     # (for parsing)
 
     @staticmethod
-    def _method_from_fetch(fetch: re.Match) -> Method:
+    def _method_from_fetch(fetch: Match) -> Method:
         """
         Parses a file that follows this format:
 
@@ -88,7 +88,7 @@ class File(superclass):
                       )
 
     @staticmethod
-    def _method_from_powershell(powershell: re.Match) -> Method:
+    def _method_from_powershell(powershell: Match) -> Method:
         """
         Parses a file that follows this format:
 
