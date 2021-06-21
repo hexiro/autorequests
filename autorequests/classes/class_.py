@@ -52,8 +52,8 @@ class Class:
         for method in self.methods:
             # not actually two newlines; adds \n to end of previous line
             code += "\n\n"
-            code += indent(method.code(banned_headers=self.headers,
-                                       banned_cookies=self.cookies))
+            code += indent(method.code(class_headers=self.headers,
+                                       class_cookies=self.cookies))
         code += "\n"
         return code
 

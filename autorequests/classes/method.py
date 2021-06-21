@@ -61,13 +61,13 @@ class Method:
         return f"def {self.name}({', '.join(param.code() for param in self.parameters)}):"
 
     def code(self,
-             banned_headers: dict = None,
-             banned_cookies: dict = None):
+             class_headers: dict = None,
+             class_cookies: dict = None):
         # handle class headers & cookies
-        banned_headers = banned_headers or {}
-        banned_cookies = banned_cookies or {}
-        headers = {header: value for header, value in self.headers.items() if header not in banned_headers}
-        cookies = {cookie: value for cookie, value in self.cookies.items() if cookie not in banned_cookies}
+        class_headers = class_headers or {}
+        class_cookies = class_cookies or {}
+        headers = {header: value for header, value in self.headers.items() if header not in class_headers}
+        cookies = {cookie: value for cookie, value in self.cookies.items() if cookie not in class_cookies}
         # code
         body = f"return self.session.{self.method.lower()}(\"{self.url}\""
         for kwarg, data in {"params": self.url.query,
