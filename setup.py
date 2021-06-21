@@ -25,6 +25,7 @@ setup(
         ]
     },
     python_requires=">=3.6",
+    zip_safe=True,
     license="MPL2",
     classifiers=[
         "Environment :: Console",
