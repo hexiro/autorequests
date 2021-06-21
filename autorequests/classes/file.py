@@ -102,7 +102,7 @@ class File(superclass):
 
         for header in powershell["headers"].splitlines():
             if "=" in header:
-                header = header.removeprefix("  ")
+                header = header.lstrip("  ")
                 key, value = header.split("=", maxsplit=1)
                 # remove leading and trailing "s that always exist
                 key = key[1:-1]
