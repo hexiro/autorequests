@@ -1,3 +1,5 @@
+from typing import List, Dict
+
 from . import URL, Body, Parameter
 from ..utils import format_dict, indent
 
@@ -14,7 +16,7 @@ class Method:
                  method: str,
                  url: URL,
                  body: Body,
-                 parameters: list[Parameter] = None,
+                 parameters: List[Parameter] = None,
                  headers: dict = None,
                  cookies: dict = None,
                  ):
@@ -60,7 +62,7 @@ class Method:
         return self.signature + "\n" + indent(body, spaces=4)
 
     @property
-    def parameters(self) -> list[Parameter]:
+    def parameters(self) -> List[Parameter]:
         return self.__parameters
 
     def add_parameter(self, param: Parameter):
@@ -102,7 +104,7 @@ class Method:
         return self.__headers
 
     @headers.setter
-    def headers(self, new_headers: dict[str]):
+    def headers(self, new_headers: Dict[str, str]):
         if isinstance(new_headers, dict):
             self.__headers = new_headers
 
@@ -111,7 +113,7 @@ class Method:
         return self.__cookies
 
     @cookies.setter
-    def cookies(self, new_cookies: dict[str]):
+    def cookies(self, new_cookies: Dict[str, str]):
         if isinstance(new_cookies, dict):
             self.__cookies = new_cookies
 

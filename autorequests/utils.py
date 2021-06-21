@@ -3,6 +3,8 @@ import json
 
 # pretty simplistic names tbf
 # a lot of these aren't super self explanatory so they have docstring
+from typing import List, Dict
+
 
 def indent(data: str, spaces: int = 4) -> str:
     """ add spaces by newline """
@@ -11,7 +13,7 @@ def indent(data: str, spaces: int = 4) -> str:
 
 # i'm hoping this is more useful when i add more options besides fetch
 
-def extract_cookies(headers: dict[str]):
+def extract_cookies(headers: Dict[str, str]):
     """ :returns: a dict of cookies based off the 'cookie' header """
     cookie_header = headers.pop("cookie", None)
     if not cookie_header:
@@ -23,7 +25,7 @@ def extract_cookies(headers: dict[str]):
     return cookie_dict
 
 
-def compare_dicts(dicts: list[dict]) -> dict:
+def compare_dicts(dicts: List[dict]) -> dict:
     """ :returns: a dictionary with the items that all of the dicts in the list share """
     # if there is 0 or 1 dicts, there will be no matches
     if len(dicts) <= 1:
@@ -36,7 +38,7 @@ def compare_dicts(dicts: list[dict]) -> dict:
 
 # compare_lists isn't used yet
 
-def compare_lists(lists: list[list]) -> list:
+def compare_lists(lists: List[list]) -> list:
     """ :returns: a list of items that all the lists share """
     # if there is 0 or 1 lists, there will be no matches
     if len(lists) <= 1:
@@ -122,7 +124,7 @@ def written_form(num: int) -> str:
     return " and ".join(written)
 
 
-def unique_name(name: str, other_names: list[str]) -> str:
+def unique_name(name: str, other_names: List[str]) -> str:
     """ :returns a unique name based on the name passed and the taken names """
     matches = [item for item in other_names if item.startswith(name)]
     if not any(matches):
@@ -134,7 +136,7 @@ def unique_name(name: str, other_names: list[str]) -> str:
     return name + "_" + written
 
 
-def combine_dicts(dicts: list[dict]) -> dict:
+def combine_dicts(dicts: List[dict]) -> dict:
     """ combines dicts with unique names """
     combined = {}
     for dict_ in dicts:
