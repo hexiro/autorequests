@@ -55,8 +55,6 @@ class File(superclass):
           "mode": <MODE>
         });
         """
-        groups = fetch.groupdict()
-
         headers = json.loads(fetch["headers"])
         # referer is spelled wrong in the HTTP header
         # referrer policy is not
