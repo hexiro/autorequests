@@ -1,6 +1,5 @@
 import json
 import re
-from functools import cached_property
 from pathlib import Path
 
 from .. import regexp
@@ -15,26 +14,36 @@ superclass = type(Path())
 class File(superclass):
     """ handles files and the parsing of files """
 
-    # Path isn't really meant for subclassing afaik
-    # so we won't overload __init__ or __new__
-    # cached_properties is the way to go
+    def __new__(cls, *args):
+        return super().__new__(cls, *args)
 
-    @cached_property
+    def __init__(self, *args):
+        super().__init__()
+        # *args is needed but not used
+        self.__text = self.read_text(encoding="utf8", errors="ignore")
+        self.__method = self._compute_method()
+
+    @property
     def text(self):
-        return self.read_text(encoding="utf8", errors="ignore")
+        return self.__text
 
-    @cached_property
+    @property
     def method(self):
-        if self.fetch_match:
-            return self._method_from_fetch(self.fetch_match)
-        if self.powershell_match:
-            return self._method_from_powershell(self.powershell_match)
+        return self.__method
 
-    @cached_property
+    def _compute_method(self):
+        fetch = self.fetch_match
+        if fetch:
+            return self._method_from_fetch(fetch)
+        powershell = self.powershell_match
+        if powershell:
+            return self._method_from_powershell(powershell)
+
+    @property
     def fetch_match(self):
         return regexp.fetch_regexp.search(self.text)
 
-    @cached_property
+    @property
     def powershell_match(self):
         return regexp.powershell_regexp.search(self.text)
 
