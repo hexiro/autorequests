@@ -29,29 +29,7 @@ class Method:
         for param in (parameters or []):
             self.__parameters.append(param)
 
-        # remove leading and trailing / for calculation
-        path = self.url.path
-        split = [i for i in path.split("/") if i][::-1]
-
-        # find parts of path that meets python's syntax requirements for a method name
-
-        for sector in split:
-            # -s and .s are not actually allowed, they will be replaced with _s
-            sector = sector.replace("-", "_")
-            sector = sector.replace(".", "_")
-            if not sector or sector[0].isdigit():
-                continue
-            # for larger operators, it could be faster to do .lower() and then skip checking uppercase characters
-            # this doesn't have a big performance increase though, and it's actually slower with smaller strings
-            if all(char in self.__accepted_chars for char in sector):
-                self.__name = sector
-                break
-        else:
-            if len(split) == 0:
-                self.__name = self.class_name
-            else:
-                # this will have an error in the generated code
-                self.__name = split[-1]
+        self.__name = self._find_method_name()
 
     def __repr__(self):
         return f"<{self.signature}>"
@@ -98,6 +76,26 @@ class Method:
         # replace -s with _s
         class_name = class_name.replace("-", "_")
         return class_name
+
+    def _find_method_name(self):
+        # remove leading and trailing / for calculation
+        path = self.url.path
+        split = [i for i in path.split("/") if i][::-1]
+        # find parts of path that meets python's syntax requirements for a method name
+        for sector in split:
+            # -s and .s are not actually allowed, they will be replaced with _s
+            sector = sector.replace("-", "_")
+            sector = sector.replace(".", "_")
+            if not sector or sector[0].isdigit():
+                continue
+            # for larger operators, it could be faster to do .lower() and then skip checking uppercase characters
+            # this doesn't have a big performance increase though, and it's actually slower with smaller strings
+            if all(char in self.__accepted_chars for char in sector):
+                return sector
+        if len(split) == 0:
+            return self.class_name
+        # this will have an error in the generated code
+        return split[-1]
 
     @property
     def headers(self):
