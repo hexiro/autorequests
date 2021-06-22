@@ -58,7 +58,7 @@ class Method:
                             "cookies": cookies}.items():
             if data:
                 body += f", {kwarg}=" + format_dict(data)
-        body += ").json()"
+        body += ").text"
         return self.signature + "\n" + indent(body, spaces=4)
 
     @property
