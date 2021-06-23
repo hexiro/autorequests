@@ -96,6 +96,7 @@ class Body:
             self.__data[key] = value
 
     def __parse_multipart_form_data(self):
+        # let's all take a moment and pray for whoever has to refactor this (me probably)
         try:
             boundary, body = self.body.split("\n", maxsplit=1)
             body = body.rstrip("--")
@@ -103,10 +104,7 @@ class Body:
             return
         for item in body.split(boundary):
             # remove leading & trailing /n
-            if item.endswith("\n"):
-                item = item[:-1]
-            if item.startswith("\n"):
-                item = item[1:]
+            item = item.strip("\n")
             # get two main details
             try:
                 details, content = item.split("\n\n")
