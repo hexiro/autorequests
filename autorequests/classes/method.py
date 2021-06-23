@@ -46,10 +46,17 @@ class Method:
         # handle class headers & cookies
         class_headers = class_headers or {}
         class_cookies = class_cookies or {}
-        headers = {header: value for header, value in self.headers.items() if header not in class_headers}
-        cookies = {cookie: value for cookie, value in self.cookies.items() if cookie not in class_cookies}
+        # only use session if headers or cookies are set in class
+        if class_headers or class_cookies:
+            headers = {header: value for header, value in self.headers.items() if header not in class_headers}
+            cookies = {cookie: value for cookie, value in self.cookies.items() if cookie not in class_cookies}
+            requests_call = "self.session"
+        else:
+            headers = self.headers
+            cookies = self.cookies
+            requests_call = "requests"
         # code
-        body = f"return self.session.{self.method.lower()}(\"{self.url}\""
+        body = f"return {requests_call}.{self.method.lower()}(\"{self.url}\""
         for kwarg, data in {"params": self.url.query,
                             "data": self.body.data,
                             "json": self.body.json,
