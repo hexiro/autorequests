@@ -1,9 +1,9 @@
 import argparse
 from pathlib import Path
-from typing import Dict, List
+from typing import List
 
-from .utils import PathType
 from .classes import Class, File
+from .utils import PathType
 
 
 class AutoRequests(argparse.ArgumentParser):
@@ -28,9 +28,7 @@ class AutoRequests(argparse.ArgumentParser):
         self.__no_cookies = args.no_cookies
 
         # dynamic tings from here on out
-        # class_name: Class()
-        self.__classes = {}
-        # []File
+        self.__classes = []
         self.__files = []
         self.__has_written = False
 
@@ -61,7 +59,7 @@ class AutoRequests(argparse.ArgumentParser):
     # dynamic
 
     @property
-    def classes(self) -> Dict[str, Class]:
+    def classes(self) -> List[Class]:
         return self.__classes
 
     @property
@@ -82,7 +80,8 @@ class AutoRequests(argparse.ArgumentParser):
         output_folder = self.output.name
 
         # add non-local files and write python files
-        for class_name, class_object in self.classes.items():
+        for class_object in self.classes:
+            class_name = class_object.name
             # create directories
             if class_name == output_folder:
                 # ex. class is named "autorequests" and output folder is named "autorequests"
@@ -125,13 +124,18 @@ class AutoRequests(argparse.ArgumentParser):
             file = File(file)
             if file.method:
                 class_name = file.method.class_name
-                if class_name not in self.classes:
-                    self.classes[class_name] = Class(class_name)
+                classes_search = [c for c in self.classes if c.name == class_name]
+
+                if len(classes_search) == 0:
+                    class_object = Class(class_name)
+                    self.classes.append(class_object)
+                else:
+                    class_object = classes_search[0]
 
                 # needs to be added first
                 # modifying methods after adding it to the class is perfectly fine
 
-                self.classes[class_name].add_method(file.method)
+                class_object.add_method(file.method)
                 self.files.append(file)
 
                 # maybe this could be optimized?
