@@ -6,9 +6,7 @@ class Parameter:
         self.__name = name
         # resolves <class 'str'> to str
         self.__typehint = typehint.__name__ if typehint else None
-        # default=None literally means there is no default
-        # not that the default value is `None`
-        self.__default = f"\"{default}\"" if default else None
+        self.__default = repr(default) if default is not None else None
 
     def __repr__(self):
         return f"<Parameter {self.code()}>"
