@@ -7,8 +7,15 @@ from typing import List, Dict
 
 
 def indent(data: str, spaces: int = 4) -> str:
-    """ add spaces by newline """
-    return "\n".join(" " * spaces + line for line in data.splitlines())
+    """
+    indents a code block a set amount of spaces
+    note: is faster than textwrap.indent()
+    (from my testing)
+    """
+    # using this var is slightly slower on small operations,
+    # and a lot faster on big operations
+    indent_block = " " * spaces
+    return "\n".join(indent_block + line for line in data.splitlines())
 
 
 # i'm hoping this is more useful when i add more options besides fetch
