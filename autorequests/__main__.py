@@ -2,6 +2,7 @@ import argparse
 from pathlib import Path
 from typing import Dict, List
 
+from .utils import PathType
 from .classes import Class, File
 
 
@@ -33,15 +34,12 @@ class AutoRequests(argparse.ArgumentParser):
         self.__files = []
         self.__has_written = False
 
-    # technically these both return WindowsPath or PosixPath
-    # but I don't see specifying the more abstracted, 'Path' being an issue.
-
     @property
-    def input(self) -> Path:
+    def input(self) -> PathType:
         return self.__input
 
     @property
-    def output(self) -> Path:
+    def output(self) -> PathType:
         return self.__output
 
     @property

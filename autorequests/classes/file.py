@@ -3,15 +3,11 @@ from pathlib import Path
 from typing import Match
 
 from .. import regexp
-from ..utils import extract_cookies
+from ..utils import extract_cookies, PathType
 from ..classes import URL, Body, Method
 
-# Path() returns type WindowsPath or PosixPath based on os
-# I could replicate their os check, but this is safer in case they change it in the future.
-superclass = type(Path())
 
-
-class File(superclass):
+class File(PathType):
     """ handles files and the parsing of files """
 
     def __new__(cls, *args):

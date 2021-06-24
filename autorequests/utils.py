@@ -1,11 +1,17 @@
 import json
+import keyword
+import string
+from pathlib import Path
+from typing import Union, List, Dict, Set
+
+# Path() returns type WindowsPath or PosixPath based on os
+# I could replicate their os check, but this is safer in case they change it in the future.
+
+PathType = type(Path())
+
 
 # pretty simplistic names tbf
 # a lot of these aren't super self explanatory so they have docstring
-import keyword
-import string
-from typing import Union, List, Dict, Set
-
 
 def indent(data: str, spaces: int = 4) -> str:
     """
