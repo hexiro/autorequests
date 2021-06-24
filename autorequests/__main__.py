@@ -1,5 +1,6 @@
 import argparse
 from pathlib import Path
+from typing import Dict, List
 
 from .classes import Class, File
 
@@ -62,11 +63,11 @@ class AutoRequests(argparse.ArgumentParser):
     # dynamic
 
     @property
-    def classes(self) -> dict:
+    def classes(self) -> Dict[str, Class]:
         return self.__classes
 
     @property
-    def files(self) -> list:
+    def files(self) -> List[File]:
         return self.__files
 
     @property
