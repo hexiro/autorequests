@@ -31,7 +31,7 @@ class Method:
         for param in (parameters or []):
             self.__parameters.append(param)
 
-        self.__name = self._find_method_name()
+        self.__name = self.default_method_name
 
     def __repr__(self):
         return f"<{self.signature}>"
@@ -85,10 +85,10 @@ class Method:
         class_name = class_name.replace("-", "_")
         return class_name
 
-    def _find_method_name(self):
+    @property
+    def default_method_name(self):
         # remove leading and trailing / for calculation
-        path = self.url.path
-        split = [i for i in path.split("/") if i][::-1]
+        split = [i for i in self.url.path.split("/") if i][::-1]
         # find parts of path that meets python's syntax requirements for a method name
         for sector in split:
             # -s and .s are not actually allowed, they will be replaced with _s
