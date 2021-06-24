@@ -64,7 +64,7 @@ class AutoRequests(argparse.ArgumentParser):
 
     def print_results(self):
         if len(self.classes) == 0:
-            print("No fetches could be located.")
+            print("No request data could be located.")
             return
         if not self.has_written:
             print("Modules haven't been written to the filesystem yet.")
