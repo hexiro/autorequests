@@ -82,12 +82,12 @@ class Method:
     @property
     def default_method_name(self):
         # remove leading and trailing / for calculation
-        split = self.url.path.split("/")[::-1]
+        split = [Case(p).snake_case for p in self.url.path.split("/") if p]
+        split.reverse()
         # find parts of path that meets python's syntax requirements for a method name
-        for sector in split:
-            sector = Case(sector).snake_case
-            if is_valid_function_name(sector):
-                return sector
+        for part in split:
+            if is_valid_function_name(part):
+                return part
         # using base domain -- same name as class
         if len(split) == 0:
             return self.class_name
