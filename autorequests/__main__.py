@@ -32,6 +32,47 @@ class AutoRequests(argparse.ArgumentParser):
         self.__files = []
         self.__has_written = False
 
+    # technically these both return WindowsPath or PosixPath
+    # but I don't see specifying the more abstracted, 'Path' being an issue.
+
+    @property
+    def input(self) -> Path:
+        return self.__input
+
+    @property
+    def output(self) -> Path:
+        return self.__output
+
+    @property
+    def single_quote(self) -> bool:
+        return self.__single_quote
+
+    @property
+    def return_text(self) -> bool:
+        return self.__return_text
+
+    @property
+    def no_headers(self) -> bool:
+        return self.__no_headers
+
+    @property
+    def no_cookies(self) -> bool:
+        return self.__no_cookies
+
+    # dynamic
+
+    @property
+    def classes(self) -> dict:
+        return self.__classes
+
+    @property
+    def files(self) -> list:
+        return self.__files
+
+    @property
+    def has_written(self):
+        return self.__has_written
+
     def write(self):
         if self.has_written:
             return
@@ -42,7 +83,7 @@ class AutoRequests(argparse.ArgumentParser):
         output_folder = self.output.name
 
         # add non-local files and write python files
-        for class_name, class_object in self.__classes.items():
+        for class_name, class_object in self.classes.items():
             # create directories
             if class_name == output_folder:
                 # ex. class is named "autorequests" and output folder is named "autorequests"
@@ -55,11 +96,11 @@ class AutoRequests(argparse.ArgumentParser):
                 else:
                     class_folder.mkdir(parents=True)
             with (class_folder / "main.py").open(mode="w") as py:
-                py.write(class_object.code(return_text=self.__return_text,
-                                           single_quote=self.__single_quote))
+                py.write(class_object.code(return_text=self.return_text,
+                                           single_quote=self.single_quote))
 
         # move local files into class folder
-        for file in self.__files:
+        for file in self.files:
             class_name = file.method.class_name
             if output_folder != class_name:
                 file.rename(self.output / class_name / file.name)
@@ -73,7 +114,7 @@ class AutoRequests(argparse.ArgumentParser):
             print("Modules haven't been written to the filesystem yet.")
             return
         num_classes = len(self.classes)
-        num_methods = len(self.methods)
+        num_methods = len(self.files)
         classes_noun = "classes" if num_classes > 1 else "class"
         methods_noun = "methods" if num_methods > 1 else "method"
         print(f"Successfully wrote {num_classes} {classes_noun} with a total of {num_methods} {methods_noun}.")
@@ -85,44 +126,21 @@ class AutoRequests(argparse.ArgumentParser):
             file = File(file)
             if file.method:
                 class_name = file.method.class_name
-                if class_name not in self.__classes:
-                    self.__classes[class_name] = Class(class_name)
+                if class_name not in self.classes:
+                    self.classes[class_name] = Class(class_name)
 
                 # needs to be added first
                 # modifying methods after adding it to the class is perfectly fine
 
-                self.__classes[class_name].add_method(file.method)
-                self.__files.append(file)
+                self.classes[class_name].add_method(file.method)
+                self.files.append(file)
 
                 # maybe this could be optimized?
                 # cpu is wasted calculating headers and cookies only to be deleted
-                if self.__no_headers:
+                if self.no_headers:
                     file.method.headers = {}
-                if self.__no_cookies:
+                if self.no_cookies:
                     file.method.cookies = {}
-
-    @property
-    def has_written(self):
-        return self.__has_written
-
-    # technically these both return WindowsPath or PosixPath
-    # but I don't see specifying the more abstracted, 'Path' being an issue.
-
-    @property
-    def input(self) -> Path:
-        return self.__input
-
-    @property
-    def output(self) -> Path:
-        return self.__output
-
-    @property
-    def classes(self) -> dict:
-        return self.__classes
-
-    @property
-    def methods(self) -> list:
-        return self.__files
 
 
 def main():
