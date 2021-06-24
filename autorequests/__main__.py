@@ -12,6 +12,7 @@ class AutoRequests(argparse.ArgumentParser):
         self.add_argument("-o", "--output", default=None, help="Output Directory")
         self.add_argument("--return-text", action="store_true",
                           help="Makes the generated method's responses return .text instead of .json()")
+        self.add_argument("--single-quote", action="store_true", help="Uses single quotes instead of double quotes")
         self.add_argument("--no-headers", action="store_true", help="Removes all headers from the operation")
         self.add_argument("--no-cookies", action="store_true", help="Removes all cookies from the operation")
         args = self.parse_args()
@@ -19,6 +20,7 @@ class AutoRequests(argparse.ArgumentParser):
         # resolves path
         self.__input = (Path(args.i) if args.input else Path.cwd()).resolve()
         self.__output = (Path(args.o) if args.output else Path.cwd()).resolve()
+        self.__single_quote = args.single_quote
         self.__return_text = args.return_text
         self.__no_headers = args.no_headers
         self.__no_cookies = args.no_cookies
@@ -53,7 +55,8 @@ class AutoRequests(argparse.ArgumentParser):
                 else:
                     class_folder.mkdir(parents=True)
             with (class_folder / "main.py").open(mode="w") as py:
-                py.write(class_object.code(return_text=self.__return_text))
+                py.write(class_object.code(return_text=self.__return_text,
+                                           single_quote=self.__single_quote))
 
         # move local files into class folder
         for file in self.__files:

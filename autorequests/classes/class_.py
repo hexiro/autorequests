@@ -54,7 +54,7 @@ class Class:
             code += f"self.session.cookies.set(\"{cookie}\", \"{value}\")\n"
         return signature + indent(code)
 
-    def code(self, return_text: bool = False):
+    def code(self, return_text: bool = False, single_quote: bool = False):
         code = self.top + self.signature
         # not actually two newlines; adds \n to end of previous line
         if self.headers or self.cookies:
@@ -66,6 +66,13 @@ class Class:
                                        class_cookies=self.cookies,
                                        return_text=return_text))
         code += "\n"
+        if single_quote:
+            # replace unescaped 's with escaped 's
+            code = code.replace("'", "\\'")
+            # replace escaped "s with escaped 's
+            code = code.replace("\\\"", "\\'")
+            # replace all "s with 's
+            code = code.replace("\"", "'")
         return code
 
     def add_method(self, method: Method):

@@ -49,6 +49,7 @@ parsing control
 
 ```
   --return-text         Makes the generated method's responses return .text instead of .json()
+  --single-quote        Uses single quotes instead of double quotes
   --no-headers          Removes all headers from the operation
   --no-cookies          Removes all cookies from the operation
 ```
