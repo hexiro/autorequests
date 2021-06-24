@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-from . import URL, Body, Parameter
+from . import URL, Body, Parameter, Case
 from ..utils import format_dict, indent
 
 
@@ -91,9 +91,7 @@ class Method:
         split = [i for i in self.url.path.split("/") if i][::-1]
         # find parts of path that meets python's syntax requirements for a method name
         for sector in split:
-            # -s and .s are not actually allowed, they will be replaced with _s
-            sector = sector.replace("-", "_")
-            sector = sector.replace(".", "_")
+            sector = Case(sector).snake_case
             if not sector or sector[0].isdigit():
                 continue
             # for larger operators, it could be faster to do .lower() and then skip checking uppercase characters

@@ -3,7 +3,7 @@ import json
 
 # pretty simplistic names tbf
 # a lot of these aren't super self explanatory so they have docstring
-from typing import List, Dict
+from typing import Union, List, Dict
 
 
 def indent(data: str, spaces: int = 4) -> str:
@@ -18,7 +18,10 @@ def indent(data: str, spaces: int = 4) -> str:
     return "\n".join(indent_block + line for line in data.splitlines())
 
 
-# i'm hoping this is more useful when i add more options besides fetch
+def uses_accepted_chars(text: str, chars: Union[List[str], str]) -> bool:
+    """ :returns: true if all characters in text are accepted chars set by `chars`"""
+    return all(t in chars for t in text)
+
 
 def extract_cookies(headers: Dict[str, str]):
     """ :returns: a dict of cookies based off the 'cookie' header """
