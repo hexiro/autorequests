@@ -72,9 +72,6 @@ class Method:
     def parameters(self) -> List[Parameter]:
         return self.__parameters
 
-    def add_parameter(self, param: Parameter):
-        self.__parameters.append(param)
-
     @property
     def class_name(self):
         # DOMAIN of url
