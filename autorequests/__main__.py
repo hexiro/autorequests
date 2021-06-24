@@ -77,24 +77,23 @@ class AutoRequests(argparse.ArgumentParser):
             return
         for file in directory.glob("*.txt"):
             file = File(file)
-            if not file.method:
-                return
-            class_name = file.method.class_name
-            if class_name not in self.__classes:
-                self.__classes[class_name] = Class(class_name)
+            if file.method:
+                class_name = file.method.class_name
+                if class_name not in self.__classes:
+                    self.__classes[class_name] = Class(class_name)
 
-            # needs to be added first
-            # modifying methods after adding it to the class is perfectly fine
+                # needs to be added first
+                # modifying methods after adding it to the class is perfectly fine
 
-            self.__classes[class_name].add_method(file.method)
-            self.__files.append(file)
+                self.__classes[class_name].add_method(file.method)
+                self.__files.append(file)
 
-            # maybe this could be optimized?
-            # cpu is wasted calculating headers and cookies only to be deleted
-            if self.__no_headers:
-                file.method.headers = {}
-            if self.__no_cookies:
-                file.method.cookies = {}
+                # maybe this could be optimized?
+                # cpu is wasted calculating headers and cookies only to be deleted
+                if self.__no_headers:
+                    file.method.headers = {}
+                if self.__no_cookies:
+                    file.method.cookies = {}
 
     @property
     def has_written(self):
