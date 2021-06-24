@@ -1,9 +1,10 @@
 import json
 
-
 # pretty simplistic names tbf
 # a lot of these aren't super self explanatory so they have docstring
-from typing import Union, List, Dict
+import keyword
+import string
+from typing import Union, List, Dict, Set
 
 
 def indent(data: str, spaces: int = 4) -> str:
@@ -18,9 +19,24 @@ def indent(data: str, spaces: int = 4) -> str:
     return "\n".join(indent_block + line for line in data.splitlines())
 
 
-def uses_accepted_chars(text: str, chars: Union[List[str], str]) -> bool:
+def uses_accepted_chars(text: str, chars: Union[List[str], Set[str], str]) -> bool:
     """ :returns: true if all characters in text are accepted chars set by `chars`"""
     return all(t in chars for t in text)
+
+
+def is_valid_function_name(text: str) -> bool:
+    if not text:
+        return False
+    # functions can't start with a digit
+    if text[0].isdigit():
+        return False
+    # function names can only contain letters, numbers, and _s
+    if not uses_accepted_chars(text, string.ascii_letters + string.digits + "_"):
+        return False
+    # if function name is a reserved keyword
+    if keyword.iskeyword(text):
+        return False
+    return True
 
 
 def extract_cookies(headers: Dict[str, str]):

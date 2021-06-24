@@ -1,16 +1,10 @@
 from typing import List, Dict
 
 from . import URL, Body, Parameter, Case
-from ..utils import format_dict, indent
+from ..utils import format_dict, indent, is_valid_function_name
 
 
 class Method:
-    # set for performance
-    __accepted_chars = {"_", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-                        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S",
-                        "T", "U", "V", "W", "X", "Y", "Z",
-                        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
-                        "t", "u", "v", "w", "x", "y", "z"}
 
     def __init__(self,
                  method: str,
@@ -88,16 +82,13 @@ class Method:
     @property
     def default_method_name(self):
         # remove leading and trailing / for calculation
-        split = [i for i in self.url.path.split("/") if i][::-1]
+        split = self.url.path.split("/")[::-1]
         # find parts of path that meets python's syntax requirements for a method name
         for sector in split:
             sector = Case(sector).snake_case
-            if not sector or sector[0].isdigit():
-                continue
-            # for larger operators, it could be faster to do .lower() and then skip checking uppercase characters
-            # this doesn't have a big performance increase though, and it's actually slower with smaller strings
-            if all(char in self.__accepted_chars for char in sector):
+            if is_valid_function_name(sector):
                 return sector
+        # using base domain -- same name as class
         if len(split) == 0:
             return self.class_name
         # this will have an error in the generated code
