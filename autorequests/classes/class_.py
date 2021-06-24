@@ -54,7 +54,7 @@ class Class:
             code += f"self.session.cookies.set(\"{cookie}\", \"{value}\")\n"
         return signature + indent(code)
 
-    def code(self):
+    def code(self, return_text: bool = False):
         code = self.top + self.signature
         # not actually two newlines; adds \n to end of previous line
         if self.headers or self.cookies:
@@ -63,7 +63,8 @@ class Class:
         for method in self.methods:
             code += "\n\n"
             code += indent(method.code(class_headers=self.headers,
-                                       class_cookies=self.cookies))
+                                       class_cookies=self.cookies,
+                                       return_text=return_text))
         code += "\n"
         return code
 

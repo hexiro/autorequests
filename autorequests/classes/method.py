@@ -42,7 +42,8 @@ class Method:
 
     def code(self,
              class_headers: dict = None,
-             class_cookies: dict = None):
+             class_cookies: dict = None,
+             return_text: bool = False):
         # handle class headers & cookies
         class_headers = class_headers or {}
         class_cookies = class_cookies or {}
@@ -65,7 +66,8 @@ class Method:
                             "cookies": cookies}.items():
             if data:
                 body += f", {kwarg}=" + format_dict(data)
-        body += ").json()"
+        body += ")."
+        body += "text" if return_text else "json()"
         return self.signature + "\n" + indent(body, spaces=4)
 
     @property
