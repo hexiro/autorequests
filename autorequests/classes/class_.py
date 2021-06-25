@@ -1,4 +1,3 @@
-from . import Method
 from ..utils import format_dict, indent, unique_name, compare_dicts
 
 
@@ -85,7 +84,10 @@ class Class:
             code = code.replace("\"", "'")
         return code
 
-    def add_method(self, method: Method):
+    def add_method(self, method):
+        """
+        :type method: Method
+        """
         # there will only ever be one time where there are two methods with the same name,
         # and this right checks that and adds a _one after it
         # the unique_name function on the bottom will add a _two to that one, and so on.

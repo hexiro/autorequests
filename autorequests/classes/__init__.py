@@ -1,7 +1,8 @@
-# this order matters unfortunately
-# (class has to be last so it can import Method)
-# (method has to be fourth so it can import the previous things)
-# not sure if there is anything I can do about this
+# I would like to import
+# `Method` in `class_.py` and
+# `Class` in `method.py`
+# but idk how to do that w/o cycling imports
+
 from .case import Case
 from .url import URL
 from .body import Body
