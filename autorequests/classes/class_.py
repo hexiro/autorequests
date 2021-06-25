@@ -65,6 +65,7 @@ class Class:
             code += f"self.session.cookies.set(\"{cookie}\", \"{value}\")\n"
         return signature + indent(code)
 
+    @property
     def code(self):
         code = self.top + self.signature
         # not actually two newlines; adds \n to end of previous line
@@ -73,7 +74,7 @@ class Class:
             code += indent(self.constructor)
         for method in self.methods:
             code += "\n\n"
-            code += indent(method.code())
+            code += indent(method.code)
         code += "\n"
         if self.single_quote:
             # replace unescaped 's with escaped 's

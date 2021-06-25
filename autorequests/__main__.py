@@ -94,7 +94,7 @@ class AutoRequests(argparse.ArgumentParser):
                 else:
                     class_folder.mkdir(parents=True)
             with (class_folder / "main.py").open(mode="w") as py:
-                py.write(class_object.code())
+                py.write(class_object.code)
 
         # move local files into class folder
         for file in self.files:

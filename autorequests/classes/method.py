@@ -58,8 +58,9 @@ class Method:
 
     @property
     def signature(self):
-        return f"def {self.name}({', '.join(param.code() for param in self.parameters)}):"
+        return f"def {self.name}({', '.join(param.code for param in self.parameters)}):"
 
+    @property
     def code(self):
         # handle class headers & cookies
         # only use session if headers or cookies are set in class

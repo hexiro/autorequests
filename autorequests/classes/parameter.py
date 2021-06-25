@@ -9,8 +9,9 @@ class Parameter:
         self.__default = repr(default) if default is not None else None
 
     def __repr__(self):
-        return f"<Parameter {self.code()}>"
+        return f"<Parameter {self.code}>"
 
+    @property
     def code(self):
         if self.typehint and self.default:
             return f"{self.name}: {self.typehint} = {self.default}"
