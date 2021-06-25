@@ -26,25 +26,46 @@ class Method:
             self.__parameters.append(param)
 
         self.__name = self.default_method_name
+        self.__class = None
 
     def __repr__(self):
         return f"<{self.signature}>"
+
+    def attach_class(self, class_):
+        """
+        :type class_: Class
+        """
+        self.__class = class_
+
+    @property
+    def class_(self):
+        """
+        :rtype: Class
+        """
+        return self.__class
+
+    @property
+    def class_headers(self):
+        return getattr(self.class_, "headers", {})
+
+    @property
+    def class_cookies(self):
+        return getattr(self.class_, "cookies", {})
+
+    @property
+    def return_text(self):
+        return getattr(self.class_, "return_text", False)
 
     @property
     def signature(self):
         return f"def {self.name}({', '.join(param.code() for param in self.parameters)}):"
 
-    def code(self,
-             class_headers: dict = None,
-             class_cookies: dict = None,
-             return_text: bool = False):
+    def code(self):
         # handle class headers & cookies
-        class_headers = class_headers or {}
-        class_cookies = class_cookies or {}
         # only use session if headers or cookies are set in class
-        if class_headers or class_cookies:
-            headers = {header: value for header, value in self.headers.items() if header not in class_headers}
-            cookies = {cookie: value for cookie, value in self.cookies.items() if cookie not in class_cookies}
+        if self.class_headers or self.class_cookies:
+            headers = {header: value for header, value in self.headers.items() if header not in self.class_headers}
+            cookies = {cookie: value for cookie, value in self.cookies.items() if cookie not in self.class_cookies}
             requests_call = "self.session"
         else:
             headers = self.headers
@@ -61,7 +82,7 @@ class Method:
             if data:
                 body += f", {kwarg}=" + format_dict(data)
         body += ")."
-        body += "text" if return_text else "json()"
+        body += "text" if self.return_text else "json()"
         return self.signature + "\n" + indent(body, spaces=4)
 
     @property

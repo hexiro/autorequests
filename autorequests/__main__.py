@@ -94,8 +94,7 @@ class AutoRequests(argparse.ArgumentParser):
                 else:
                     class_folder.mkdir(parents=True)
             with (class_folder / "main.py").open(mode="w") as py:
-                py.write(class_object.code(return_text=self.return_text,
-                                           single_quote=self.single_quote))
+                py.write(class_object.code())
 
         # move local files into class folder
         for file in self.files:
@@ -122,12 +121,15 @@ class AutoRequests(argparse.ArgumentParser):
             return
         for file in directory.glob("*.txt"):
             file = File(file)
-            if file.method:
+            method = file.method
+            if method:
                 class_name = file.method.class_name
                 classes_search = [c for c in self.classes if c.name == class_name]
 
                 if len(classes_search) == 0:
-                    class_object = Class(class_name)
+                    class_object = Class(name=class_name,
+                                         return_text=self.return_text,
+                                         single_quote=self.single_quote)
                     self.classes.append(class_object)
                 else:
                     class_object = classes_search[0]
@@ -135,7 +137,8 @@ class AutoRequests(argparse.ArgumentParser):
                 # needs to be added first
                 # modifying methods after adding it to the class is perfectly fine
 
-                class_object.add_method(file.method)
+                class_object.add_method(method)
+                method.attach_class(class_object)
                 self.files.append(file)
 
                 # maybe this could be optimized?

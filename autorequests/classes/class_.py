@@ -7,11 +7,14 @@ from ..utils import format_dict, indent, unique_name, compare_dicts
 
 class Class:
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, return_text: bool = False, single_quote: bool = False):
         self.__name = name
         self.__methods = []
         self.__cookies = {}
         self.__headers = {}
+
+        self.__return_text = return_text
+        self.__single_quote = single_quote
 
     @property
     def name(self):
@@ -28,6 +31,14 @@ class Class:
     @property
     def cookies(self):
         return self.__cookies
+
+    @property
+    def return_text(self):
+        return self.__return_text
+
+    @property
+    def single_quote(self):
+        return self.__single_quote
 
     @property
     def top(self):
@@ -54,7 +65,7 @@ class Class:
             code += f"self.session.cookies.set(\"{cookie}\", \"{value}\")\n"
         return signature + indent(code)
 
-    def code(self, return_text: bool = False, single_quote: bool = False):
+    def code(self):
         code = self.top + self.signature
         # not actually two newlines; adds \n to end of previous line
         if self.headers or self.cookies:
@@ -62,11 +73,9 @@ class Class:
             code += indent(self.constructor)
         for method in self.methods:
             code += "\n\n"
-            code += indent(method.code(class_headers=self.headers,
-                                       class_cookies=self.cookies,
-                                       return_text=return_text))
+            code += indent(method.code())
         code += "\n"
-        if single_quote:
+        if self.single_quote:
             # replace unescaped 's with escaped 's
             code = code.replace("'", "\\'")
             # replace escaped "s with escaped 's
@@ -76,7 +85,6 @@ class Class:
         return code
 
     def add_method(self, method: Method):
-
         # there will only ever be one time where there are two methods with the same name,
         # and this right checks that and adds a _one after it
         # the unique_name function on the bottom will add a _two to that one, and so on.
