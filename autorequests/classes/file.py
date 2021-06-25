@@ -1,10 +1,9 @@
 import json
-from pathlib import Path
 from typing import Match
 
 from .. import regexp
-from ..utils import extract_cookies, PathType
 from ..classes import URL, Body, Method
+from ..utils import extract_cookies, PathType
 
 
 class File(PathType):

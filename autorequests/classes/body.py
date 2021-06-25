@@ -11,7 +11,7 @@ class Body:
             # ignore/replace are kind of just guesses at what i think would be best
             # if there is a more logical reason to use something else LMK!
             body = (body.encode(encoding="utf8", errors="ignore")
-                        .decode(encoding="unicode_escape", errors="replace"))
+                    .decode(encoding="unicode_escape", errors="replace"))
             # replace line breaks with \n(s)
             body = "\n".join(body.splitlines())
         self.__body = body
