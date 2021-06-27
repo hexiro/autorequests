@@ -37,14 +37,14 @@ Autorequests provides an easy way to create a simple API wrapper from request da
 $ autorequests --help
 ```
 
-directory control
+directory options
 
 ```console
   -i, --input           Input Directory
   -o, --output          Output Directory
 ```
 
-parsing control
+generation options
 
 ```
   --return-text         Makes the generated method's responses return .text instead of .json()

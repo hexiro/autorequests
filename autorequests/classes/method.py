@@ -23,9 +23,10 @@ class Method:
         # params
         self.__parameters = [Parameter("self")]
         for param in (parameters or []):
-            self.__parameters.append(param)
+            if param.name != "self":
+                self.__parameters.append(param)
 
-        self.__name = self.default_method_name
+        self.__name = self.default_name
         self.__class = None
 
     def __repr__(self):
@@ -102,7 +103,7 @@ class Method:
         return class_name
 
     @property
-    def default_method_name(self):
+    def default_name(self):
         # remove leading and trailing / for calculation
         split = [Case(p).snake_case for p in self.url.path.split("/") if p]
         split.reverse()
