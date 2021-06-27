@@ -17,8 +17,8 @@ Autorequests provides an easy way to create a simple API wrapper from request da
 * Recreating a request outside the browser
 * Testing what cookies or headers are required for a server to understand your request
 
-
 ### ✂️ How to Copy
+
 1. Inspect Element
 2. Go to `Network` tab
 3. Find web request
@@ -30,7 +30,6 @@ Autorequests provides an easy way to create a simple API wrapper from request da
 
 * Powershell
 * Node.JS fetch
-
 
 ## 🖥️ Command Line
 
@@ -63,10 +62,8 @@ parsing control
 
 ## 📅 Planned Features
 
-* converting camelCased method names to snake_case.
 * replace hardcoded values with parameters that have default values.
 * detecting base paths (like /api/v1) and setting that in the class constructor. (maybe).
-* the ability to parse other formats of data from the browser (not just fetches).
 
 ## 🐞 Contributing
 
