@@ -82,14 +82,13 @@ class AutoRequests(argparse.ArgumentParser):
         # add non-local files and write python files
         for class_object in self.classes:
             class_name = class_object.name
-            # create directories
+            # ex. class is named "autorequests" and output folder is named "autorequests"
             if class_name == output_folder:
-                # ex. class is named "autorequests" and output folder is named "autorequests"
                 class_folder = self.output
             else:
                 class_folder = self.output / class_name
                 # add methods from class folder
-                if class_folder.exists():
+                if class_folder.is_dir():
                     self.parse_directory(class_folder)
                 else:
                     class_folder.mkdir(parents=True)
@@ -117,7 +116,7 @@ class AutoRequests(argparse.ArgumentParser):
         print(f"Successfully wrote {num_classes} {classes_noun} with a total of {num_methods} {methods_noun}.")
 
     def parse_directory(self, directory: Path):
-        if not directory.exists():
+        if not directory.is_dir():
             return
         for file in directory.glob("*.txt"):
             file = File(file)
