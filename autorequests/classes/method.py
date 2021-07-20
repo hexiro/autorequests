@@ -65,22 +65,15 @@ class Method:
     def code(self):
         # handle class headers & cookies
         # only use session if headers or cookies are set in class
-        if self.class_headers or self.class_cookies:
-            headers = {header: value for header, value in self.headers.items() if header not in self.class_headers}
-            cookies = {cookie: value for cookie, value in self.cookies.items() if cookie not in self.class_cookies}
-            requests_call = "self.session"
-        else:
-            headers = self.headers
-            cookies = self.cookies
-            requests_call = "requests"
+        requests_call = "self.session" if (self.class_headers or self.class_cookies) else "requests"
         # code
         body = f"return {requests_call}.{self.method.lower()}(\"{self.url}\""
         for kwarg, data in {"params": self.url.query,
                             "data": self.body.data,
                             "json": self.body.json,
                             "files": self.body.files,
-                            "headers": headers,
-                            "cookies": cookies}.items():
+                            "headers": self.headers,
+                            "cookies": self.cookies}.items():
             if data:
                 body += f", {kwarg}=" + format_dict(data)
         body += ")."
@@ -119,6 +112,8 @@ class Method:
 
     @property
     def headers(self):
+        if self.class_headers:
+            return {h: v for h, v in self.__headers.items() if h not in self.class_headers}
         return self.__headers
 
     @headers.setter
@@ -128,6 +123,8 @@ class Method:
 
     @property
     def cookies(self):
+        if self.class_cookies:
+            return {c: v for c, v in self.__headers.items() if c not in self.class_cookies}
         return self.__cookies
 
     @cookies.setter
