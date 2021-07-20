@@ -1,4 +1,5 @@
 import argparse
+import difflib
 from pathlib import Path
 from typing import List
 
@@ -13,10 +14,14 @@ class AutoRequests(argparse.ArgumentParser):
         self.add_argument("-i", "--input", default=None, help="Input Directory")
         self.add_argument("-o", "--output", default=None, help="Output Directory")
         self.add_argument("--return-text", action="store_true",
-                          help="Makes the generated method's responses return .text instead of .json()")
+                          help="Makes the generated method's responses return .text instead of .json()"
+                          )
         self.add_argument("--single-quote", action="store_true", help="Uses single quotes instead of double quotes")
         self.add_argument("--no-headers", action="store_true", help="Removes all headers from the operation")
         self.add_argument("--no-cookies", action="store_true", help="Removes all cookies from the operation")
+        self.add_argument("--compare", action="store_true",
+                          help="Compares the previously generated files to the new files."
+                          )
         args = self.parse_args()
 
         # resolves path
@@ -26,6 +31,7 @@ class AutoRequests(argparse.ArgumentParser):
         self.__return_text = args.return_text
         self.__no_headers = args.no_headers
         self.__no_cookies = args.no_cookies
+        self.__compare = args.compare
 
         # dynamic tings from here on out
         self.__classes = []
@@ -56,6 +62,9 @@ class AutoRequests(argparse.ArgumentParser):
     def no_cookies(self) -> bool:
         return self.__no_cookies
 
+    @property
+    def compare(self) -> bool:
+        return self.__compare
     # dynamic
 
     @property
@@ -92,8 +101,16 @@ class AutoRequests(argparse.ArgumentParser):
                     self.parse_directory(class_folder)
                 else:
                     class_folder.mkdir(parents=True)
-            with (class_folder / "main.py").open(mode="w") as py:
-                py.write(class_object.code)
+            file = (class_folder / "main.py")
+            code = class_object.code
+            if file.is_file() and self.compare:
+                old_py = file.read_text(encoding="utf8", errors="ignore").splitlines()
+                new_py = code.splitlines()
+                changes = difflib.HtmlDiff(tabsize=4).make_file(old_py, new_py, context=True)
+                with (class_folder / "changes.html") as html:
+                    html.write_text(changes)
+            with file.open(mode="w") as py:
+                py.write(code)
 
         # move local files into class folder
         for file in self.files:
