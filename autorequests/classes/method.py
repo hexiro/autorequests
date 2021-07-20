@@ -112,7 +112,7 @@ class Method:
             if is_valid_function_name(part):
                 return part
         # using base domain -- same name as class
-        if len(split) == 0:
+        if not split:
             return self.class_name
         # this will have an error in the generated code
         return split[-1]

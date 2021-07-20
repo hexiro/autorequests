@@ -125,7 +125,7 @@ class AutoRequests(argparse.ArgumentParser):
                 class_name = file.method.class_name
                 classes_search = [c for c in self.classes if c.name == class_name]
 
-                if len(classes_search) == 0:
+                if not classes_search:
                     class_object = Class(name=class_name,
                                          return_text=self.return_text,
                                          single_quote=self.single_quote)
