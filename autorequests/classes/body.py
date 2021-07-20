@@ -71,10 +71,7 @@ class Body:
     def is_urlencoded(self):
         if "=" not in self.body:
             return False
-        for item in self.body.split("&"):
-            if item.count("=") <= 0:
-                return False
-        return True
+        return all(item.count("=") > 0 for item in self.body.split("&"))
 
     @property
     def is_multipart_form_data(self):
