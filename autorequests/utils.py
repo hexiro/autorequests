@@ -155,16 +155,16 @@ def written_form(num: int) -> str:
     hundreds_match = ones_dict.get(hundreds)
     written = []
     if hundreds_match:
-        written.append(hundreds_match + " hundred")
+        written.append(hundreds_match + "_hundred")
     if unique_match:
         written.append(unique_match)
     elif tens_match and ones_match:
-        written.append(tens_match + "-" + ones_match)
+        written.append(tens_match + "_" + ones_match)
     elif tens_match:
         written.append(tens_match)
     elif ones_match:
         written.append(ones_match)
-    return " and ".join(written)
+    return "_and_".join(written)
 
 
 def unique_name(name: str, other_names: List[str]) -> str:
@@ -175,7 +175,7 @@ def unique_name(name: str, other_names: List[str]) -> str:
     matched_names_length = len(matches)
     if matched_names_length > 999:
         raise NotImplementedError(">999 methods with similar names not supported")
-    written = written_form(matched_names_length + 1).replace(" ", "_").replace("-", "_")
+    written = written_form(matched_names_length + 1)
     return name + "_" + written
 
 
