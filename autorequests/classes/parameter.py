@@ -1,12 +1,12 @@
 class Parameter:
 
-    def __init__(self, name: str, typehint: type = None, default: str = None):
+    def __init__(self, name: str, **kwargs):
         # isn't really used to it's full potential right now
         # we'll have to see if a good way to implement custom parameters is found
         self.__name = name
         # resolves <class 'str'> to str
-        self.__typehint = typehint.__name__ if typehint else None
-        self.__default = repr(default) if default is not None else None
+        self.__default = repr(kwargs["default"]) if "default" in kwargs else None
+        self.__typehint = kwargs["typehint"].__name__ if "typehint" in kwargs else None
 
     def __repr__(self):
         return f"<Parameter {self.code}>"
