@@ -54,7 +54,7 @@ def is_valid_function_name(text: str) -> bool:
     return True
 
 
-def extract_cookies(headers: Dict[str, str]):
+def extract_cookies(headers: Dict[str, str]) -> Dict[str, str]:
     """ :returns: a dict of cookies based off the 'cookie' header """
     cookie_header = headers.pop("cookie", None)
     if not cookie_header:

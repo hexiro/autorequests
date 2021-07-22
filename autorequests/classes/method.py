@@ -43,15 +43,15 @@ class Method:
         self.__class = new_class
 
     @property
-    def class_headers(self):
+    def class_headers(self) -> Dict[str, str]:
         return getattr(self.class_, "headers", {})
 
     @property
-    def class_cookies(self):
+    def class_cookies(self) -> Dict[str, str]:
         return getattr(self.class_, "cookies", {})
 
     @property
-    def return_text(self):
+    def return_text(self) -> bool:
         return getattr(self.class_, "return_text", False)
 
     @property
