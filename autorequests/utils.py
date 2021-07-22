@@ -39,7 +39,7 @@ def uses_accepted_chars(text: str, chars: Iterable) -> bool:
     return all(t in chars for t in text)
 
 
-def is_valid_function_name(text: str) -> bool:
+def is_pythonic_name(text: str) -> bool:
     if not text:
         return False
     # functions can't start with a digit

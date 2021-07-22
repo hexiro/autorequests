@@ -1,7 +1,7 @@
 from typing import List, Dict
 
 from . import URL, Body, Parameter, Case
-from ..utils import format_dict, indent, is_valid_function_name, cached_property
+from ..utils import format_dict, indent, is_pythonic_name, cached_property
 
 
 class Method:
@@ -118,7 +118,7 @@ class Method:
         split.reverse()
         # find parts of path that meets python's syntax requirements for a method name
         for part in split:
-            if is_valid_function_name(part):
+            if is_pythonic_name(part):
                 return part
         # using base domain -- same name as class
         if not split:
