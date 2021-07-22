@@ -87,6 +87,8 @@ class Class:
         """
         :type method: Method
         """
+        method.class_ = self
+
         # there will only ever be one time where there are two methods with the same name,
         # and this right checks that and adds a _one after it
         # the unique_name function on the bottom will add a _two to that one, and so on.
