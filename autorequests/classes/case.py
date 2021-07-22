@@ -36,8 +36,24 @@ class Case:
         snaked_text = self.kebab_to_snake(snaked_text)
         snaked_text = self.dot_to_snake(snaked_text)
         snaked_text = self.camel_to_snake(snaked_text)
-        # pascal -> snake and camel -> snake are the same function, so pascal isn't needed
+        # pascal to snake and camel to snake are the same function, so pascal isn't needed
         return fix_snake_case_regexp.sub("_", snaked_text)
+
+    @cached_property
+    def camel_case(self):
+        return self.snake_to_camel(self.snake_case)
+
+    @cached_property
+    def pascal_case(self):
+        return self.snake_to_pascal(self.snake_case)
+
+    @cached_property
+    def kebab_case(self):
+        return self.snake_to_kebab(self.snake_case)
+
+    @cached_property
+    def dot_case(self):
+        return self.snake_to_dot(self.snake_case)
 
     @cached_property
     def is_no_case(self) -> bool:
