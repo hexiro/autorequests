@@ -22,3 +22,5 @@ powershell_regexp = re.compile(
     r"(?P<content_type>.+)\"|)(?: `\n-Body \""
     r"(?P<body>.+)\"|)$"
 )
+
+fix_snake_case_regexp = re.compile("_+")

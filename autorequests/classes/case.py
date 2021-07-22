@@ -1,5 +1,6 @@
 import string
 
+from ..regexp import fix_snake_case_regexp
 from ..utils import uses_accepted_chars
 
 
@@ -29,10 +30,9 @@ class Case:
             snaked_text = self.kebab_to_snake(snaked_text)
             snaked_text = self.dot_to_snake(snaked_text)
             snaked_text = self.camel_to_snake(snaked_text)
-            # occasionally happens when parsing
-            snaked_text = snaked_text.replace("__", "_")
             # pascal not really needed
 
+        snaked_text = fix_snake_case_regexp.sub("_", snaked_text)
         # it hurts my eyes less not seeing these ugly self.__s everywhere
         # so i define it first w/o self
         self.__snaked_text = snaked_text
