@@ -23,4 +23,4 @@ powershell_regexp = re.compile(
     r"(?P<body>.+)\"|)$"
 )
 
-fix_snake_case_regexp = re.compile("_+")
+fix_snake_case_regexp = re.compile("_{2,}")
