@@ -6,7 +6,10 @@ from ..utils import format_dict, indent, unique_name, compare_dicts
 
 class Class:
 
-    def __init__(self, name: str, return_text: bool = False, single_quote: bool = False):
+    def __init__(self, name: str,
+                 return_text: bool = False,
+                 single_quote: bool = False,
+                 parameters_mode: bool = False):
         self.__name = name
         self.__methods = []
         self.__cookies = {}
@@ -14,6 +17,7 @@ class Class:
 
         self.__return_text = return_text
         self.__single_quote = single_quote
+        self.__parameters_mode = parameters_mode
 
     @property
     def name(self):
@@ -38,6 +42,10 @@ class Class:
     @property
     def single_quote(self):
         return self.__single_quote
+
+    @property
+    def parameters_mode(self):
+        return self.__parameters_mode
 
     @property
     def top(self):

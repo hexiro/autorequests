@@ -22,6 +22,9 @@ class AutoRequests(argparse.ArgumentParser):
         self.add_argument("--compare", action="store_true",
                           help="Compares the previously generated files to the new files."
                           )
+        self.add_argument("--parameters",
+                          action="store_true",
+                          help="Replaces hardcoded values with parameters that have default values")
         args = self.parse_args()
 
         # resolves path
@@ -32,6 +35,7 @@ class AutoRequests(argparse.ArgumentParser):
         self.__no_headers = args.no_headers
         self.__no_cookies = args.no_cookies
         self.__compare = args.compare
+        self.__parameters_mode = args.parameters
 
         # dynamic tings from here on out
         self.__classes = []
@@ -65,6 +69,11 @@ class AutoRequests(argparse.ArgumentParser):
     @property
     def compare(self) -> bool:
         return self.__compare
+
+    @property
+    def parameters_mode(self) -> bool:
+        return self.__parameters_mode
+
     # dynamic
 
     @property
@@ -145,7 +154,8 @@ class AutoRequests(argparse.ArgumentParser):
                 if not classes_search:
                     class_object = Class(name=class_name,
                                          return_text=self.return_text,
-                                         single_quote=self.single_quote)
+                                         single_quote=self.single_quote,
+                                         parameters_mode=self.parameters_mode)
                     self.classes.append(class_object)
                 else:
                     class_object = classes_search[0]

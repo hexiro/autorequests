@@ -90,19 +90,21 @@ def compare_lists(lists: List[list]) -> list:
     return [p for i, p in enumerate(lists[0]) if all(list_[i] == p for list_ in lists[1:])]
 
 
-def format_dict(data: dict, indent: Optional[int] = 4) -> str:
+def format_dict(data: dict, indent: Optional[int] = 4, variables: List[str] = None) -> str:
     """ format a dictionary """
-
+    variables = variables or []
     # I'm not sure it's possible to pretty-format this with something like
     # pprint, but if it is possible LMK!
-
     formatted = json.dumps(data, indent=indent)
     # parse bools and none
-    # I believe this is all I need to replace
     # leading space allows us to only match literal false and not "false" string
     formatted = formatted.replace(" null", " None")
     formatted = formatted.replace(" true", " True")
     formatted = formatted.replace(" false", " False")
+    # parse when key names are the same as value
+    # leading ": " means that it will replace the value and not the key
+    for var in variables:
+        formatted = formatted.replace(f": \"{var}\"", f": {var}")
     return formatted
 
 

@@ -1,7 +1,7 @@
 from typing import List, Dict
 
 from . import URL, Body, Parameter, Case
-from ..utils import format_dict, indent, is_valid_function_name
+from ..utils import format_dict, indent, is_valid_function_name, cached_property
 
 
 class Method:
@@ -11,23 +11,19 @@ class Method:
                  url: URL,
                  body: Body,
                  parameters: List[Parameter] = None,
-                 headers: Dict[str] = None,
-                 cookies: Dict[str] = None,
+                 headers: Dict[str, str] = None,
+                 cookies: Dict[str, str] = None
                  ):
         self.__method = method
         self.__url = url
         # request body -- not to be confused with method body
         self.__body = body
+        self.__parameters = parameters
         self.__headers = headers or {}
         self.__cookies = cookies or {}
-        # params
-        self.__parameters = [Parameter("self")]
-        for param in (parameters or []):
-            if param.name != "self":
-                self.__parameters.append(param)
-
         self.__name = self.default_name
         self.__class = None
+        # params
 
     def __repr__(self):
         return f"<{self.signature}>"
@@ -58,6 +54,22 @@ class Method:
         return getattr(self.class_, "return_text", False)
 
     @property
+    def parameters_mode(self) -> bool:
+        return self.class_ and self.class_.parameters_mode
+
+    @cached_property
+    def parameters(self) -> List[Parameter]:
+        params = [Parameter("self")]
+        for param in (self.__parameters or []):
+            if param.name != "self":
+                params.append(param)
+        if self.parameters_mode:
+            data = {**self.url.query, **self.body.data, **self.body.json, **self.body.files}
+            for index, (key, value) in enumerate(data.items()):
+                params.append(Parameter(key, default=value))
+        return params
+
+    @property
     def signature(self):
         return f"def {self.name}({', '.join(param.code for param in self.parameters)}):"
 
@@ -75,14 +87,14 @@ class Method:
                             "headers": self.headers,
                             "cookies": self.cookies}.items():
             if data:
-                body += f", {kwarg}=" + format_dict(data)
+                if self.parameters_mode:
+                    parameters_dict = {p.name: p for p in self.parameters}
+                    for key, value in data.items():
+                        data[key] = parameters_dict[key].name if key in parameters_dict else value
+                body += f", {kwarg}=" + format_dict(data, variables=[p.name for p in self.parameters])
         body += ")."
         body += "text" if self.return_text else "json()"
         return self.signature + "\n" + indent(body, spaces=4)
-
-    @property
-    def parameters(self) -> List[Parameter]:
-        return self.__parameters
 
     @property
     def class_name(self):
