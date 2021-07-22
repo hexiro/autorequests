@@ -23,7 +23,6 @@ class Method:
         self.__cookies = cookies or {}
         self.__name = self.default_name
         self.__class = None
-        # params
 
     def __repr__(self):
         return f"<{self.signature}>"
@@ -66,7 +65,7 @@ class Method:
                 params.append(param)
         if self.parameters_mode:
             data = {**self.url.query, **self.body.data, **self.body.json, **self.body.files}
-            for index, (key, value) in enumerate(data.items()):
+            for key, value in data.items():
                 params.append(Parameter(key, default=value))
         return params
 
