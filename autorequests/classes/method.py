@@ -18,6 +18,7 @@ class Method:
         self.__url = url
         # request body -- not to be confused with method body
         self.__body = body
+        # must append to `parameters` property, and not __parameters
         self.__parameters = parameters
         self.__headers = headers or {}
         self.__cookies = cookies or {}
@@ -64,8 +65,10 @@ class Method:
             if param.name != "self":
                 params.append(param)
         if self.parameters_mode:
-            data = {**self.url.query, **self.body.data, **self.body.json, **self.body.files}
-            for key, value in data.items():
+            for key, value in {**self.url.query,
+                               **self.body.data,
+                               **self.body.json,
+                               **self.body.files}.items():
                 params.append(Parameter(key, default=value))
         return params
 
@@ -91,7 +94,10 @@ class Method:
                     parameters_dict = {p.name: p for p in self.parameters}
                     for key, value in data.items():
                         data[key] = parameters_dict[key].name if key in parameters_dict else value
-                body += f", {kwarg}=" + format_dict(data, variables=[p.name for p in self.parameters])
+                    formatted_data = format_dict(data, variables=[p.name for p in self.parameters])
+                else:
+                    formatted_data = format_dict(data)
+                body += f", {kwarg}=" + formatted_data
         body += ")."
         body += "text" if self.return_text else "json()"
         return self.signature + "\n" + indent(body, spaces=4)
