@@ -62,7 +62,6 @@ generation options
 
 ## 📅 Planned Features
 
-* replace hardcoded values with parameters that have default values.
 * detecting base paths (like /api/v1) and setting that in the class constructor. (maybe).
 
 ## 🐞 Contributing
