@@ -1,32 +1,21 @@
+import functools
 import json
 from typing import Match
 
 from .. import regexp
 from ..classes import URL, Body, Method
-from ..utils import extract_cookies, PathType
+from ..utils import extract_cookies, PathType, cached_property
 
 
 class File(PathType):
     """ handles files and the parsing of files """
 
-    def __new__(cls, *args):
-        return super().__new__(cls, *args)
-
-    def __init__(self, *args):
-        super().__init__()
-        # *args is needed but not used
-        self.__text = self.read_text(encoding="utf8", errors="ignore")
-        self.__method = self._compute_method()
-
-    @property
+    @cached_property
     def text(self):
-        return self.__text
+        return self.read_text(encoding="utf8", errors="ignore")
 
-    @property
+    @cached_property
     def method(self):
-        return self.__method
-
-    def _compute_method(self):
         fetch = self.fetch_match
         if fetch:
             return self._method_from_fetch(fetch)
@@ -34,11 +23,11 @@ class File(PathType):
         if powershell:
             return self._method_from_powershell(powershell)
 
-    @property
+    @cached_property
     def fetch_match(self):
         return regexp.fetch_regexp.search(self.text)
 
-    @property
+    @cached_property
     def powershell_match(self):
         return regexp.powershell_regexp.search(self.text)
 

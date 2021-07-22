@@ -1,8 +1,10 @@
+import functools
 import json
 import keyword
 import string
+import sys
 from pathlib import Path
-from typing import Union, List, Dict, Set, Iterable, Optional
+from typing import List, Dict, Iterable, Optional
 
 # Path() returns type WindowsPath or PosixPath based on os
 # I could replicate their os check, but this is safer in case they change it in the future.
@@ -12,6 +14,13 @@ PathType = type(Path())
 
 # pretty simplistic names tbf
 # a lot of these aren't super self explanatory so they have docstring
+
+
+def cached_property(func):
+    if sys.version_info > (3, 8):
+        return functools.cached_property(func)
+    return property(functools.lru_cache()(func))
+
 
 def indent(data: str, spaces: int = 4) -> str:
     """
