@@ -84,3 +84,19 @@ class Case:
     @staticmethod
     def dot_to_snake(text: str) -> str:
         return text.replace(".", "_")
+
+    @staticmethod
+    def snake_to_camel(text: str) -> str:
+        return "".join(t.lower() if i == 0 else t.capitalize() for i, t in enumerate(text.split("_")))
+
+    @staticmethod
+    def snake_to_pascal(text: str) -> str:
+        return "".join(t.capitalize() for t in text.split("_"))
+
+    @staticmethod
+    def snake_to_kebab(text: str) -> str:
+        return text.replace("_", "-").lower()
+
+    @staticmethod
+    def snake_to_dot(text: str) -> str:
+        return text.replace("_", ".").lower()
