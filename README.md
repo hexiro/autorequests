@@ -31,6 +31,20 @@ Autorequests provides an easy way to create a simple API wrapper from request da
 * Powershell
 * Node.JS fetch
 
+## 📦 Installation
+
+install the package with pip
+
+```
+$ pip3 install autorequests
+```
+
+or download the latest development build from GitHub
+
+```
+$ pip3 install -U git+https://github.com/Hexiro/autorequests
+```
+
 ## 🖥️ Command Line
 
 ```console
