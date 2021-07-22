@@ -56,7 +56,7 @@ class Method:
 
     @property
     def parameters_mode(self) -> bool:
-        return self.class_ and self.class_.parameters_mode
+        return getattr(self.class_, "parameters_mode", False)
 
     @cached_property
     def parameters(self) -> List[Parameter]:
