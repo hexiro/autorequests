@@ -28,18 +28,19 @@ class Method:
     def __repr__(self):
         return f"<{self.signature}>"
 
-    def attach_class(self, class_):
-        """
-        :type class_: Class
-        """
-        self.__class = class_
-
     @property
     def class_(self):
         """
         :rtype: Class
         """
         return self.__class
+
+    @class_.setter
+    def class_(self, new_class):
+        """
+        :type new_class: Class
+        """
+        self.__class = new_class
 
     @property
     def class_headers(self):

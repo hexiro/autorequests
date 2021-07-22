@@ -164,7 +164,7 @@ class AutoRequests(argparse.ArgumentParser):
                 # modifying methods after adding it to the class is perfectly fine
 
                 class_object.add_method(method)
-                method.attach_class(class_object)
+                method.class_ = class_object
                 self.files.append(file)
 
                 # maybe this could be optimized?
