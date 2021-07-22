@@ -109,9 +109,7 @@ class Method:
         class_name = self.url.domain.split(".")[-2]
         # remove port
         class_name = class_name.split(":")[0]
-        # replace -s with _s
-        class_name = class_name.replace("-", "_")
-        return class_name
+        return Case(class_name).camel_case
 
     @property
     def default_name(self):
