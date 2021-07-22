@@ -72,8 +72,7 @@ class Case:
 
     @property
     def is_pascal_case(self) -> bool:
-        return self.text[0].isupper() and not self.text.islower() and \
-               uses_accepted_chars(self.text, self.pascal_case_chars)
+        return self.text[0].isupper() and uses_accepted_chars(self.text, self.pascal_case_chars)
 
     @staticmethod
     def camel_to_snake(text: str) -> str:
