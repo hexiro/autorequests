@@ -100,8 +100,9 @@ class File(PathType):
         # replace singular `s with nothing
 
         raw_body = powershell["body"]
-        raw_body = raw_body.split("`")
-        raw_body = "".join((e if e != "" else "`") for e in raw_body)
+        if raw_body:
+            raw_body = raw_body.split("`")
+            raw_body = "".join((e if e != "" else "`") for e in raw_body)
 
         method = powershell["method"] or "GET"
         url = URL(powershell["url"])
