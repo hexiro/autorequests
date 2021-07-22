@@ -63,7 +63,7 @@ class Case:
 
     @property
     def is_dot_case(self) -> bool:
-        return self.text.islower() and uses_accepted_chars(self.text, self.snake_case_chars)
+        return self.text.islower() and uses_accepted_chars(self.text, self.dot_case_chars)
 
     @property
     def is_camel_case(self) -> bool:
