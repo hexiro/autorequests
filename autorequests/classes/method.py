@@ -11,8 +11,8 @@ class Method:
                  url: URL,
                  body: Body,
                  parameters: List[Parameter] = None,
-                 headers: dict = None,
-                 cookies: dict = None,
+                 headers: Dict[str] = None,
+                 cookies: Dict[str] = None,
                  ):
         self.__method = method
         self.__url = url

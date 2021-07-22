@@ -2,7 +2,7 @@ import json
 import keyword
 import string
 from pathlib import Path
-from typing import Union, List, Dict, Set
+from typing import Union, List, Dict, Set, Iterable, Optional
 
 # Path() returns type WindowsPath or PosixPath based on os
 # I could replicate their os check, but this is safer in case they change it in the future.
@@ -25,7 +25,7 @@ def indent(data: str, spaces: int = 4) -> str:
     return "\n".join(indent_block + line for line in data.splitlines())
 
 
-def uses_accepted_chars(text: str, chars: Union[List[str], Set[str], str]) -> bool:
+def uses_accepted_chars(text: str, chars: Iterable) -> bool:
     """ :returns: true if all characters in text are accepted chars set by `chars`"""
     return all(t in chars for t in text)
 
@@ -81,13 +81,13 @@ def compare_lists(lists: List[list]) -> list:
     return [p for i, p in enumerate(lists[0]) if all(list_[i] == p for list_ in lists[1:])]
 
 
-def format_dict(data: dict) -> str:
+def format_dict(data: dict, indent: Optional[int] = 4) -> str:
     """ format a dictionary """
 
     # I'm not sure it's possible to pretty-format this with something like
     # pprint, but if it is possible LMK!
 
-    formatted = json.dumps(data, indent=4)
+    formatted = json.dumps(data, indent=indent)
     # parse bools and none
     # I believe this is all I need to replace
     # leading space allows us to only match literal false and not "false" string
