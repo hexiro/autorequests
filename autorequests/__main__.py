@@ -8,6 +8,9 @@ from .utils import PathType
 
 
 class AutoRequests(argparse.ArgumentParser):
+    # filepath: PathType
+    # filename: str
+    # file: File
 
     def __init__(self):
         super().__init__()
@@ -115,8 +118,8 @@ class AutoRequests(argparse.ArgumentParser):
                 else:
                     folder.mkdir()
 
-    def compare_changes(self, file, class_object) -> str:
-        old_py = file.read_text(encoding="utf8", errors="ignore").splitlines()
+    def compare_changes(self, filepath, class_object) -> str:
+        old_py = filepath.read_text(encoding="utf8", errors="ignore").splitlines()
         new_py = (self.top + class_object.code).splitlines()
         return difflib.HtmlDiff().make_file(old_py, new_py, context=True)
 
@@ -126,11 +129,11 @@ class AutoRequests(argparse.ArgumentParser):
 
         for class_object in self.classes:
             folder = self.export_folder(class_object)
-            file = folder / "main.py"
-            if self.compare and file.is_file():
+            filepath = folder / "main.py"
+            if self.compare and filepath.is_file():
                 with (folder / "changes.html") as html:
-                    html.write_text(self.compare_changes(file, class_object))
-            with file.open(mode="w") as py:
+                    html.write_text(self.compare_changes(filepath, class_object))
+            with filepath.open(mode="w") as py:
                 py.write(self.top + class_object.code)
 
         self.__has_written = True
