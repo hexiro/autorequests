@@ -46,6 +46,9 @@ class OutputFile:
         # ex. class is named "autorequests" and output folder is named "autorequests"
         return self.filepath
 
+    def in_same_dir(self):
+        return self.filepath.name == self.folder.name
+
     @property
     def python_file(self):
         return self.folder / "main.py"

@@ -102,7 +102,7 @@ class AutoRequests(argparse.ArgumentParser):
 
     def load_external_files(self):
         for output_file in self.output_files:
-            if output_file.class_ and output_file.filepath != output_file.folder:
+            if not output_file.in_same_dir():
                 if output_file.folder.is_dir():
                     self.parse_directory(output_file.folder)
                 else:
