@@ -76,7 +76,7 @@ class Method:
     def signature(self):
         return f"def {self.name}({', '.join(param.code for param in self.parameters)}):"
 
-    @property
+    @cached_property
     def code(self):
         # handle class headers & cookies
         # only use session if headers or cookies are set in class
@@ -102,7 +102,7 @@ class Method:
         body += "text" if self.return_text else "json()"
         return self.signature + "\n" + indent(body, spaces=4)
 
-    @property
+    @cached_property
     def class_name(self):
         # DOMAIN of url
         # domains with two dots break this (ex. .co.uk)
@@ -111,7 +111,7 @@ class Method:
         class_name = class_name.split(":")[0]
         return Case(class_name).camel_case
 
-    @property
+    @cached_property
     def default_name(self):
         # remove leading and trailing / for calculation
         split = [Case(p).snake_case for p in self.url.path.split("/") if p]
