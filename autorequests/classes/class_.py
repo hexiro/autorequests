@@ -19,6 +19,9 @@ class Class:
         self.__single_quote = single_quote
         self.__parameters_mode = parameters_mode
 
+    def __repr__(self):
+        return f"<Class {self.name}>"
+
     @property
     def name(self):
         return self.__name
