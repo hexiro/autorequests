@@ -1,7 +1,6 @@
 import difflib
 from typing import Union, Optional
 
-from . import Class
 from ..utils import PathType, cached_property
 
 

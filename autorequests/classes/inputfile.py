@@ -1,4 +1,3 @@
-import functools
 import json
 from typing import Match
 

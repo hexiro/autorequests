@@ -1,5 +1,4 @@
 import argparse
-import difflib
 from pathlib import Path
 from typing import List
 
