@@ -7,7 +7,7 @@ from ..classes import URL, Body, Method
 from ..utils import extract_cookies, PathType, cached_property
 
 
-class File(PathType):
+class InputFile(PathType):
     """ handles files and the parsing of files """
 
     @cached_property

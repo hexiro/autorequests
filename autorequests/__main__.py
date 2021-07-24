@@ -3,7 +3,7 @@ import difflib
 from pathlib import Path
 from typing import List
 
-from .classes import Class, File
+from .classes import Class, InputFile
 from .utils import PathType
 
 
@@ -84,7 +84,7 @@ class AutoRequests(argparse.ArgumentParser):
         return self.__classes
 
     @property
-    def files(self) -> List[File]:
+    def files(self) -> List[InputFile]:
         return self.__files
 
     @property
@@ -161,7 +161,7 @@ class AutoRequests(argparse.ArgumentParser):
         if not directory.is_dir():
             return
         for filename in directory.glob("*.txt"):
-            file = File(filename)
+            file = InputFile(filename)
             method = file.method
             if method:
                 class_name = file.method.class_name
