@@ -65,6 +65,8 @@ generation options
   --single-quote        Uses single quotes instead of double quotes
   --no-headers          Removes all headers from the operation
   --no-cookies          Removes all cookies from the operation
+  --compare             Compares the previously generated files to the new files
+  --parameters          Replaces hardcoded params, json, data, etc with parameters that have default values
 ```
 
 ## 🚩 Known Issues

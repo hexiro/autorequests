@@ -27,7 +27,7 @@ class AutoRequests(argparse.ArgumentParser):
                           )
         self.add_argument("--parameters",
                           action="store_true",
-                          help="Replaces hardcoded values with parameters that have default values")
+                          help="Replaces hardcoded params, json, data, etc with parameters that have default values")
         args = self.parse_args()
 
         # resolves path
