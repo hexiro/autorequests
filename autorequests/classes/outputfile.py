@@ -1,5 +1,5 @@
 import difflib
-from typing import Union
+from typing import Union, Optional
 
 from . import Class
 from ..utils import PathType, cached_property
@@ -15,7 +15,7 @@ class OutputFile:
         return f"<OutputFile {self.class_.name}.py>"
 
     @property
-    def filepath(self):
+    def filepath(self) -> PathType:
         return self.__filepath
 
     @property
@@ -23,7 +23,7 @@ class OutputFile:
         return self.__class
 
     @cached_property
-    def text(self):
+    def text(self) -> Optional[str]:
         if self.python_file.is_file():
             return self.python_file.read_text(encoding="utf8", errors="ignore")
 
@@ -36,29 +36,29 @@ class OutputFile:
                 "\n")
 
     @cached_property
-    def code(self):
+    def code(self) -> str:
         return self.top + self.class_.code
 
     @cached_property
-    def folder(self):
+    def folder(self) -> PathType:
         if self.filepath.name != self.class_.name:
             return self.filepath / self.class_.name
         # ex. class is named "autorequests" and output folder is named "autorequests"
         return self.filepath
 
-    def in_same_dir(self):
+    def in_same_dir(self) -> bool:
         return self.filepath.name == self.folder.name
 
     @property
-    def python_file(self):
+    def python_file(self) -> PathType:
         return self.folder / "main.py"
 
     @property
-    def changes_file(self):
+    def changes_file(self) -> PathType:
         return self.folder / "changes.html"
 
     @cached_property
-    def changes(self):
+    def changes(self) -> str:
         return difflib.HtmlDiff().make_file(self.text.splitlines(), self.code.splitlines(), context=True)
 
     def write(self):

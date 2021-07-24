@@ -94,7 +94,7 @@ class AutoRequests(argparse.ArgumentParser):
         return self.__output_files
 
     @property
-    def has_written(self):
+    def has_written(self) -> bool:
         return self.__has_written
 
     def load_local_files(self):
