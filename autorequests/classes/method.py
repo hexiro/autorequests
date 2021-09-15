@@ -62,7 +62,7 @@ class Method:
     def parameters(self) -> List[Parameter]:
         params = self.__parameters or []
         if params[0].name != "self":
-            params.insert(Parameter("self"), 0)
+            params.insert(0, Parameter("self"))
         if self.parameters_mode:
             for key, value in {**self.url.query,
                                **self.body.data,
