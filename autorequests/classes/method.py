@@ -60,10 +60,9 @@ class Method:
 
     @cached_property
     def parameters(self) -> List[Parameter]:
-        params = [Parameter("self")]
-        for param in (self.__parameters or []):
-            if param.name != "self":
-                params.append(param)
+        params = self.__parameters or []
+        if params[0].name != "self":
+            params.insert(Parameter("self"), 0)
         if self.parameters_mode:
             for key, value in {**self.url.query,
                                **self.body.data,
