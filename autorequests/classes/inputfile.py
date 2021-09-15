@@ -1,5 +1,5 @@
 import json
-from typing import Match
+from typing import Optional
 
 from .. import regexp
 from ..classes import URL, Body, Method
@@ -14,39 +14,32 @@ class InputFile(PathType):
         return self.read_text(encoding="utf8", errors="ignore")
 
     @cached_property
-    def method(self):
-        fetch = self.fetch_match
-        if fetch:
-            return self._method_from_fetch(fetch)
-        powershell = self.powershell_match
-        if powershell:
-            return self._method_from_powershell(powershell)
-
-    @cached_property
-    def fetch_match(self):
-        return regexp.fetch_regexp.search(self.text)
-
-    @cached_property
-    def powershell_match(self):
-        return regexp.powershell_regexp.search(self.text)
+    def method(self) -> Optional[Method]:
+        # short circuiting
+        return self.method_from_fetch or self.method_from_powershell
 
     # static methods
     # (for parsing)
 
-    @staticmethod
-    def _method_from_fetch(fetch: Match) -> Method:
+    @cached_property
+    def method_from_fetch(self) -> Optional[Method]:
         """
         Parses a file that follows this format:
+        (with some being optional)
 
         fetch(<URL>, {
           "headers": <HEADERS>,
-          "referrer": <REFERRER>,  # optional
-          "referrerPolicy": <REFERRER-POLICY>,  # might be optional
+          "referrer": <REFERRER>,
+          "referrerPolicy": <REFERRER-POLICY>,
           "body": <BODY>,
           "method": <METHOD>,
           "mode": <MODE>
         });
         """
+        fetch = regexp.fetch_regexp.search(self.text)
+        if not fetch:
+            return
+
         headers = json.loads(fetch["headers"])
         # referer is spelled wrong in the HTTP header
         # referrer policy is not
@@ -70,10 +63,11 @@ class InputFile(PathType):
                       cookies=cookies,
                       )
 
-    @staticmethod
-    def _method_from_powershell(powershell: Match) -> Method:
+    @cached_property
+    def method_from_powershell(self) -> Optional[Method]:
         """
         Parses a file that follows this format:
+        (with some potentially being optional)
 
         Invoke-WebRequest -Uri <URL> `
         -Method <METHOD> `   # optional; defaults to GET if not set
@@ -81,8 +75,11 @@ class InputFile(PathType):
         -ContentType <CONTENT-TYPE> `   # optional; only exists w/ body
         -Body <BODY>     # optional; only exists if a body is present
         """
-        headers = {}
+        powershell = regexp.powershell_regexp.search(self.text)
+        if not powershell:
+            return
 
+        headers = {}
         for header in powershell["headers"].splitlines():
             if "=" in header:
                 header = header.lstrip("  ")
