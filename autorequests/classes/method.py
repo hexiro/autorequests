@@ -42,28 +42,12 @@ class Method:
         """
         self.__class = new_class
 
-    @property
-    def class_headers(self) -> Dict[str, str]:
-        return getattr(self.class_, "headers", {})
-
-    @property
-    def class_cookies(self) -> Dict[str, str]:
-        return getattr(self.class_, "cookies", {})
-
-    @property
-    def return_text(self) -> bool:
-        return getattr(self.class_, "return_text", False)
-
-    @property
-    def parameters_mode(self) -> bool:
-        return getattr(self.class_, "parameters_mode", False)
-
     @cached_property
     def parameters(self) -> List[Parameter]:
         params = self.__parameters or []
         if params[0].name != "self":
             params.insert(0, Parameter("self"))
-        if self.parameters_mode:
+        if self.class_.parameters_mode:
             for key, value in {**self.url.query,
                                **self.body.data,
                                **self.body.json,
@@ -79,7 +63,7 @@ class Method:
     def code(self):
         # handle class headers & cookies
         # only use session if headers or cookies are set in class
-        requests_call = "self.session" if (self.class_headers or self.class_cookies) else "requests"
+        requests_call = "self.session" if (self.class_.headers or self.class_.cookies) else "requests"
         # code
         body = f"return {requests_call}.{self.method.lower()}(\"{self.url}\""
         for kwarg, data in {"params": self.url.query,
@@ -89,7 +73,7 @@ class Method:
                             "headers": self.headers,
                             "cookies": self.cookies}.items():
             if data:
-                if self.parameters_mode:
+                if self.class_.parameters_mode:
                     parameters_dict = {p.name: p for p in self.parameters}
                     for key, value in data.items():
                         data[key] = parameters_dict[key].name if key in parameters_dict else value
@@ -98,7 +82,7 @@ class Method:
                     formatted_data = format_dict(data)
                 body += f", {kwarg}=" + formatted_data
         body += ")."
-        body += "text" if self.return_text else "json()"
+        body += "text" if self.class_.return_text else "json()"
         return self.signature + "\n" + indent(body, spaces=4)
 
     @cached_property
@@ -128,7 +112,7 @@ class Method:
     @property
     def headers(self):
         if self.class_headers:
-            return {h: v for h, v in self.__headers.items() if h not in self.class_headers}
+            return {h: v for h, v in self.__headers.items() if h not in self.class_.headers}
         return self.__headers
 
     @headers.setter
@@ -139,7 +123,7 @@ class Method:
     @property
     def cookies(self):
         if self.class_cookies:
-            return {c: v for c, v in self.__headers.items() if c not in self.class_cookies}
+            return {c: v for c, v in self.__headers.items() if c not in self.class_.cookies}
         return self.__cookies
 
     @cookies.setter
