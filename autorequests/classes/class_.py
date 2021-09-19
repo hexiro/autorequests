@@ -1,6 +1,5 @@
 from ..utils import format_dict, indent, unique_name, compare_dicts
 
-
 # "class" is a reserved keyword so I can't name a file "class"
 
 
@@ -90,10 +89,7 @@ class Class:
             code = code.replace("\"", "'")
         return code
 
-    def add_method(self, method):
-        """
-        :type method: Method
-        """
+    def add_method(self, method: "Method"):
         method.class_ = self
 
         # there will only ever be one time where there are two methods with the same name,
