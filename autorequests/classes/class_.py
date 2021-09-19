@@ -67,10 +67,14 @@ class Class:
         return signature + indent(code)
 
     @property
+    def use_constructor(self) -> bool:
+        return bool(self.headers or self.cookies)
+
+    @property
     def code(self):
         code = self.signature
         # not actually two newlines; adds \n to end of previous line
-        if self.headers or self.cookies:
+        if self.use_constructor:
             code += "\n\n"
             code += indent(self.constructor)
         for method in self.methods:
