@@ -40,18 +40,8 @@ def uses_accepted_chars(text: str, chars: Iterable) -> bool:
 
 
 def is_pythonic_name(text: str) -> bool:
-    if not text:
-        return False
-    # functions can't start with a digit
-    if text[0].isdigit():
-        return False
-    # function names can only contain letters, numbers, and _s
-    if not uses_accepted_chars(text, string.ascii_letters + string.digits + "_"):
-        return False
-    # if function name is a reserved keyword
-    if keyword.iskeyword(text):
-        return False
-    return True
+    """ :returns: true if the string provided is a valid function name """
+    return text.isidentifier() and not keyword.iskeyword(text)
 
 
 def extract_cookies(headers: Dict[str, str]) -> Dict[str, str]:
