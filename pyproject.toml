@@ -13,7 +13,7 @@ python = "^3.6"
 requests = "^2.26.0"
 
 [tool.poetry.scripts]
-autorequests = "autorequests.__main__:main"
+autorequests = "autorequests:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -2,8 +2,14 @@ import argparse
 from pathlib import Path
 from typing import List
 
-from . import __version__
 from .classes import Class, InputFile, OutputFile
+
+__version__ = "1.0.2"
+__all__ = (
+    "AutoRequests",
+    "main",
+    "__version__"
+)
 
 
 class AutoRequests:
