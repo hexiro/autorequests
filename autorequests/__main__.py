@@ -4,11 +4,10 @@ from typing import List
 
 from .classes.outputfile import OutputFile
 from .classes import Class, InputFile
-from .utils import PathType
 
 
 class AutoRequests(argparse.ArgumentParser):
-    # filepath: PathType
+    # filepath: Path
     # filename: str
     # file: File
 
@@ -47,11 +46,11 @@ class AutoRequests(argparse.ArgumentParser):
         self.__has_written = False
 
     @property
-    def input(self) -> PathType:
+    def input(self) -> Path:
         return self.__input
 
     @property
-    def output(self) -> PathType:
+    def output(self) -> Path:
         return self.__output
 
     @property

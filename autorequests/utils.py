@@ -1,22 +1,15 @@
 import functools
 import json
 import keyword
-import string
 import sys
-from pathlib import Path
-from typing import List, Dict, Iterable, Optional
-
-# Path() returns type WindowsPath or PosixPath based on os
-# I could replicate their os check, but this is safer in case they change it in the future.
-
-PathType = type(Path())
+from typing import List, Dict, Iterable, Optional, Callable
 
 
 # pretty simplistic names tbf
 # a lot of these aren't super self explanatory so they have docstring
 
 
-def cached_property(func):
+def cached_property(func: Callable):
     if sys.version_info > (3, 8):
         return functools.cached_property(func)
     return property(functools.lru_cache()(func))
@@ -25,13 +18,13 @@ def cached_property(func):
 def indent(data: str, spaces: int = 4) -> str:
     """
     indents a code block a set amount of spaces
-    note: is faster than textwrap.indent()
+    note: is ~1.5x faster than textwrap.indent(data, " " * spaces)
     (from my testing)
     """
     # using this var is slightly slower on small operations,
     # and a lot faster on big operations
     indent_block = " " * spaces
-    return "\n".join(indent_block + line for line in data.splitlines())
+    return "\n".join((indent_block + line if line else line) for line in data.splitlines())
 
 
 def uses_accepted_chars(text: str, chars: Iterable) -> bool:

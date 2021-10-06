@@ -1,12 +1,13 @@
 import difflib
+from pathlib import Path
 from typing import Optional
 
-from ..utils import PathType, cached_property
+from ..utils import cached_property
 
 
 class OutputFile:
 
-    def __init__(self, filepath: PathType, class_object: "Class"):
+    def __init__(self, filepath: Path, class_object: "Class"):
         self.__filepath = filepath
         self.__class = class_object
 
@@ -14,7 +15,7 @@ class OutputFile:
         return f"<OutputFile {self.class_.name}.py>"
 
     @property
-    def filepath(self) -> PathType:
+    def filepath(self) -> Path:
         return self.__filepath
 
     @property
@@ -39,7 +40,7 @@ class OutputFile:
         return self.top + self.class_.code
 
     @cached_property
-    def folder(self) -> PathType:
+    def folder(self) -> Path:
         if self.filepath.name != self.class_.name:
             return self.filepath / self.class_.name
         # ex. class is named "autorequests" and output folder is named "autorequests"
@@ -49,11 +50,11 @@ class OutputFile:
         return self.filepath.name == self.folder.name
 
     @property
-    def python_file(self) -> PathType:
+    def python_file(self) -> Path:
         return self.folder / "main.py"
 
     @property
-    def changes_file(self) -> PathType:
+    def changes_file(self) -> Path:
         return self.folder / "changes.html"
 
     @cached_property

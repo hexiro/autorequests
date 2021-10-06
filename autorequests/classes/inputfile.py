@@ -1,12 +1,13 @@
 import json
+from pathlib import Path
 from typing import Optional
 
 from .. import regexp
 from ..classes import URL, Body, Method
-from ..utils import extract_cookies, PathType, cached_property
+from ..utils import extract_cookies, cached_property
 
 
-class InputFile(PathType):
+class InputFile(Path):
     """ handles files and the parsing of files """
 
     @cached_property
