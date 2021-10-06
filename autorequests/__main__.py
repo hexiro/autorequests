@@ -2,6 +2,7 @@ import argparse
 from pathlib import Path
 from typing import List
 
+from . import __version__
 from .classes import Class, InputFile, OutputFile
 
 
@@ -15,6 +16,7 @@ class AutoRequests:
         parser = argparse.ArgumentParser()
         parser.add_argument("-i", "--input", default=None, help="Input Directory")
         parser.add_argument("-o", "--output", default=None, help="Output Directory")
+        parser.add_argument("-v", "--version", action="store_true")
         parser.add_argument("--return-text",
                             action="store_true",
                             help="Makes the generated method's responses return .text instead of .json()"
@@ -33,6 +35,7 @@ class AutoRequests:
         # resolves path
         self.__input = (Path(args.i) if args.input else Path.cwd()).resolve()
         self.__output = (Path(args.o) if args.output else Path.cwd()).resolve()
+        self.__version = args.version
         self.__single_quote = args.single_quote
         self.__return_text = args.return_text
         self.__no_headers = args.no_headers
@@ -53,6 +56,10 @@ class AutoRequests:
     @property
     def output(self) -> Path:
         return self.__output
+
+    @property
+    def version(self) -> bool:
+        return self.__version
 
     @property
     def single_quote(self) -> bool:
@@ -98,6 +105,16 @@ class AutoRequests:
 
     def load_local_files(self):
         self.parse_directory(self.input)
+
+    def main(self):
+        if self.version:
+            print(f"AutoRequests {__version__}")
+            return
+        self.load_local_files()
+        self.load_external_files()
+        self.write()
+        self.move_into_class_folder()
+        self.print_results()
 
     def load_external_files(self):
         for output_file in self.output_files:
@@ -169,12 +186,7 @@ class AutoRequests:
 
 
 def main():
-    auto_requests = AutoRequests()
-    auto_requests.load_local_files()
-    auto_requests.load_external_files()
-    auto_requests.write()
-    auto_requests.move_into_class_folder()
-    auto_requests.print_results()
+    AutoRequests().main()
 
 
 if __name__ == "__main__":
