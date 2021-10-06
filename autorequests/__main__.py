@@ -17,39 +17,30 @@ class AutoRequests:
     # filename: str
     # file: File
 
-    def __init__(self):
-        super().__init__()
-        parser = argparse.ArgumentParser()
-        parser.add_argument("-i", "--input", default=None, help="Input Directory")
-        parser.add_argument("-o", "--output", default=None, help="Output Directory")
-        parser.add_argument("-v", "--version", action="store_true")
-        parser.add_argument("--return-text",
-                            action="store_true",
-                            help="Makes the generated method's responses return .text instead of .json()"
-                            )
-        parser.add_argument("--single-quote", action="store_true", help="Uses single quotes instead of double quotes")
-        parser.add_argument("--no-headers", action="store_true", help="Removes all headers from the operation")
-        parser.add_argument("--no-cookies", action="store_true", help="Removes all cookies from the operation")
-        parser.add_argument("--compare", action="store_true",
-                            help="Compares the previously generated files to the new files."
-                            )
-        parser.add_argument("--parameters",
-                            action="store_true",
-                            help="Replaces hardcoded params, json, data, etc with parameters that have default values")
-        args = parser.parse_args()
+    def __init__(self, *,
+                 input: Path = None,
+                 output: Path = None,
+                 version: bool = False,
+                 single_quote: bool = False,
+                 return_text: bool = False,
+                 no_headers: bool = False,
+                 no_cookies: bool = False,
+                 compare: bool = False,
+                 parameters_mode: bool = False
+                 ):
 
-        # resolves path
-        self.__input = (Path(args.i) if args.input else Path.cwd()).resolve()
-        self.__output = (Path(args.o) if args.output else Path.cwd()).resolve()
-        self.__version = args.version
-        self.__single_quote = args.single_quote
-        self.__return_text = args.return_text
-        self.__no_headers = args.no_headers
-        self.__no_cookies = args.no_cookies
-        self.__compare = args.compare
-        self.__parameters_mode = args.parameters
+        # params
+        self.__input = input
+        self.__output = output
+        self.__version = version
+        self.__single_quote = single_quote
+        self.__return_text = return_text
+        self.__no_headers = no_headers
+        self.__no_cookies = no_cookies
+        self.__compare = compare
+        self.__parameters_mode = parameters_mode
 
-        # dynamic tings from here on out
+        # dynamic
         self.__classes = []
         self.__input_files = []
         self.__output_files = []
@@ -192,7 +183,27 @@ class AutoRequests:
 
 
 def main():
-    AutoRequests().main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i", "--input", default=None, help="Input Directory")
+    parser.add_argument("-o", "--output", default=None, help="Output Directory")
+    parser.add_argument("-v", "--version", action="store_true")
+    parser.add_argument("--return-text",
+                        action="store_true",
+                        help="Makes the generated method's responses return .text instead of .json()"
+                        )
+    parser.add_argument("--single-quote", action="store_true", help="Uses single quotes instead of double quotes")
+    parser.add_argument("--no-headers", action="store_true", help="Removes all headers from the operation")
+    parser.add_argument("--no-cookies", action="store_true", help="Removes all cookies from the operation")
+    parser.add_argument("--compare", action="store_true",
+                        help="Compares the previously generated files to the new files."
+                        )
+    parser.add_argument("--parameters",
+                        action="store_true",
+                        help="Replaces hardcoded params, json, data, etc with parameters that have default values")
+    args = vars(parser.parse_args())
+    args["input"] = (Path(args["input"]) if args["input"] else Path.cwd()).resolve()
+    args["output"] = (Path(args["output"]) if args["output"] else Path.cwd()).resolve()
+    AutoRequests(**args).main()
 
 
 if __name__ == "__main__":
