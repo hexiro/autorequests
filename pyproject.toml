@@ -9,6 +9,9 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.6"
 
+[tool.poetry.dev-dependencies]
+requests = "^2.26.0"
+
 [tool.poetry.scripts]
 autorequests = "autorequests.__main__:main"
 
