@@ -107,7 +107,7 @@ class Method:
 
     @property
     def headers(self):
-        if self.class_headers:
+        if self.class_.headers:
             return {h: v for h, v in self.__headers.items() if h not in self.class_.headers}
         return self.__headers
 
@@ -118,7 +118,7 @@ class Method:
 
     @property
     def cookies(self):
-        if self.class_cookies:
+        if self.class_.cookies:
             return {c: v for c, v in self.__headers.items() if c not in self.class_.cookies}
         return self.__cookies
 

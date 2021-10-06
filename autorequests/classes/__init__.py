@@ -7,6 +7,7 @@
 from .body import Body
 from .case import Case
 from .class_ import Class
+from .outputfile import OutputFile
 from .parameter import Parameter
 from .url import URL
 # imports from __init__.py

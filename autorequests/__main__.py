@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 from typing import List
 
-from autorequests.classes.outputfile import OutputFile
+from .classes.outputfile import OutputFile
 from .classes import Class, InputFile
 from .utils import PathType
 
@@ -146,20 +146,16 @@ class AutoRequests(argparse.ArgumentParser):
             method = file.method
             if method:
                 class_name = file.method.class_name
-                classes_search = [c for c in self.classes if c.name == class_name]
-
-                if not classes_search:
+                class_object = next((c for c in self.classes if c.name == class_name), None)
+                if not class_object:
                     class_object = Class(name=class_name,
                                          return_text=self.return_text,
                                          single_quote=self.single_quote,
                                          parameters_mode=self.parameters_mode)
                     self.classes.append(class_object)
                     self.output_files.append(OutputFile(self.output, class_object))
-                else:
-                    class_object = classes_search[0]
 
                 # needs to be added first
-                # modifying methods after adding it to the class is perfectly fine
 
                 class_object.add_method(method)
                 self.input_files.append(file)
@@ -167,9 +163,9 @@ class AutoRequests(argparse.ArgumentParser):
                 # maybe this could be optimized?
                 # cpu is wasted calculating headers and cookies only to be deleted
                 if self.no_headers:
-                    file.method.headers = {}
+                    method.headers = {}
                 if self.no_cookies:
-                    file.method.cookies = {}
+                    method.cookies = {}
 
 
 def main():

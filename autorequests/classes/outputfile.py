@@ -1,13 +1,13 @@
 import difflib
-from typing import Union, Optional
+from typing import Optional
 
 from ..utils import PathType, cached_property
 
 
 class OutputFile:
 
-    def __init__(self, filepath: Union[str, PathType], class_object):
-        self.__filepath = PathType(filepath) if isinstance(filepath, str) else filepath
+    def __init__(self, filepath: PathType, class_object: "Class"):
+        self.__filepath = filepath
         self.__class = class_object
 
     def __repr__(self):
