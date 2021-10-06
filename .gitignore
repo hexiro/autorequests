@@ -5,8 +5,11 @@
 # virtual environment
 venv/
 
-# byte-compiled / optimized / DLL files
+# python build stuff
 __pycache__/
 *.py[cod]
 *$py.class
+dist/
 
+# pytest cache
+.pytest_cache/
