@@ -69,15 +69,14 @@ class Method:
                             "files": self.body.files,
                             "headers": self.headers,
                             "cookies": self.cookies}.items():
-            if data:
-                if self.class_.parameters_mode:
-                    parameters_dict = {p.name: p for p in self.parameters}
-                    for key, value in data.items():
-                        data[key] = parameters_dict[key].name if key in parameters_dict else value
-                    formatted_data = format_dict(data, variables=[p.name for p in self.parameters])
-                else:
-                    formatted_data = format_dict(data)
-                body += f", {kwarg}=" + formatted_data
+            if not data:
+                continue
+            variables = None
+            if self.class_.parameters_mode:
+                variables = [p.name for p in self.parameters]
+                for key, value in data.items():
+                    data[key] = key if key in variables else value
+            body += f", {kwarg}=" + format_dict(data, variables)
         body += ")."
         body += "text" if self.class_.return_text else "json()"
         return self.signature + "\n" + indent(body, spaces=4)
