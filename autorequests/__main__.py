@@ -2,32 +2,33 @@ import argparse
 from pathlib import Path
 from typing import List
 
-from .classes.outputfile import OutputFile
-from .classes import Class, InputFile
+from .classes import Class, InputFile, OutputFile
 
 
-class AutoRequests(argparse.ArgumentParser):
+class AutoRequests:
     # filepath: Path
     # filename: str
     # file: File
 
     def __init__(self):
         super().__init__()
-        self.add_argument("-i", "--input", default=None, help="Input Directory")
-        self.add_argument("-o", "--output", default=None, help="Output Directory")
-        self.add_argument("--return-text", action="store_true",
-                          help="Makes the generated method's responses return .text instead of .json()"
-                          )
-        self.add_argument("--single-quote", action="store_true", help="Uses single quotes instead of double quotes")
-        self.add_argument("--no-headers", action="store_true", help="Removes all headers from the operation")
-        self.add_argument("--no-cookies", action="store_true", help="Removes all cookies from the operation")
-        self.add_argument("--compare", action="store_true",
-                          help="Compares the previously generated files to the new files."
-                          )
-        self.add_argument("--parameters",
-                          action="store_true",
-                          help="Replaces hardcoded params, json, data, etc with parameters that have default values")
-        args = self.parse_args()
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-i", "--input", default=None, help="Input Directory")
+        parser.add_argument("-o", "--output", default=None, help="Output Directory")
+        parser.add_argument("--return-text",
+                            action="store_true",
+                            help="Makes the generated method's responses return .text instead of .json()"
+                            )
+        parser.add_argument("--single-quote", action="store_true", help="Uses single quotes instead of double quotes")
+        parser.add_argument("--no-headers", action="store_true", help="Removes all headers from the operation")
+        parser.add_argument("--no-cookies", action="store_true", help="Removes all cookies from the operation")
+        parser.add_argument("--compare", action="store_true",
+                            help="Compares the previously generated files to the new files."
+                            )
+        parser.add_argument("--parameters",
+                            action="store_true",
+                            help="Replaces hardcoded params, json, data, etc with parameters that have default values")
+        args = parser.parse_args()
 
         # resolves path
         self.__input = (Path(args.i) if args.input else Path.cwd()).resolve()
