@@ -5,14 +5,14 @@ from typing import Optional
 from ..utils import cached_property
 
 
-class OutputFile:
+class Output:
 
     def __init__(self, filepath: Path, class_object: "Class"):
         self.__filepath = filepath
         self.__class = class_object
 
     def __repr__(self):
-        return f"<OutputFile {self.class_.name}.py>"
+        return f"<{self.__class__.__name__} {self.class_.name}.py>"
 
     @property
     def filepath(self) -> Path:

@@ -7,20 +7,27 @@ from ..classes import URL, Body, Method
 from ..utils import extract_cookies, cached_property
 
 
-class InputFile(Path):
+class Input:
     """ handles files and the parsing of files """
+
+    def __init__(self, filepath: Path):
+        self.__filepath = filepath
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} method={self.method}>"
+
+    @property
+    def filepath(self):
+        return self.__filepath
 
     @cached_property
     def text(self):
-        return self.read_text(encoding="utf8", errors="ignore")
+        return self.filepath.read_text(encoding="utf8", errors="ignore")
 
     @cached_property
     def method(self) -> Optional[Method]:
         # short circuiting
         return self.method_from_fetch or self.method_from_powershell
-
-    # static methods
-    # (for parsing)
 
     @cached_property
     def method_from_fetch(self) -> Optional[Method]:

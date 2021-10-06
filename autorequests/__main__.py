@@ -1,8 +1,8 @@
 import argparse
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
-from .classes import Class, InputFile, OutputFile
+from .classes import Class, Input, Output
 
 __version__ = "1.0.2"
 __all__ = (
@@ -18,8 +18,8 @@ class AutoRequests:
     # file: File
 
     def __init__(self, *,
-                 input: Path = None,
-                 output: Path = None,
+                 input: Optional[Path] = None,
+                 output: Optional[Path] = None,
                  version: bool = False,
                  single_quote: bool = False,
                  return_text: bool = False,
@@ -41,10 +41,10 @@ class AutoRequests:
         self.__parameters_mode = parameters_mode
 
         # dynamic
-        self.__classes = []
-        self.__input_files = []
-        self.__output_files = []
-        self.__has_written = False
+        self.__classes: List[Class] = []
+        self.__input_files: List[Input] = []
+        self.__output_files: List[Output] = []
+        self.__has_written: bool = False
 
     @property
     def input(self) -> Path:
@@ -89,11 +89,11 @@ class AutoRequests:
         return self.__classes
 
     @property
-    def input_files(self) -> List[InputFile]:
+    def input_files(self) -> List[Input]:
         return self.__input_files
 
     @property
-    def output_files(self) -> List[OutputFile]:
+    def output_files(self) -> List[Output]:
         return self.__output_files
 
     @property
@@ -156,30 +156,31 @@ class AutoRequests:
         if not directory.is_dir():
             return
         for filename in directory.glob("*.txt"):
-            file = InputFile(filename)
+            file = Input(filename)
             method = file.method
-            if method:
-                class_name = file.method.class_name
-                class_object = next((c for c in self.classes if c.name == class_name), None)
-                if not class_object:
-                    class_object = Class(name=class_name,
-                                         return_text=self.return_text,
-                                         single_quote=self.single_quote,
-                                         parameters_mode=self.parameters_mode)
-                    self.classes.append(class_object)
-                    self.output_files.append(OutputFile(self.output, class_object))
+            if not method:
+                continue
+            class_name = file.method.class_name
+            class_object = next((c for c in self.classes if c.name == class_name), None)
+            if not class_object:
+                class_object = Class(name=class_name,
+                                     return_text=self.return_text,
+                                     single_quote=self.single_quote,
+                                     parameters_mode=self.parameters_mode)
+                self.classes.append(class_object)
+                self.output_files.append(Output(self.output, class_object))
 
-                # needs to be added first
+            # needs to be added first
 
-                class_object.add_method(method)
-                self.input_files.append(file)
+            class_object.add_method(method)
+            self.input_files.append(file)
 
-                # maybe this could be optimized?
-                # cpu is wasted calculating headers and cookies only to be deleted
-                if self.no_headers:
-                    method.headers = {}
-                if self.no_cookies:
-                    method.cookies = {}
+            # maybe this could be optimized?
+            # cpu is wasted calculating headers and cookies only to be deleted
+            if self.no_headers:
+                method.headers = {}
+            if self.no_cookies:
+                method.cookies = {}
 
 
 def main():

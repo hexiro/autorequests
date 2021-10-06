@@ -29,6 +29,30 @@ class Method:
         return f"<{self.signature}>"
 
     @property
+    def name(self):
+        return self.__name
+
+    @name.setter
+    def name(self, new_name):
+        self.__name = new_name
+
+    @property
+    def method(self):
+        return self.__method
+
+    @property
+    def url(self):
+        return self.__url
+
+    @property
+    def body(self):
+        return self.__body
+
+    @property
+    def signature(self):
+        return f"def {self.name}({', '.join(param.code for param in self.parameters)}):"
+
+    @property
     def class_(self):
         """
         :rtype: Class
@@ -51,10 +75,6 @@ class Method:
                                **self.body.files}.items():
                 params.append(Parameter(key, default=value))
         return params
-
-    @property
-    def signature(self):
-        return f"def {self.name}({', '.join(param.code for param in self.parameters)}):"
 
     @cached_property
     def code(self):
@@ -126,23 +146,3 @@ class Method:
     def cookies(self, new_cookies: Dict[str, str]):
         if isinstance(new_cookies, dict):
             self.__cookies = new_cookies
-
-    @property
-    def name(self):
-        return self.__name
-
-    @name.setter
-    def name(self, new_name):
-        self.__name = new_name
-
-    @property
-    def method(self):
-        return self.__method
-
-    @property
-    def url(self):
-        return self.__url
-
-    @property
-    def body(self):
-        return self.__body
