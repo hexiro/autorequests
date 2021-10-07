@@ -13,7 +13,7 @@ class Class:
                  output_path: Path,
                  return_text: bool = False,
                  single_quote: bool = False,
-                 parameters_mode: bool = False):
+                 parameters: bool = False):
         self.__name = name
         self.__output_path = output_path
         self.__methods = []
@@ -22,7 +22,7 @@ class Class:
 
         self.__return_text = return_text
         self.__single_quote = single_quote
-        self.__parameters_mode = parameters_mode
+        self.__parameters = parameters
 
     def __repr__(self):
         return f"<Class {self.name}>"
@@ -56,8 +56,8 @@ class Class:
         return self.__single_quote
 
     @property
-    def parameters_mode(self):
-        return self.__parameters_mode
+    def parameters(self):
+        return self.__parameters
 
     @cached_property
     def folder(self) -> Path:
@@ -101,13 +101,13 @@ class Class:
             code += "\n\n"
             code += indent(method.code)
         code += "\n"
-        # if self.single_quote:
-        #     # replace unescaped 's with escaped 's
-        #     code = code.replace("'", "\\'")
-        #     # replace escaped "s with escaped 's
-        #     code = code.replace("\\\"", "\\'")
-        #     # replace all "s with 's
-        #     code = code.replace("\"", "'")
+        if self.single_quote:
+            # replace unescaped 's with escaped 's
+            code = code.replace("'", "\\'")
+            # replace escaped "s with escaped 's
+            code = code.replace("\\\"", "\\'")
+            # replace all "s with 's
+            code = code.replace("\"", "'")
         return code
 
     def add_method(self, method: "Method"):

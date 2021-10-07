@@ -45,7 +45,9 @@ class AutoRequests:
         self.__output_path: Path = output_path
         self.__input_files: Dict[Path, Method] = {}
         self.__methods: List[Method] = self.methods_from_path(self.input_path)
-        self.__classes: List[Class] = [Class(name=name, output_path=output_path) for name in
+
+        self.__classes: List[Class] = [Class(name=name, output_path=output_path, return_text=return_text,
+                                             single_quote=single_quote, parameters=parameters) for name in
                                        {method.class_name for method in self.methods}]
 
         for cls in self.classes:
@@ -54,6 +56,7 @@ class AutoRequests:
         for method in self.methods:
             cls = self.find_class(method.class_name)
             cls.add_method(method)
+            method.class_ = cls
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} classes={self.classes!r}>"

@@ -52,36 +52,35 @@ class Method:
     def signature(self):
         return f"def {self.name}({', '.join(param.code for param in self.parameters)}):"
 
-    # @property
-    # def class_(self):
-    #     """
-    #     :rtype: Class
-    #     """
-    #     return self.__class
-    #
-    # @class_.setter
-    # def class_(self, new_class: "Class"):
-    #     self.__class = new_class
+    @property
+    def class_(self):
+        """
+        :rtype: Class
+        """
+        return self.__class
+
+    @class_.setter
+    def class_(self, new_class: "Class"):
+        self.__class = new_class
 
     @cached_property
     def parameters(self) -> List[Parameter]:
         params = self.__parameters
         if not params or params[0].name != "self":
             params.insert(0, Parameter("self"))
-        # if self.class_.parameters:
-        #     for key, value in {**self.url.query,
-        #                        **self.body.data,
-        #                        **self.body.json,
-        #                        **self.body.files}.items():
-        #         params.append(Parameter(key, default=value))
+        if self.class_.parameters:
+            for key, value in {**self.url.query,
+                               **self.body.data,
+                               **self.body.json,
+                               **self.body.files}.items():
+                params.append(Parameter(key, default=value))
         return params
 
     @cached_property
     def code(self):
         # handle class headers & cookies
         # only use session if headers or cookies are set in class
-        # requests_call = "self.session" if self.class_.use_constructor else "requests"
-        requests_call = "requests"
+        requests_call = "self.session" if self.class_.use_constructor else "requests"
         # code
         body = f"return {requests_call}.{self.method.lower()}(\"{self.url}\""
         for kwarg, data in {"params": self.url.query,
@@ -93,14 +92,13 @@ class Method:
             if not data:
                 continue
             variables = None
-            # if self.class_.parameters:
-            #     variables = [p.name for p in self.parameters]
-            #     for key, value in data.items():
-            #         data[key] = key if key in variables else value
+            if self.class_.parameters:
+                variables = [p.name for p in self.parameters]
+                for key, value in data.items():
+                    data[key] = key if key in variables else value
             body += f", {kwarg}=" + format_dict(data, variables=variables)
         body += ")."
-        body += "json()"
-        # body += "text" if self.class_.return_text else "json()"
+        body += "text" if self.class_.return_text else "json()"
         return self.signature + "\n" + indent(body)
 
     @cached_property
@@ -129,8 +127,8 @@ class Method:
 
     @property
     def headers(self):
-        # if self.class_.headers:
-        #     return {h: v for h, v in self.__headers.items() if h not in self.class_.headers}
+        if self.class_.headers:
+            return {h: v for h, v in self.__headers.items() if h not in self.class_.headers}
         return self.__headers
 
     @headers.setter
@@ -140,8 +138,8 @@ class Method:
 
     @property
     def cookies(self):
-        # if self.class_.cookies:
-        #     return {c: v for c, v in self.__headers.items() if c not in self.class_.cookies}
+        if self.class_.cookies:
+            return {c: v for c, v in self.__headers.items() if c not in self.class_.cookies}
         return self.__cookies
 
     @cookies.setter
