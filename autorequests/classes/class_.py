@@ -1,15 +1,21 @@
-from ..utils import format_dict, indent, unique_name, compare_dicts
+from pathlib import Path
+
+from ..utils import format_dict, indent, unique_name, compare_dicts, cached_property
+
 
 # "class" is a reserved keyword so I can't name a file "class"
 
 
 class Class:
 
-    def __init__(self, name: str,
+    def __init__(self,
+                 name: str,
+                 output_path: Path,
                  return_text: bool = False,
                  single_quote: bool = False,
                  parameters_mode: bool = False):
         self.__name = name
+        self.__output_path = output_path
         self.__methods = []
         self.__cookies = {}
         self.__headers = {}
@@ -24,6 +30,10 @@ class Class:
     @property
     def name(self):
         return self.__name
+
+    @property
+    def output_path(self):
+        return self.__output_path
 
     @property
     def methods(self):
@@ -48,6 +58,17 @@ class Class:
     @property
     def parameters_mode(self):
         return self.__parameters_mode
+
+    @cached_property
+    def folder(self) -> Path:
+        if self.output_path.name != self.name:
+            return self.output_path / self.name
+        # ex. class is named "autorequests" and output folder is named "autorequests"
+        return self.output_path
+
+    @property
+    def file(self):
+        return self.folder / "main.py"
 
     @property
     def signature(self):

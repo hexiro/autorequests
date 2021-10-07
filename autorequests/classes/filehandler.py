@@ -15,11 +15,14 @@ class FileHandler:
         self.__output_path: Path = output_path
         self.__input_files: Dict[Path, Method] = {}
         self.__methods: List[Method] = self.methods_from_path(self.input_path)
-        self.__classes: List[Class] = [Class(name=name) for name in {method.class_name for method in self.methods}]
+        self.__classes: List[Class] = [Class(name=name, output_path=output_path) for name in {method.class_name for method in self.methods}]
 
         for cls in self.classes:
-            folder = self.class_output_path(cls)
-            self.methods.extend(self.methods_from_path(folder))
+            self.methods.extend(self.methods_from_path(cls.folder))
+
+        for method in self.methods:
+            cls = self.find_class(method.class_name)
+            cls.add_method(method)
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} methods={self.methods}>"
@@ -47,7 +50,7 @@ class FileHandler:
     def class_output_path(self, cls: Class):
         if self.output_path.name != cls.name:
             return self.output_path / cls.name
-        # ex. class is named "autorequests" and output folder is named "autorequests"
+
         return cls
 
     def methods_from_path(self, path: Path) -> List[Method]:
@@ -71,10 +74,9 @@ class FileHandler:
 
     def write(self):
         for cls in self.classes:
-            folder = self.class_output_path(cls)
-            if not folder.exists():
-                folder.mkdir()
-            main = folder / "main.py"
+            if not cls.folder.exists():
+                cls.folder.mkdir()
+            main = cls.folder / "main.py"
             code = self.top + cls.code
             main.write_text(data=code, encoding="utf8", errors="strict")
         for file, method in self.input_files.items():
