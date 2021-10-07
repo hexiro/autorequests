@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 from typing import List, Optional
 
-from .classes import Class, Input, Output
+from .classes import Class, Input
 
 __version__ = "1.0.2"
 __all__ = (
@@ -18,41 +18,41 @@ class AutoRequests:
     # file: File
 
     def __init__(self, *,
-                 input: Optional[Path] = None,
-                 output: Optional[Path] = None,
+                 input: Input = None,
+                 # output: Output = None,
                  version: bool = False,
                  single_quote: bool = False,
                  return_text: bool = False,
                  no_headers: bool = False,
                  no_cookies: bool = False,
                  compare: bool = False,
-                 parameters_mode: bool = False
+                 parameters: bool = False
                  ):
 
         # params
+
+        # `Input`takes input from the filesystem
+        # `Output` get its output from input
         self.__input = input
-        self.__output = output
+        # self.__output = output
         self.__version = version
         self.__single_quote = single_quote
         self.__return_text = return_text
         self.__no_headers = no_headers
         self.__no_cookies = no_cookies
         self.__compare = compare
-        self.__parameters_mode = parameters_mode
+        self.__parameters = parameters
 
         # dynamic
-        self.__classes: List[Class] = []
-        self.__input_files: List[Input] = []
-        self.__output_files: List[Output] = []
         self.__has_written: bool = False
 
     @property
-    def input(self) -> Path:
+    def input(self) -> Input:
         return self.__input
 
-    @property
-    def output(self) -> Path:
-        return self.__output
+    # @property
+    # def output(self) -> Output:
+    #     return self.__output
 
     @property
     def version(self) -> bool:
@@ -79,8 +79,8 @@ class AutoRequests:
         return self.__compare
 
     @property
-    def parameters_mode(self) -> bool:
-        return self.__parameters_mode
+    def parameters(self) -> bool:
+        return self.__parameters
 
     # dynamic
 
@@ -92,9 +92,9 @@ class AutoRequests:
     def input_files(self) -> List[Input]:
         return self.__input_files
 
-    @property
-    def output_files(self) -> List[Output]:
-        return self.__output_files
+    # @property
+    # def output_files(self) -> List[Output]:
+    #     return self.__output_files
 
     @property
     def has_written(self) -> bool:
@@ -166,7 +166,7 @@ class AutoRequests:
                 class_object = Class(name=class_name,
                                      return_text=self.return_text,
                                      single_quote=self.single_quote,
-                                     parameters_mode=self.parameters_mode)
+                                     parameters_mode=self.parameters)
                 self.classes.append(class_object)
                 self.output_files.append(Output(self.output, class_object))
 
@@ -202,9 +202,15 @@ def main():
                         action="store_true",
                         help="Replaces hardcoded params, json, data, etc with parameters that have default values")
     args = vars(parser.parse_args())
-    args["input"] = (Path(args["input"]) if args["input"] else Path.cwd()).resolve()
-    args["output"] = (Path(args["output"]) if args["output"] else Path.cwd()).resolve()
-    AutoRequests(**args).main()
+    input_arg = args.pop("input", None)
+    output_arg = args.pop("output", None)
+    input_path = (Path(input_arg) if input_arg else Path.cwd()).resolve()
+    output_path = (Path(output_arg) if output_arg else Path.cwd()).resolve()
+    # print(args)
+    input = Input(input_path=input_path, output_path=output_path)
+    print(vars(input))
+    # output = Output(output_path=output_path, input=input)
+    # AutoRequests(**args, input=input).main()
 
 
 if __name__ == "__main__":
