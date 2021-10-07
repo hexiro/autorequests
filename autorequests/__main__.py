@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import List, Optional, Dict, Generator
 
 from . import regexp
-from .utils import cached_property, extract_cookies
 from .classes import Class, Method, URL, Body
+from .utils import cached_property, extract_cookies
 
 __version__ = "1.0.2"
 __all__ = (
@@ -23,7 +23,6 @@ class AutoRequests:
     def __init__(self, *,
                  input_path: Path,
                  output_path: Path,
-                 version: bool = False,
                  single_quote: bool = False,
                  return_text: bool = False,
                  no_headers: bool = False,
@@ -34,7 +33,6 @@ class AutoRequests:
 
         # params
 
-        self.__version = version
         self.__single_quote = single_quote
         self.__return_text = return_text
         self.__no_headers = no_headers
@@ -59,10 +57,6 @@ class AutoRequests:
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} classes={self.classes!r}>"
-
-    @property
-    def version(self) -> bool:
-        return self.__version
 
     @property
     def single_quote(self) -> bool:
@@ -251,9 +245,6 @@ class AutoRequests:
     # dynamic
 
     def main(self):
-        if self.version:
-            print(f"AutoRequests {__version__}")
-            return
         self.write()
         self.print_results()
 
@@ -286,12 +277,29 @@ def main():
     parser.add_argument("--parameters",
                         action="store_true",
                         help="Replaces hardcoded params, json, data, etc with parameters that have default values")
-    args = vars(parser.parse_args())
-    input_arg = args.pop("input", None)
-    output_arg = args.pop("output", None)
-    input_path = (Path(input_arg) if input_arg else Path.cwd()).resolve()
-    output_path = (Path(output_arg) if output_arg else Path.cwd()).resolve()
-    AutoRequests(**args, input_path=input_path, output_path=output_path).main()
+    args = parser.parse_args()
+
+    if not args:
+        parser.print_help()
+        return
+    if args.version:
+        print(f"AutoRequests {__version__}")
+        return
+
+    input_path = (Path(args.input) if args.input else Path.cwd()).resolve()
+    output_path = (Path(args.output) if args.output else Path.cwd()).resolve()
+
+    auto_requests = AutoRequests(
+        input_path=input_path,
+        output_path=output_path,
+        single_quote=args.single_quote,
+        return_text=args.return_text,
+        no_headers=args.no_headers,
+        no_cookies=args.no_cookies,
+        compare=args.compare,
+        parameters=args.parameters
+    )
+    auto_requests.main()
 
 
 if __name__ == "__main__":
