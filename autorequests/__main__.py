@@ -3,6 +3,9 @@ import json
 from pathlib import Path
 from typing import List, Optional, Dict, Generator
 
+import rich
+from rich.syntax import Syntax
+
 from . import regexp
 from .classes import Class, Method, URL, Body
 from .utils import cached_property, extract_cookies
@@ -13,6 +16,8 @@ __all__ = (
     "main",
     "__version__"
 )
+
+console = rich.get_console()
 
 
 class AutoRequests:
@@ -33,12 +38,15 @@ class AutoRequests:
 
         # params
 
-        self.__single_quote = single_quote
-        self.__return_text = return_text
-        self.__no_headers = no_headers
-        self.__no_cookies = no_cookies
-        self.__compare = compare
-        self.__parameters = parameters
+        self.__single_quote: bool = single_quote
+        self.__return_text: bool = return_text
+        self.__no_headers: bool = no_headers
+        self.__no_cookies: bool = no_cookies
+        self.__compare: bool = compare
+        self.__parameters: bool = parameters
+
+        # pathlib.Path: code (str)
+        self.__written: Dict[Path, str] = {}
 
         # dynamic
         self.__input_path: Path = input_path
@@ -84,6 +92,10 @@ class AutoRequests:
     @property
     def parameters(self) -> bool:
         return self.__parameters
+
+    @property
+    def written(self) -> Dict[Path, str]:
+        return self.__written
 
     @property
     def input_path(self) -> Path:
@@ -137,6 +149,7 @@ class AutoRequests:
             main_py = cls.folder / "main.py"
             code = self.top + cls.code
             main_py.write_text(data=code, encoding="utf8", errors="strict")
+            self.written[main_py] = code
         for file, method in self.input_files.items():
             class_name = method.class_name
             if self.output_path.name != class_name:
@@ -245,21 +258,25 @@ class AutoRequests:
                       cookies=cookies,
                       )
 
-    # dynamic
-
     def main(self):
         self.write()
         self.print_results()
 
     def print_results(self):
-        if len(self.classes) == 0:
+        if not self.written:
             print("No request data could be located.")
             return
-        num_classes = len(self.classes)
-        num_methods = len(self.input_files)
-        classes_noun = "classes" if num_classes > 1 else "class"
-        methods_noun = "methods" if num_methods > 1 else "method"
-        print(f"Successfully wrote {num_classes} {classes_noun} with a total of {num_methods} {methods_noun}.")
+        for path, code in self.written.items():
+            class_definition = next((l for l in code.splitlines() if "class" in l))
+            method_definitions = [line + " ..." for line in code.splitlines() if "def" in line]
+            method_definitions.insert(0, "")
+            method_definitions.append("")
+
+            code = class_definition + "\n".join(method_definitions)
+
+            name = str(path.relative_to(path.parents[1]))
+            console.rule(name, style="bold red")
+            console.print(Syntax(code, "python", theme="fruity"))
 
 
 def main():
