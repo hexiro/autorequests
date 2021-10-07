@@ -91,7 +91,7 @@ def format_dict(data: dict, indent: Optional[int] = 4, variables: List[str] = No
     return formatted
 
 
-# kinda fucked if english changes
+# kinda screwed if english changes
 # if english has progressed please make a pr :pray:
 
 ones_dict = {"1": "one",
@@ -129,6 +129,8 @@ def written_form(num: int) -> str:
     """ :returns: written form of an integer 0-999 """
     if num > 999:
         raise NotImplementedError("numbers > 999 not supported")
+    if num < 0:
+        raise NotImplementedError("numbers < 0 not supported")
     if num == 0:
         return "zero"
     hundreds, tens, ones = str(num).zfill(3)
