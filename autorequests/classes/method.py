@@ -19,7 +19,7 @@ class Method:
         # request body -- not to be confused with method body
         self.__body = body
         # must append to `parameters` property, and not __parameters
-        self.__parameters = parameters
+        self.__parameters = parameters or []
         self.__headers = headers or {}
         self.__cookies = cookies or {}
         self.__name = self.default_name
@@ -65,8 +65,8 @@ class Method:
 
     @cached_property
     def parameters(self) -> List[Parameter]:
-        params = self.__parameters or []
-        if params and params[0].name != "self":
+        params = self.__parameters
+        if not params or params[0].name != "self":
             params.insert(0, Parameter("self"))
         # if self.class_.parameters:
         #     for key, value in {**self.url.query,
