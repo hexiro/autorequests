@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Optional, List, Generator
+from typing import Optional, List, Generator, Dict
 
 from . import URL, Body, Method, Class
 from .. import regexp
@@ -13,7 +13,7 @@ class FileHandler:
     def __init__(self, input_path: Path, output_path: Path):
         self.__input_path: Path = input_path
         self.__output_path: Path = output_path
-        self.__input_files: List[Path] = []
+        self.__input_files: Dict[Path, Method] = {}
         self.__methods: List[Method] = self.methods_from_path(self.input_path)
         self.__classes: List[Class] = [Class(name=name) for name in {method.class_name for method in self.methods}]
 
@@ -58,7 +58,7 @@ class FileHandler:
             if method is None:
                 continue
             methods.append(method)
-            self.input_files.append(file)
+            self.input_files[file] = method
         return methods
 
     @property
@@ -72,9 +72,15 @@ class FileHandler:
     def write(self):
         for cls in self.classes:
             folder = self.class_output_path(cls)
+            if not folder.exists():
+                folder.mkdir()
             main = folder / "main.py"
             code = self.top + cls.code
             main.write_text(data=code, encoding="utf8", errors="strict")
+        for file, method in self.input_files.items():
+            class_name = method.class_name
+            if self.output_path.name != class_name:
+                file.rename(self.output_path / class_name / file.name)
 
     @staticmethod
     def files_from_path(path: Path) -> Generator[Path, None, None]:

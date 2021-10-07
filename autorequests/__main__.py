@@ -209,6 +209,7 @@ def main():
     # print(args)
     file_handler = FileHandler(input_path=input_path, output_path=output_path)
     print({k: v for k, v in vars(file_handler).items() if not k.startswith("_")})
+    file_handler.write()
     # AutoRequests(**args, input=input).main()
 
 
