@@ -97,11 +97,11 @@ class Method:
             #     variables = [p.name for p in self.parameters]
             #     for key, value in data.items():
             #         data[key] = key if key in variables else value
-            body += f", {kwarg}=" + format_dict(data, variables)
+            body += f", {kwarg}=" + format_dict(data, variables=variables)
         body += ")."
         body += "json()"
         # body += "text" if self.class_.return_text else "json()"
-        return self.signature + "\n" + indent(body, spaces=4)
+        return self.signature + "\n" + indent(body)
 
     @cached_property
     def class_name(self):
