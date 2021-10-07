@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 from typing import List, Optional
 
-from .classes import Class, Input
+from .classes import Class, FileHandler
 
 __version__ = "1.0.2"
 __all__ = (
@@ -18,7 +18,7 @@ class AutoRequests:
     # file: File
 
     def __init__(self, *,
-                 input: Input = None,
+                 input: FileHandler = None,
                  # output: Output = None,
                  version: bool = False,
                  single_quote: bool = False,
@@ -47,7 +47,7 @@ class AutoRequests:
         self.__has_written: bool = False
 
     @property
-    def input(self) -> Input:
+    def input(self) -> FileHandler:
         return self.__input
 
     # @property
@@ -89,7 +89,7 @@ class AutoRequests:
         return self.__classes
 
     @property
-    def input_files(self) -> List[Input]:
+    def input_files(self) -> List[FileHandler]:
         return self.__input_files
 
     # @property
@@ -156,7 +156,7 @@ class AutoRequests:
         if not directory.is_dir():
             return
         for filename in directory.glob("*.txt"):
-            file = Input(filename)
+            file = FileHandler(filename)
             method = file.method
             if not method:
                 continue
@@ -207,9 +207,8 @@ def main():
     input_path = (Path(input_arg) if input_arg else Path.cwd()).resolve()
     output_path = (Path(output_arg) if output_arg else Path.cwd()).resolve()
     # print(args)
-    input = Input(input_path=input_path, output_path=output_path)
-    print(vars(input))
-    # output = Output(output_path=output_path, input=input)
+    file_handler = FileHandler(input_path=input_path, output_path=output_path)
+    print({k: v for k, v in vars(file_handler).items() if not k.startswith("_")})
     # AutoRequests(**args, input=input).main()
 
 

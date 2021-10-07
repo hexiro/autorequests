@@ -12,4 +12,4 @@ from .parameter import Parameter
 from .url import URL
 # imports from __init__.py
 from .method import Method
-from .input import Input
+from .filehandler import FileHandler
