@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import List, Optional, Dict, Generator
 
 import rich
-from rich.syntax import Syntax
 
 from . import regexp
 from .classes import Class, Method, URL, Body
@@ -45,15 +44,13 @@ class AutoRequests:
         self.__compare: bool = compare
         self.__parameters: bool = parameters
 
-        # pathlib.Path: code (str)
-        self.__written: Dict[Path, str] = {}
-
         # dynamic
         self.__input_path: Path = input_path
         self.__output_path: Path = output_path
-        self.__input_files: Dict[Path, Method] = {}
-        self.__methods: List[Method] = self.methods_from_path(self.input_path)
+        self.__input_methods: Dict[Path, Method] = {}
+        self.__output_classes: Dict[Path, Class] = {}
 
+        self.__methods: List[Method] = self.methods_from_path(self.input_path)
         self.__classes: List[Class] = [Class(name=name, output_path=output_path, return_text=return_text,
                                              single_quote=single_quote, parameters=parameters) for name in
                                        {method.class_name for method in self.methods}]
@@ -94,10 +91,6 @@ class AutoRequests:
         return self.__parameters
 
     @property
-    def written(self) -> Dict[Path, str]:
-        return self.__written
-
-    @property
     def input_path(self) -> Path:
         return self.__input_path
 
@@ -106,8 +99,12 @@ class AutoRequests:
         return self.__output_path
 
     @property
-    def input_files(self):
-        return self.__input_files
+    def input_methods(self):
+        return self.__input_methods
+
+    @property
+    def output_classes(self):
+        return self.__output_classes
 
     @cached_property
     def methods(self) -> List[Method]:
@@ -131,7 +128,7 @@ class AutoRequests:
             if method is None:
                 continue
             methods.append(method)
-            self.input_files[file] = method
+            self.input_methods[file] = method
         return methods
 
     @property
@@ -147,10 +144,9 @@ class AutoRequests:
             if not cls.folder.exists():
                 cls.folder.mkdir()
             main_py = cls.folder / "main.py"
-            code = self.top + cls.code
-            main_py.write_text(data=code, encoding="utf8", errors="strict")
-            self.written[main_py] = code
-        for file, method in self.input_files.items():
+            main_py.write_text(data=self.top + cls.code, encoding="utf8", errors="strict")
+            self.output_classes[main_py] = cls
+        for file, method in self.input_methods.items():
             class_name = method.class_name
             if self.output_path.name != class_name:
                 file.rename(self.output_path / class_name / file.name)
@@ -263,20 +259,16 @@ class AutoRequests:
         self.print_results()
 
     def print_results(self):
-        if not self.written:
+        if not self.output_classes:
             print("No request data could be located.")
             return
-        for path, code in self.written.items():
-            class_definition = next((l for l in code.splitlines() if "class" in l))
-            method_definitions = [line + " ..." for line in code.splitlines() if "def" in line]
-            method_definitions.insert(0, "")
-            method_definitions.append("")
-
-            code = class_definition + "\n".join(method_definitions)
-
-            name = str(path.relative_to(path.parents[1]))
-            console.rule(name, style="bold red")
-            console.print(Syntax(code, "python", theme="fruity"))
+        for path, cls in self.output_classes.items():
+            # p.s. if you try and make an object, python will throw an error because `requests` isn't defined
+            # thankfully, the class can be created which is pretty cool (thanks interpreter :))
+            exec(cls.code)
+            generated_cls = eval(cls.name)
+            name = path.parent.name
+            rich.inspect(generated_cls, all=False, methods=True, title=f"[bold white]{name}[/bold white]")
 
 
 def main():
