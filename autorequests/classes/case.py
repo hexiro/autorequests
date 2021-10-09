@@ -1,7 +1,7 @@
 import string
 
-from ..regexp import fix_snake_case_regexp
-from ..utils import uses_accepted_chars, cached_property
+from ..utilities import uses_accepted_chars, cached_property
+from ..utilities.regexp import fix_snake_case_regexp
 
 
 class Case:

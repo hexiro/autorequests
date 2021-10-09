@@ -2,7 +2,7 @@ import json
 from typing import Optional
 
 from . import regexp
-from .classes import Method, URL, Body
+from autorequests.classes import Method, URL, Body
 from .utils import extract_cookies
 
 

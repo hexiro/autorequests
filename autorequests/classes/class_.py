@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import List, Dict
 
 from . import method
-from ..utils import format_dict, indent, unique_name, compare_dicts, cached_property
+from ..utilities import format_dict, indent, unique_name, compare_dicts, cached_property
 
 
 # "class" is a reserved keyword so I can't name a file "class"

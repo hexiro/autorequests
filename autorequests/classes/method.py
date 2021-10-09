@@ -2,7 +2,7 @@ from typing import List, Dict, Optional
 
 from . import URL, Body, Parameter, Case
 from . import class_
-from ..utils import format_dict, indent, is_pythonic_name, cached_property
+from ..utilities import format_dict, indent, is_pythonic_name, cached_property
 
 
 class Method:

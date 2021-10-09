@@ -5,8 +5,8 @@ from typing import List, Optional, Dict, Generator
 import rich
 
 from .classes import Class, Method
-from .parsing import method_from_text
-from .utils import cached_property
+from .utilities import cached_property
+from .utilities.parsing import method_from_text
 
 __version__ = "1.0.2"
 __all__ = (
@@ -19,9 +19,6 @@ console = rich.get_console()
 
 
 class AutoRequests:
-    # filepath: Path
-    # filename: str
-    # file: File
 
     def __init__(self, *,
                  input_path: Path,
