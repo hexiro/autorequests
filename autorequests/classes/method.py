@@ -76,10 +76,8 @@ class Method:
 
     @cached_property
     def code(self):
-        # handle class headers & cookies
         # only use session if headers or cookies are set in class
-        requests_call = "self.session" if self.class_.use_constructor else "requests"
-        # code
+        requests_call = "self.session" if self.class_.use_initializer else "requests"
         body = f"return {requests_call}.{self.method.lower()}(\"{self.url}\""
         for kwarg, data in {"params": self.url.query,
                             "data": self.body.data,

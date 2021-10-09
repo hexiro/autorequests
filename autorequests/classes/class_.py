@@ -70,7 +70,7 @@ class Class:
         return f"class {self.name}:"
 
     @property
-    def constructor(self):
+    def initializer(self):
         signature = "def __init__(self):\n"
         code = "self.session = requests.Session()\n"
         if self.headers:
@@ -82,16 +82,16 @@ class Class:
         return signature + indent(code)
 
     @property
-    def use_constructor(self) -> bool:
+    def use_initializer(self) -> bool:
         return bool(self.headers or self.cookies)
 
     @property
     def code(self):
         code = self.signature
         # not actually two newlines; adds \n to end of previous line
-        if self.use_constructor:
+        if self.use_initializer:
             code += "\n\n"
-            code += indent(self.constructor)
+            code += indent(self.initializer)
         for method in self.methods:
             code += "\n\n"
             code += indent(method.code)
