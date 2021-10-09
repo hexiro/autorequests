@@ -95,13 +95,6 @@ class Class:
             code += "\n\n"
             code += indent(method.code)
         code += "\n"
-        if self.single_quote:
-            # replace unescaped 's with escaped 's
-            code = code.replace("'", "\\'")
-            # replace escaped "s with escaped 's
-            code = code.replace("\\\"", "\\'")
-            # replace all "s with 's
-            code = code.replace("\"", "'")
         return code
 
     def add_method(self, method: "Method"):
