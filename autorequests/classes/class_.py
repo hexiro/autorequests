@@ -1,11 +1,11 @@
 from pathlib import Path
 from typing import List, Dict
 
+from . import method
 from ..utils import format_dict, indent, unique_name, compare_dicts, cached_property
 
 
 # "class" is a reserved keyword so I can't name a file "class"
-
 
 class Class:
 
@@ -16,7 +16,7 @@ class Class:
                  parameters: bool = False):
         self._name: str = name
         self._output_path: Path = output_path
-        self._methods: List["Method"] = []
+        self._methods: List["method.Method"] = []
         self._cookies: Dict[str, str] = {}
         self._headers: Dict[str, str] = {}
 
@@ -98,7 +98,7 @@ class Class:
         code += "\n"
         return code
 
-    def add_method(self, method: "Method"):
+    def add_method(self, method: "method.Method"):
         method.class_ = self
 
         # there will only ever be one time where there are two methods with the same name,

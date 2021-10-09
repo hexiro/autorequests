@@ -1,6 +1,7 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from . import URL, Body, Parameter, Case
+from . import class_
 from ..utils import format_dict, indent, is_pythonic_name, cached_property
 
 
@@ -23,7 +24,7 @@ class Method:
         self._headers = headers or {}
         self._cookies = cookies or {}
         self._name = self.default_name
-        self._class = None
+        self._class: Optional["class_.Class"] = None
 
     def __repr__(self):
         return f"<{self.signature}>"
@@ -53,11 +54,11 @@ class Method:
         return f"def {self.name}({', '.join(param.code for param in self.parameters)}):"
 
     @property
-    def class_(self) -> "Class":
+    def class_(self) -> Optional["class_.Class"]:
         return self._class
 
     @class_.setter
-    def class_(self, new_class: "Class"):
+    def class_(self, new_class: "class_.Class"):
         self._class = new_class
 
     @cached_property
@@ -65,7 +66,7 @@ class Method:
         params = self._parameters
         if not params or params[0].name != "self":
             params.insert(0, Parameter("self"))
-        if self.class_.parameters:
+        if self.class_ and self.class_.parameters:
             for key, value in {**self.url.query,
                                **self.body.data,
                                **self.body.json,
