@@ -1,6 +1,6 @@
 import json
 import urllib.parse
-from typing import Optional
+from typing import Optional, Dict, Tuple
 
 
 class Body:
@@ -15,10 +15,10 @@ class Body:
                     .decode(encoding="unicode_escape", errors="replace"))
             # replace line breaks with \n(s)
             body = "\n".join(body.splitlines())
-        self._body = body
-        self._data = {}
-        self._json = {}
-        self._files = {}
+        self._body: Optional[str] = body
+        self._data: Dict[str, str] = {}
+        self._json: Dict[str, str] = {}
+        self._files: Dict[str, Tuple[str, str, ...]] = {}
 
         # multipart is the most broad and obvious so it goes first
         if not body:
