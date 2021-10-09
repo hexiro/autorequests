@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List, Dict
 
 from ..utils import format_dict, indent, unique_name, compare_dicts, cached_property
 
@@ -13,11 +14,11 @@ class Class:
                  output_path: Path,
                  return_text: bool = False,
                  parameters: bool = False):
-        self._name = name
-        self._output_path = output_path
-        self._methods = []
-        self._cookies = {}
-        self._headers = {}
+        self._name: str = name
+        self._output_path: Path = output_path
+        self._methods: List["Method"] = []
+        self._cookies: Dict[str, str] = {}
+        self._headers: Dict[str, str] = {}
 
         self._return_text = return_text
         self._parameters = parameters

@@ -49,7 +49,7 @@ def extract_cookies(headers: Dict[str, str]) -> Dict[str, str]:
     return cookie_dict
 
 
-def compare_dicts(dicts: List[dict]) -> dict:
+def compare_dicts(dicts: List[Dict[str, str]]) -> Dict[str, str]:
     """ :returns: a dictionary with the items that all of the dicts in the list share """
     # if there is 0 or 1 dicts, there will be no matches
     if len(dicts) <= 1:
