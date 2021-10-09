@@ -14,58 +14,55 @@ class Method:
                  headers: Dict[str, str] = None,
                  cookies: Dict[str, str] = None
                  ):
-        self.__method = method
-        self.__url = url
+        self._method = method
+        self._url = url
         # request body -- not to be confused with method body
-        self.__body = body
+        self._body = body
         # must append to `parameters` property, and not __parameters
-        self.__parameters = parameters or []
-        self.__headers = headers or {}
-        self.__cookies = cookies or {}
-        self.__name = self.default_name
-        self.__class = None
+        self._parameters = parameters or []
+        self._headers = headers or {}
+        self._cookies = cookies or {}
+        self._name = self.default_name
+        self._class = None
 
     def __repr__(self):
         return f"<{self.signature}>"
 
     @property
     def name(self):
-        return self.__name
+        return self._name
 
     @name.setter
     def name(self, new_name):
-        self.__name = new_name
+        self._name = new_name
 
     @property
     def method(self):
-        return self.__method
+        return self._method
 
     @property
     def url(self):
-        return self.__url
+        return self._url
 
     @property
     def body(self):
-        return self.__body
+        return self._body
 
     @property
     def signature(self):
         return f"def {self.name}({', '.join(param.code for param in self.parameters)}):"
 
     @property
-    def class_(self):
-        """
-        :rtype: Class
-        """
-        return self.__class
+    def class_(self) -> "Class":
+        return self._class
 
     @class_.setter
     def class_(self, new_class: "Class"):
-        self.__class = new_class
+        self._class = new_class
 
     @cached_property
     def parameters(self) -> List[Parameter]:
-        params = self.__parameters
+        params = self._parameters
         if not params or params[0].name != "self":
             params.insert(0, Parameter("self"))
         if self.class_.parameters:
@@ -128,21 +125,21 @@ class Method:
     @property
     def headers(self):
         if self.class_.headers:
-            return {h: v for h, v in self.__headers.items() if h not in self.class_.headers}
-        return self.__headers
+            return {h: v for h, v in self._headers.items() if h not in self.class_.headers}
+        return self._headers
 
     @headers.setter
     def headers(self, new_headers: Dict[str, str]):
         if isinstance(new_headers, dict):
-            self.__headers = new_headers
+            self._headers = new_headers
 
     @property
     def cookies(self):
         if self.class_.cookies:
-            return {c: v for c, v in self.__headers.items() if c not in self.class_.cookies}
-        return self.__cookies
+            return {c: v for c, v in self._headers.items() if c not in self.class_.cookies}
+        return self._cookies
 
     @cookies.setter
     def cookies(self, new_cookies: Dict[str, str]):
         if isinstance(new_cookies, dict):
-            self.__cookies = new_cookies
+            self._cookies = new_cookies

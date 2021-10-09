@@ -13,11 +13,11 @@ class Case:
     pascal_case_chars = string.ascii_letters
 
     def __init__(self, text: str):
-        self.__text = text
+        self._text = text
 
     @property
     def text(self):
-        return self.__text
+        return self._text
 
     @cached_property
     def snake_case(self):

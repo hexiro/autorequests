@@ -34,19 +34,19 @@ class AutoRequests:
 
         # params
 
-        self.__return_text: bool = return_text
-        self.__no_headers: bool = no_headers
-        self.__no_cookies: bool = no_cookies
-        self.__parameters: bool = parameters
+        self._return_text: bool = return_text
+        self._no_headers: bool = no_headers
+        self._no_cookies: bool = no_cookies
+        self._parameters: bool = parameters
 
         # dynamic
-        self.__input_path: Path = input_path
-        self.__output_path: Path = output_path
-        self.__input_methods: Dict[Path, Method] = {}
-        self.__output_classes: Dict[Path, Class] = {}
+        self._input_path: Path = input_path
+        self._output_path: Path = output_path
+        self._input_methods: Dict[Path, Method] = {}
+        self._output_classes: Dict[Path, Class] = {}
 
-        self.__methods: List[Method] = self.methods_from_path(self.input_path)
-        self.__classes: List[Class] = \
+        self._methods: List[Method] = self.methods_from_path(self.input_path)
+        self._classes: List[Class] = \
             [Class(name=name, output_path=output_path, return_text=return_text, parameters=parameters)
              for name in {method.class_name for method in self.methods}]
 
@@ -63,43 +63,43 @@ class AutoRequests:
 
     @property
     def return_text(self) -> bool:
-        return self.__return_text
+        return self._return_text
 
     @property
     def no_headers(self) -> bool:
-        return self.__no_headers
+        return self._no_headers
 
     @property
     def no_cookies(self) -> bool:
-        return self.__no_cookies
+        return self._no_cookies
 
     @property
     def parameters(self) -> bool:
-        return self.__parameters
+        return self._parameters
 
     @property
     def input_path(self) -> Path:
-        return self.__input_path
+        return self._input_path
 
     @property
     def output_path(self) -> Path:
-        return self.__output_path
+        return self._output_path
 
     @property
     def input_methods(self):
-        return self.__input_methods
+        return self._input_methods
 
     @property
     def output_classes(self):
-        return self.__output_classes
+        return self._output_classes
 
     @cached_property
     def methods(self) -> List[Method]:
-        return self.__methods
+        return self._methods
 
     @cached_property
     def classes(self) -> List[Class]:
-        return self.__classes
+        return self._classes
 
     def class_output_path(self, cls: Class):
         if self.output_path.name != cls.name:

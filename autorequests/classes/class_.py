@@ -13,45 +13,45 @@ class Class:
                  output_path: Path,
                  return_text: bool = False,
                  parameters: bool = False):
-        self.__name = name
-        self.__output_path = output_path
-        self.__methods = []
-        self.__cookies = {}
-        self.__headers = {}
+        self._name = name
+        self._output_path = output_path
+        self._methods = []
+        self._cookies = {}
+        self._headers = {}
 
-        self.__return_text = return_text
-        self.__parameters = parameters
+        self._return_text = return_text
+        self._parameters = parameters
 
     def __repr__(self):
         return f"<Class {self.name}>"
 
     @property
     def name(self):
-        return self.__name
+        return self._name
 
     @property
     def output_path(self):
-        return self.__output_path
+        return self._output_path
 
     @property
     def methods(self):
-        return self.__methods
+        return self._methods
 
     @property
     def headers(self):
-        return self.__headers
+        return self._headers
 
     @property
     def cookies(self):
-        return self.__cookies
+        return self._cookies
 
     @property
     def return_text(self):
-        return self.__return_text
+        return self._return_text
 
     @property
     def parameters(self):
-        return self.__parameters
+        return self._parameters
 
     @cached_property
     def folder(self) -> Path:
@@ -118,7 +118,7 @@ class Class:
 
         # this line showcases 3 instances of 'method.name' LOL
         method.name = unique_name(method.name, [method.name for method in self.methods])
-        self.__methods.append(method)
+        self._methods.append(method)
         if len(self.methods) >= 2:
-            self.__headers = compare_dicts([method.headers for method in self.methods])
-            self.__cookies = compare_dicts([method.cookies for method in self.methods])
+            self._headers = compare_dicts([method.headers for method in self.methods])
+            self._cookies = compare_dicts([method.cookies for method in self.methods])
