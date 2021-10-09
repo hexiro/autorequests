@@ -133,7 +133,11 @@ def written_form(num: int) -> str:
         raise NotImplementedError("numbers < 0 not supported")
     if num == 0:
         return "zero"
-    hundreds, tens, ones = str(num).zfill(3)
+    # mypy & pycharm don't like string unpacking
+    full_num = str(num).zfill(3)
+    hundreds = full_num[0]
+    tens = full_num[1]
+    ones = full_num[2]
     ones_match = ones_dict.get(ones)
     tens_match = tens_dict.get(tens)
     unique_match = unique_dict.get((tens + ones))
@@ -162,15 +166,3 @@ def unique_name(name: str, other_names: List[str]) -> str:
         raise NotImplementedError(">999 methods with similar names not supported")
     written = written_form(matched_names_length + 1)
     return name + "_" + written
-
-
-def combine_dicts(dicts: List[dict]) -> dict:
-    """ combines dicts with unique names """
-    combined = {}
-    for dict_ in dicts:
-        for key, value in dict_.items():
-            if key in combined:
-                key = unique_name(name=key,
-                                  other_names=list(combined.keys()))
-            combined[key] = value
-    return combined

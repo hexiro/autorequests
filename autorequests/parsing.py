@@ -6,7 +6,7 @@ from .classes import Method, URL, Body
 from .utils import extract_cookies
 
 
-def method_from_text(text: str) -> Optional[Method]:
+def method_from_text(text: str) -> Optional[Method]:  # type: ignore
     # short circuiting
     if text:
         return method_from_fetch(text) or method_from_powershell(text)
@@ -28,7 +28,7 @@ def method_from_fetch(text: str) -> Optional[Method]:
     """
     fetch = regexp.fetch_regexp.search(text)
     if not fetch:
-        return
+        return  # type: ignore
 
     headers = json.loads(fetch["headers"])
     # referer is spelled wrong in the HTTP header
@@ -67,7 +67,7 @@ def method_from_powershell(text: str) -> Optional[Method]:
     """
     powershell = regexp.powershell_regexp.search(text)
     if not powershell:
-        return
+        return  # type: ignore
 
     headers = {}
     for header in powershell["headers"].splitlines():
@@ -87,8 +87,7 @@ def method_from_powershell(text: str) -> Optional[Method]:
 
     raw_body = powershell["body"]
     if raw_body:
-        raw_body = raw_body.split("`")
-        raw_body = "".join((e if e != "" else "`") for e in raw_body)
+        raw_body = "".join((e if e != "" else "`") for e in raw_body.split("`"))
 
     method = powershell["method"] or "GET"
     url = URL(powershell["url"])

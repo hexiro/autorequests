@@ -1,6 +1,6 @@
 import json
 import urllib.parse
-from typing import Optional, Dict, Tuple
+from typing import Optional, Dict, Tuple, Union
 
 
 class Body:
@@ -18,7 +18,12 @@ class Body:
         self._body: Optional[str] = body
         self._data: Dict[str, str] = {}
         self._json: Dict[str, str] = {}
-        self._files: Dict[str, Tuple[str, str, ...]] = {}
+        # tuple of four items
+        # 1. filename
+        # 2. content
+        # 3. content-type
+        # 4. extra headers
+        self._files: Dict[str, Union[Tuple[str, str], Tuple[str, str, str], Tuple[str, str, str, Dict[str, str]]]] = {}
 
         # multipart is the most broad and obvious so it goes first
         if not body:
@@ -131,11 +136,6 @@ class Body:
             elif not filename:
                 self._data[name] = content
             # if it has a filename it's a file
-            # tuple of four items
-            # 1. filename
-            # 2. content
-            # 3. content-type
-            # 4. extra headers
             elif content_type:
                 self._files[name] = (filename, content, content_type)
             else:
