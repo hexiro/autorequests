@@ -4,8 +4,8 @@ from typing import List, Optional, Dict, Generator
 
 import rich
 
-from .parsing import method_from_text
 from .classes import Class, Method
+from .parsing import method_from_text
 from .utils import cached_property
 
 __version__ = "1.0.2"
@@ -26,21 +26,17 @@ class AutoRequests:
     def __init__(self, *,
                  input_path: Path,
                  output_path: Path,
-                 single_quote: bool = False,
                  return_text: bool = False,
                  no_headers: bool = False,
                  no_cookies: bool = False,
-                 compare: bool = False,
                  parameters: bool = False
                  ):
 
         # params
 
-        self.__single_quote: bool = single_quote
         self.__return_text: bool = return_text
         self.__no_headers: bool = no_headers
         self.__no_cookies: bool = no_cookies
-        self.__compare: bool = compare
         self.__parameters: bool = parameters
 
         # dynamic
@@ -50,9 +46,9 @@ class AutoRequests:
         self.__output_classes: Dict[Path, Class] = {}
 
         self.__methods: List[Method] = self.methods_from_path(self.input_path)
-        self.__classes: List[Class] = [Class(name=name, output_path=output_path, return_text=return_text,
-                                             single_quote=single_quote, parameters=parameters) for name in
-                                       {method.class_name for method in self.methods}]
+        self.__classes: List[Class] = \
+            [Class(name=name, output_path=output_path, return_text=return_text, parameters=parameters)
+             for name in {method.class_name for method in self.methods}]
 
         for cls in self.classes:
             self.methods.extend(self.methods_from_path(cls.folder))
@@ -66,10 +62,6 @@ class AutoRequests:
         return f"<{self.__class__.__name__} classes={self.classes!r}>"
 
     @property
-    def single_quote(self) -> bool:
-        return self.__single_quote
-
-    @property
     def return_text(self) -> bool:
         return self.__return_text
 
@@ -80,10 +72,6 @@ class AutoRequests:
     @property
     def no_cookies(self) -> bool:
         return self.__no_cookies
-
-    @property
-    def compare(self) -> bool:
-        return self.__compare
 
     @property
     def parameters(self) -> bool:
@@ -207,11 +195,9 @@ def main():
     auto_requests = AutoRequests(
         input_path=input_path,
         output_path=output_path,
-        single_quote=args.single_quote,
         return_text=args.return_text,
         no_headers=args.no_headers,
         no_cookies=args.no_cookies,
-        compare=args.compare,
         parameters=args.parameters
     )
     auto_requests.main()
