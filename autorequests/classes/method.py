@@ -79,7 +79,7 @@ class Method:
     @cached_property
     def code(self) -> str:
         # only use session if headers or cookies are set in class
-        requests_call = "self.session" if self.class_.use_initializer else "requests"
+        requests_call = "self.session" if self.class_ and self.class_.use_initializer else "requests"
         body = f"{self.docstring}\nreturn {requests_call}.{self.method.lower()}(\"{self.url}\""
         for kwarg, data in {"params": self.url.query,
                             "data": self.body.data,
@@ -90,13 +90,13 @@ class Method:
             if not data:
                 continue
             variables = None
-            if self.class_.parameters:
+            if self.class_ and self.class_.parameters:
                 variables = [p.name for p in self.parameters]
                 for key, value in data.items():
                     data[key] = key if key in variables else value
             body += f", {kwarg}=" + format_dict(data, variables=variables)
         body += ")."
-        body += "text" if self.class_.return_text else "json()"
+        body += "text" if self.class_ and self.class_.return_text else "json()"
         return self.signature + "\n" + indent(body)
 
     @property
