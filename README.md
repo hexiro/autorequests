@@ -59,10 +59,8 @@ generation options
 
 ```
   --return-text         Makes the generated method's responses return .text instead of .json()
-  --single-quote        Uses single quotes instead of double quotes
   --no-headers          Removes all headers from the operation
   --no-cookies          Removes all cookies from the operation
-  --compare             Compares the previously generated files to the new files
   --parameters          Replaces hardcoded params, json, data, etc with parameters that have default values
 ```
 
@@ -70,7 +68,7 @@ generation options
 
 * Method names are parsed from the url, but if the URL doesn't have any paths with a valid method name, an invalid
   method name will be used.
-* Sometimes when copying fetches from the browser, some important headers aren't including, causing the resulting API
+* Sometimes when copying from the browser, important headers aren't included which causes the resulting API
   wrapper to fail requests.
 * Parsing multipart/form-data when copying with the powershell mode isn't supported
 

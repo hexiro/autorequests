@@ -23,7 +23,7 @@ class Body:
         # 2. content
         # 3. content-type
         # 4. extra headers
-        self._files: Dict[str, Union[Tuple[str, str], Tuple[str, str, str], Tuple[str, str, str, Dict[str, str]]]] = {}
+        self._files: Dict[str, Union[Tuple[str, str], Tuple[str, str, str]]] = {}
 
         # multipart is the most broad and obvious so it goes first
         if not body:
