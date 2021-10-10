@@ -13,6 +13,7 @@ rich = "^10.0.0"
 [tool.poetry.dev-dependencies]
 requests = "^2.26.0"
 mypy = "^0.900"
+pytest = "^6.0.0"
 
 [tool.poetry.scripts]
 autorequests = "autorequests:main"
