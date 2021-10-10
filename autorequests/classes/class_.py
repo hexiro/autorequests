@@ -100,18 +100,7 @@ class Class:
 
     def add_method(self, method: "method.Method"):
         method.class_ = self
-
-        # there will only ever be one time where there are two methods with the same name,
-        # and this right checks that and adds a _one after it
-        # the unique_name function on the bottom will add a _two to that one, and so on.
-
-        for old_method in self.methods:
-            if old_method.name == method.name:
-                old_method.name = old_method.name + "_one"
-                break
-
-        # this line showcases 3 instances of 'method.name' LOL
-        method.name = unique_name(method.name, [method.name for method in self.methods])
+        method.ensure_unique_name()
         self._methods.append(method)
         if len(self.methods) >= 2:
             self._headers = compare_dicts(*(method.headers for method in self.methods))

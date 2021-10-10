@@ -2,7 +2,7 @@ from typing import List, Dict, Optional
 
 from . import URL, Body, Parameter
 from . import class_
-from ..utilities import format_dict, indent, is_pythonic_name, cached_property
+from ..utilities import format_dict, indent, is_pythonic_name, cached_property, unique_name
 from ..utilities.case import camel_case, snake_case
 
 
@@ -143,3 +143,16 @@ class Method:
     def cookies(self, new_cookies: Dict[str, str]):
         if isinstance(new_cookies, dict):
             self._cookies = new_cookies
+
+    def ensure_unique_name(self) -> None:
+        if not self._class:
+            return
+        other_methods = self._class.methods
+        print(other_methods)
+        if not other_methods:
+            return
+        if len(other_methods) == 1 and other_methods[0].name == self.name:
+            other_methods[0].name = f"{self.name}_one"
+            self.name = f"{self.name}_two"
+            return
+        self.name = unique_name(self.name, [method.name for method in other_methods])
