@@ -133,11 +133,6 @@ class Method:
             return self._headers
         return {h: v for h, v in self._headers.items() if h not in self._class.headers}
 
-    @headers.setter
-    def headers(self, new_headers: Dict[str, str]):
-        if isinstance(new_headers, dict):
-            self._headers = new_headers
-
     @property
     def all_cookies(self):
         return self._cookies
@@ -147,11 +142,6 @@ class Method:
         if not self.class_:
             return self._cookies
         return {c: v for c, v in self._cookies.items() if c not in self.class_.cookies}
-
-    @cookies.setter
-    def cookies(self, new_cookies: Dict[str, str]):
-        if isinstance(new_cookies, dict):
-            self._cookies = new_cookies
 
     def ensure_unique_name(self) -> None:
         if not self._class:
