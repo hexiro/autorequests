@@ -14,6 +14,7 @@ rich = "^10.0.0"
 requests = "^2.26.0"
 mypy = "^0.900"
 pytest = "^6.0.0"
+pytest-mypy = "^0.8.1"
 
 [tool.poetry.scripts]
 autorequests = "autorequests:main"
@@ -22,3 +23,5 @@ autorequests = "autorequests:main"
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.pytest.ini_options]
+addopts = "--mypy"
