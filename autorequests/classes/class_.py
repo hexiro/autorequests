@@ -114,5 +114,5 @@ class Class:
         method.name = unique_name(method.name, [method.name for method in self.methods])
         self._methods.append(method)
         if len(self.methods) >= 2:
-            self._headers = compare_dicts([method.headers for method in self.methods])
-            self._cookies = compare_dicts([method.cookies for method in self.methods])
+            self._headers = compare_dicts(*(method.headers for method in self.methods))
+            self._cookies = compare_dicts(*(method.cookies for method in self.methods))

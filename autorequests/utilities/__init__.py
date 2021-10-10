@@ -60,7 +60,7 @@ def extract_cookies(headers: Dict[str, str]) -> Dict[str, str]:
     return cookie_dict
 
 
-def compare_dicts(dicts: List[Dict[str, str]]) -> Dict[str, str]:
+def compare_dicts(*dicts: Dict[str, str]) -> Dict[str, str]:
     """ :returns: a dictionary with the items that all of the dicts in the list share """
     # if there is 0 or 1 dicts, there will be no matches
     if len(dicts) <= 1:
@@ -68,7 +68,7 @@ def compare_dicts(dicts: List[Dict[str, str]]) -> Dict[str, str]:
 
     # they ALL have to share an item for it to be accepted,
     # therefore we can just loop over the first dict in the list and check if it matches the other items
-    return {k: v for k, v in dicts[0].items() if all(dict_.get(k) == v for dict_ in dicts[1:])}
+    return {k: v for k, v in dicts[0].items() if all(x.get(k) == v for x in dicts[1:])}
 
 
 def format_dict(data: dict, indent: Optional[int] = 4, variables: List[str] = None) -> str:

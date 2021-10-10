@@ -31,10 +31,10 @@ def test_extract_cookies():
 def test_compare_dicts():
     dict_one = {"a": "a"}
     dict_two = {"a": "b"}
-    assert utilities.compare_dicts([dict_one, dict_two]) == {}
+    assert utilities.compare_dicts(dict_one, dict_two) == {}
     dict_one = {"a": "a"}
     dict_two = {"a": "a"}
-    assert utilities.compare_dicts([dict_one, dict_two]) == {"a": "a"}
+    assert utilities.compare_dicts(dict_one, dict_two) == {"a": "a"}
 
 
 def test_format_dict():
