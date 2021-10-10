@@ -168,12 +168,8 @@ def main():
                         action="store_true",
                         help="Makes the generated method's responses return .text instead of .json()"
                         )
-    parser.add_argument("--single-quote", action="store_true", help="Uses single quotes instead of double quotes")
     parser.add_argument("--no-headers", action="store_true", help="Removes all headers from the operation")
     parser.add_argument("--no-cookies", action="store_true", help="Removes all cookies from the operation")
-    parser.add_argument("--compare", action="store_true",
-                        help="Compares the previously generated files to the new files."
-                        )
     parser.add_argument("--parameters",
                         action="store_true",
                         help="Replaces hardcoded params, json, data, etc with parameters that have default values")
