@@ -136,7 +136,7 @@ class Method:
     @property
     def cookies(self):
         if self.class_.cookies:
-            return {c: v for c, v in self._headers.items() if c not in self.class_.cookies}
+            return {c: v for c, v in self._cookies.items() if c not in self.class_.cookies}
         return self._cookies
 
     @cookies.setter
