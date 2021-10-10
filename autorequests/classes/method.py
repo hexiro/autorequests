@@ -80,7 +80,7 @@ class Method:
     def code(self) -> str:
         # only use session if headers or cookies are set in class
         requests_call = "self.session" if self.class_.use_initializer else "requests"
-        body = f"return {requests_call}.{self.method.lower()}(\"{self.url}\""
+        body = f"{self.docstring}\nreturn {requests_call}.{self.method.lower()}(\"{self.url}\""
         for kwarg, data in {"params": self.url.query,
                             "data": self.body.data,
                             "json": self.body.json,
@@ -98,6 +98,29 @@ class Method:
         body += ")."
         body += "text" if self.class_.return_text else "json()"
         return self.signature + "\n" + indent(body)
+
+    @property
+    def docstring(self) -> str:
+        details: List[str] = []
+        for kwarg, data in {"param": self.url.query,
+                            "data item": self.body.data,
+                            "json item": self.body.json,
+                            "file": self.body.files,
+                            "header": self.headers,
+                            "cookie": self.cookies}.items():
+            if not data:
+                continue
+            len_data = len(data)
+            # make plural
+            if len_data > 1:
+                kwarg += "s"
+            details.append(f"{len_data} {kwarg}")
+        details[-1] = f"and {details[-1]}."
+        details_string = ", ".join(details)
+        return ("\"\"\"\n"
+                f"{self.method} {self.url}.\n"
+                f"Contains {details_string}\n"
+                "\"\"\"")
 
     @cached_property
     def class_name(self) -> str:
