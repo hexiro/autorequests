@@ -5,7 +5,6 @@
 
 # doesn't import from __init__.py
 from .body import Body
-from .case import Case
 from .parameter import Parameter
 from .url import URL
 # imports from __init__.py

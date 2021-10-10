@@ -1,8 +1,9 @@
 from typing import List, Dict, Optional
 
-from . import URL, Body, Parameter, Case
+from . import URL, Body, Parameter
 from . import class_
 from ..utilities import format_dict, indent, is_pythonic_name, cached_property
+from ..utilities.case import camel_case, snake_case
 
 
 class Method:
@@ -104,12 +105,12 @@ class Method:
         class_name = self.url.domain.split(".")[-2]
         # remove port
         class_name = class_name.split(":")[0]
-        return Case(class_name).camel_case
+        return camel_case(class_name)
 
     @cached_property
     def default_name(self):
         # remove leading and trailing / for calculation
-        split = [Case(p).snake_case for p in self.url.path.split("/") if p]
+        split = [snake_case(p) for p in self.url.path.split("/") if p]
         split.reverse()
         # find parts of path that meets python's syntax requirements for a method name
         for part in split:
