@@ -17,42 +17,42 @@ class Method:
                  cookies: Dict[str, str] = None
                  ):
         # request method (ex. GET, POST)
-        self._method = method
-        self._url = url
+        self._method: str = method
+        self._url: URL = url
         # request body -- not to be confused with method body
-        self._body = body
+        self._body: Body = body
         # must append to `parameters` property, and not __parameters
-        self._parameters = parameters or []
-        self._headers = headers or {}
-        self._cookies = cookies or {}
-        self._name = self.default_name
+        self._parameters: List[Parameter] = parameters or []
+        self._headers: Dict[str, str] = headers or {}
+        self._cookies: Dict[str, str] = cookies or {}
+        self._name: str = self.default_name
         self._class: Optional["class_.Class"] = None
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<{self.signature}>"
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
 
     @name.setter
-    def name(self, new_name):
+    def name(self, new_name: str):
         self._name = new_name
 
     @property
-    def method(self):
+    def method(self) -> str:
         return self._method
 
     @property
-    def url(self):
+    def url(self) -> URL:
         return self._url
 
     @property
-    def body(self):
+    def body(self) -> Body:
         return self._body
 
     @property
-    def signature(self):
+    def signature(self) -> str:
         return f"def {self.name}({', '.join(param.code for param in self.parameters)}):"
 
     @property
@@ -77,7 +77,7 @@ class Method:
         return params
 
     @cached_property
-    def code(self):
+    def code(self) -> str:
         # only use session if headers or cookies are set in class
         requests_call = "self.session" if self.class_.use_initializer else "requests"
         body = f"return {requests_call}.{self.method.lower()}(\"{self.url}\""
@@ -100,7 +100,7 @@ class Method:
         return self.signature + "\n" + indent(body)
 
     @cached_property
-    def class_name(self):
+    def class_name(self) -> str:
         # DOMAIN of url
         # domains with two dots break this (ex. .co.uk)
         class_name = self.url.domain.split(".")[-2]
@@ -109,7 +109,7 @@ class Method:
         return camel_case(class_name)
 
     @cached_property
-    def default_name(self):
+    def default_name(self) -> str:
         # remove leading and trailing / for calculation
         split = [snake_case(p) for p in self.url.path.split("/") if p]
         split.reverse()
@@ -124,26 +124,26 @@ class Method:
         return split[-1]
 
     @property
-    def all_headers(self):
+    def all_headers(self) -> Dict[str, str]:
         return self._headers
 
     @property
-    def headers(self):
+    def headers(self) -> Dict[str, str]:
         if not self._class:
             return self._headers
         return {h: v for h, v in self._headers.items() if h not in self._class.headers}
 
     @property
-    def all_cookies(self):
+    def all_cookies(self) -> Dict[str, str]:
         return self._cookies
 
     @property
-    def cookies(self):
+    def cookies(self) -> Dict[str, str]:
         if not self.class_:
             return self._cookies
         return {c: v for c, v in self._cookies.items() if c not in self.class_.cookies}
 
-    def ensure_unique_name(self) -> None:
+    def ensure_unique_name(self):
         if not self._class:
             return
         other_methods = self._class.methods
