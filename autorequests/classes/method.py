@@ -16,6 +16,7 @@ class Method:
                  headers: Dict[str, str] = None,
                  cookies: Dict[str, str] = None
                  ):
+        # request method (ex. GET, POST)
         self._method = method
         self._url = url
         # request body -- not to be confused with method body
@@ -123,10 +124,14 @@ class Method:
         return split[-1]
 
     @property
-    def headers(self):
-        if self.class_.headers:
-            return {h: v for h, v in self._headers.items() if h not in self.class_.headers}
+    def all_headers(self):
         return self._headers
+
+    @property
+    def headers(self):
+        if not self._class:
+            return self._headers
+        return {h: v for h, v in self._headers.items() if h not in self._class.headers}
 
     @headers.setter
     def headers(self, new_headers: Dict[str, str]):
@@ -134,10 +139,14 @@ class Method:
             self._headers = new_headers
 
     @property
-    def cookies(self):
-        if self.class_.cookies:
-            return {c: v for c, v in self._cookies.items() if c not in self.class_.cookies}
+    def all_cookies(self):
         return self._cookies
+
+    @property
+    def cookies(self):
+        if not self.class_:
+            return self._cookies
+        return {c: v for c, v in self._cookies.items() if c not in self.class_.cookies}
 
     @cookies.setter
     def cookies(self, new_cookies: Dict[str, str]):
@@ -148,7 +157,6 @@ class Method:
         if not self._class:
             return
         other_methods = self._class.methods
-        print(other_methods)
         if not other_methods:
             return
         if len(other_methods) == 1 and other_methods[0].name == self.name:
