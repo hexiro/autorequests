@@ -3,7 +3,7 @@ from typing import Optional
 
 from . import regexp
 from autorequests.classes import Method, URL, Body
-from .utils import extract_cookies
+from . import extract_cookies
 
 
 def method_from_text(text: str) -> Optional[Method]:  # type: ignore

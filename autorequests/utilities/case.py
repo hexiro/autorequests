@@ -1,6 +1,6 @@
 import string
 
-from . import uses_accepted_chars, cached_property
+from . import uses_accepted_chars
 from .regexp import fix_snake_case_regexp
 
 # accepted chars for each case convention
