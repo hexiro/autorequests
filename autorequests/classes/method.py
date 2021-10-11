@@ -153,9 +153,9 @@ class Method:
                 return part
         # using base domain -- same name as class
         if not split:
-            return self.class_name
+            return snake_case(self.class_name)
         # this will have an error in the generated code
-        return split[-1]
+        return snake_case(split[-1])
 
     @property
     def all_headers(self) -> Dict[str, str]:
