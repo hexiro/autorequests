@@ -2,7 +2,9 @@ import functools
 import json
 import keyword
 import sys
-from typing import List, Dict, Iterable, Optional, Callable
+from typing import List, Dict, Iterable, Optional, Callable, Union
+
+from .regexp import leading_integer_regexp
 
 # pretty simplistic names tbf
 # a lot of these aren't super self explanatory so they have docstring
@@ -123,8 +125,21 @@ unique_dict = {"11": "eleven",
                "19": "nineteen"}
 
 
-def written_form(num: int) -> str:
-    """ :returns: written form of an integer 0-999 """
+def written_form(num: Union[int, str]) -> str:
+    """ :returns: written form of an integer 0-999, or for the leading integer of a string """
+    if isinstance(num, str):
+        # if string is an integer
+        if num.isdigit():
+            return written_form(int(num))
+        # try to parse leading integer
+        match = leading_integer_regexp.search(num)
+        if not match:
+            return num
+        # if str starts with integer
+        initial_num = match.group(0)
+        written_num = written_form(int(initial_num))
+        rest = num[match.end():]
+        return f"{written_num}_{rest}"
     if num > 999:
         raise NotImplementedError("numbers > 999 not supported")
     if num < 0:

@@ -130,13 +130,7 @@ class Method:
         class_name = self.url.domain.split(".")[-2]
         # remove port
         class_name = class_name.split(":")[0]
-        match = leading_integer_regexp.search(class_name)
-        if not match:
-            return camel_case(class_name)
-        # if class name starts with integer
-        written_num = written_form(int(match.group(0)))
-        rest = class_name[match.end():]
-        return camel_case(f"{written_num}_{rest}")
+        return camel_case(written_form(class_name))
 
         # return camel_case(f"{written_form(int(initial_num))}_{rest}")
 

@@ -48,6 +48,9 @@ def test_written_form():
     assert utilities.written_form(0) == "zero"
     assert utilities.written_form(100) == "one_hundred"
     assert utilities.written_form(999) == "nine_hundred_and_ninety_nine"
+    assert utilities.written_form(999) == utilities.written_form("999")
+    assert utilities.written_form("999abcdefbh") == "nine_hundred_and_ninety_nine_abcdefbh"
+    assert utilities.written_form("abcdefbh") == "abcdefbh"
 
 
 def test_unique_name():
