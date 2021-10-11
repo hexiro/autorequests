@@ -3,9 +3,12 @@ from pathlib import Path
 from typing import List, Optional, Dict, Generator
 
 import rich
+from rich.box import MINIMAL
+from rich.table import Table
 
 from .classes import Class, Method
 from .utilities import cached_property
+from .utilities.inspector import inspect
 from .utilities.parsing import method_from_text
 
 __version__ = "1.0.2"
@@ -150,13 +153,23 @@ class AutoRequests:
         if not self.output_classes:
             print("No request data could be located.")
             return
+        table = Table(box=MINIMAL, border_style="bold red")
+        code = []
         for path, cls in self.output_classes.items():
             # p.s. if you try and make an object, python will throw an error because `requests` isn't defined
             # thankfully, the class can be created which is pretty cool (thanks interpreter :))
-            exec(cls.code)
-            generated_cls = eval(cls.name)
+            try:
+                exec(cls.code)
+            except SyntaxError:
+                console.print_exception()
+                return
             name = path.parent.name
-            rich.inspect(generated_cls, all=False, methods=True, title=f"[bold white]{name}[/bold white]")
+            table.add_column(f"[bold red]{name}[/bold red]")
+            generated_cls = eval(cls.name)
+            code.append(inspect(generated_cls))
+        table.width = 65 * len(code)
+        table.add_row(*code)
+        console.print(table)
 
 
 def main():
