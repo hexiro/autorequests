@@ -15,15 +15,15 @@ def snake_case(text: str):
     """
     Tries to parse snake case from an unknown case convention
     """
-    if is_no_case:
+    if is_no_case(text):
         return text
-    if is_kebab_case:
+    if is_kebab_case(text):
         return kebab_to_snake(text)
-    if is_dot_case:
+    if is_dot_case(text):
         return dot_to_snake(text)
-    if is_camel_case:
+    if is_camel_case(text):
         return camel_to_snake(text)
-    if is_pascal_case:
+    if is_pascal_case(text):
         return pascal_to_snake(text)
     # attempt to parse text
     snaked_text = text
