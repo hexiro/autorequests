@@ -2,7 +2,7 @@ from typing import List, Dict, Optional
 
 from . import URL, Body, Parameter
 from . import class_
-from ..utilities import format_dict, indent, is_pythonic_name, cached_property, unique_name
+from ..utilities import format_dict, indent, is_pythonic_name, cached_property, unique_name, written_form
 from ..utilities.case import camel_case, snake_case
 
 
@@ -129,7 +129,18 @@ class Method:
         class_name = self.url.domain.split(".")[-2]
         # remove port
         class_name = class_name.split(":")[0]
-        return camel_case(class_name)
+        if not class_name[0].isdigit():
+            return camel_case(class_name)
+        # if class name starts with integer
+        initial_num = class_name[0]
+        for i in range(1, len(class_name)):
+            segment = class_name[:i]
+            if segment.isdigit():
+                initial_num = segment
+            else:
+                break
+        rest = class_name[len(initial_num):]
+        return camel_case(f"{written_form(int(initial_num))}_{rest}")
 
     @cached_property
     def default_name(self) -> str:
