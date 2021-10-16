@@ -3,8 +3,7 @@ from typing import List, Dict, Optional
 from . import URL, Body, Parameter
 from . import class_
 from ..utilities import format_dict, indent, is_pythonic_name, cached_property, unique_name, written_form
-from ..utilities.case import camel_case, snake_case
-from ..utilities.regexp import leading_integer_regexp
+from ..utilities.case import snake_case, pascal_case
 
 
 class Method:
@@ -131,9 +130,7 @@ class Method:
         class_name = self.url.domain.split(".")[-2]
         # remove port
         class_name = class_name.split(":")[0]
-        return camel_case(written_form(class_name))
-
-        # return camel_case(f"{written_form(int(initial_num))}_{rest}")
+        return pascal_case(written_form(class_name))
 
     @cached_property
     def default_name(self) -> str:
