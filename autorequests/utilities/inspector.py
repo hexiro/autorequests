@@ -16,4 +16,3 @@ def inspect(cls):
             signature += f"\n    \"\"\"\n{indent(doc)}\n    \"\"\""
         signatures.append(signature)
     return Syntax("\n\n".join(signatures), "python", theme="fruity")
-    # return"\n\n".join(signatures)

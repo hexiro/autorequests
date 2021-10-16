@@ -116,8 +116,9 @@ class Method:
             if len_data > 1:
                 kwarg += "s"
             details.append(f"{len_data} {kwarg}")
-        details[-1] = f"and {details[-1]}."
-        details_string = ", ".join(details)
+        if details:
+            details[-1] = f"and {details[-1]}."
+        details_string = ", ".join(details) if details else "no data."
         return ("\"\"\"\n"
                 f"{self.method} {self.url}.\n"
                 f"Contains {details_string}\n"
