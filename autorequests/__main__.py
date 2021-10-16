@@ -51,7 +51,8 @@ class AutoRequests:
              for name in {method.class_name for method in self.methods}]
 
         for cls in self.classes:
-            self.methods.extend(self.methods_from_path(cls.folder))
+            if cls.folder != self.output_path:
+                self.methods.extend(self.methods_from_path(cls.folder))
 
         for method in self.methods:
             cls = self.find_class(method.class_name)
