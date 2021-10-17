@@ -11,7 +11,7 @@ from .utilities import cached_property
 from .utilities.inspector import inspect
 from .utilities.parsing import method_from_text
 
-__version__ = "1.0.2"
+__version__ = "1.1.0"
 __all__ = (
     "AutoRequests",
     "main",
