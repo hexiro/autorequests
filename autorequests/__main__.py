@@ -47,7 +47,8 @@ class AutoRequests:
 
         self._methods: List[Method] = self.methods_from_path(self.input_path)
         self._classes: List[Class] = \
-            [Class(name=name, output_path=output_path, return_text=return_text, parameters=parameters)
+            [Class(name=name, output_path=output_path, return_text=return_text, no_headers=no_headers,
+                   no_cookies=no_cookies, parameters=parameters)
              for name in {method.class_name for method in self.methods}]
 
         for cls in self.classes:

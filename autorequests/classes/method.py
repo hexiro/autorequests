@@ -115,7 +115,7 @@ class Method:
             if len_data > 1:
                 kwarg += "s"
             details.append(f"{len_data} {kwarg}")
-        if details:
+        if len(details) > 1:
             details[-1] = f"and {details[-1]}."
         details_string = ", ".join(details) if details else "no data."
         return ("\"\"\"\n"
@@ -178,3 +178,9 @@ class Method:
             self.name = f"{self.name}_two"
             return
         self.name = unique_name(self.name, [method.name for method in other_methods])
+
+    def remove_headers(self):
+        self._headers = {}
+
+    def remove_cookies(self):
+        self._cookies = {}

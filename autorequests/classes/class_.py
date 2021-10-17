@@ -13,6 +13,8 @@ class Class:
                  name: str,
                  output_path: Path,
                  return_text: bool = False,
+                 no_headers: bool = False,
+                 no_cookies: bool = False,
                  parameters: bool = False):
         self._name: str = name
         self._output_path: Path = output_path
@@ -20,8 +22,10 @@ class Class:
         self._cookies: Dict[str, str] = {}
         self._headers: Dict[str, str] = {}
 
-        self._return_text = return_text
-        self._parameters = parameters
+        self._return_text: bool = return_text
+        self._no_headers: bool = no_headers
+        self._no_cookies: bool = no_cookies
+        self._parameters: bool = parameters
 
     def __repr__(self):
         return f"<Class {self.name}>"
@@ -53,6 +57,14 @@ class Class:
     @property
     def parameters(self):
         return self._parameters
+
+    @property
+    def no_headers(self):
+        return self._no_headers
+
+    @property
+    def no_cookies(self):
+        return self._no_cookies
 
     @cached_property
     def folder(self) -> Path:
@@ -105,3 +117,8 @@ class Class:
         if len(self.methods) >= 2:
             self._headers = compare_dicts(*(method.all_headers for method in self.methods))
             self._cookies = compare_dicts(*(method.all_cookies for method in self.methods))
+
+        if self.no_headers:
+            method.remove_headers()
+        if self.no_cookies:
+            method.remove_cookies()
