@@ -6,11 +6,13 @@ import re
 # I keep learning that things can be optional,
 # so now everything besides headers is optional just in case
 fetch_regexp = re.compile(
-    r"^fetch\(\"(?P<url>(?:http|https):\/\/.+)\", {\n  \"headers\": (?P<headers>{(?:.|\n)+}),\n"
-    r"(?:  \"referrer\": \"(?P<referrer>.+)\",\n|)"
-    r"(?:  \"referrerPolicy\": \"(?P<referrer_policy>.+)\",\n|)"
-    r"(?:  \"body\": (?:\"|)(?P<body>.+?)(?:\"|),\n|)"
-    r"(?:  \"method\": \"(?P<method>[A-Z]+)\",\n|)"
+    r"^fetch\(\""
+    r"(?P<url>(?:http|https):\/\/.+)\", {\n  \"headers\": "
+    r"(?P<headers>{(?:.|\n)+}),\n(?:  \"referrer\": \""
+    r"(?P<referrer>.+)\",\n|)(?:  \"referrerPolicy\": \""
+    r"(?P<referrer_policy>.+)\",\n|)(?:  \"body\": (?:\"|)"
+    r"(?P<body>.+?)(?:\"|),\n|)(?:  \"method\": \""
+    r"(?P<method>[A-Z]+)\",\n|)"
     r"(?:  \"[a-z]+\": \".+\"(?:,|)\n|)*}\);$"
 )
 
@@ -24,3 +26,4 @@ powershell_regexp = re.compile(
 )
 
 fix_snake_case_regexp = re.compile("_{2,}")
+leading_integer_regexp = re.compile("^[0-9]+")

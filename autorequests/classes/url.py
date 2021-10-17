@@ -9,18 +9,18 @@ class URL:
         # im just gonna append it to the end of path and hope for the best
         # (not the same as query string params)
         # `anchor` should never matter for an api so it's not going to be supported
-        self.__protocol = parsed.scheme
-        self.__domain = parsed.netloc
-        self.__path = parsed.path + parsed.params
+        self._protocol = parsed.scheme
+        self._domain = parsed.netloc
+        self._path = parsed.path + parsed.params
 
         # parse to dict
         query = parsed.query
-        self.__query = {}
+        self._query = {}
         for param in query.split("&"):
             # sometimes param can be "" :shrug:
             if param:
                 key, value = param.split("=", maxsplit=1)
-                self.__query[key] = value
+                self._query[key] = value
 
     def __repr__(self):
         return f"<URL protocol={self.protocol} domain={self.domain} path={self.path}>"
@@ -30,16 +30,16 @@ class URL:
 
     @property
     def protocol(self) -> str:
-        return self.__protocol
+        return self._protocol
 
     @property
     def domain(self) -> str:
-        return self.__domain
+        return self._domain
 
     @property
     def path(self) -> str:
-        return self.__path
+        return self._path
 
     @property
     def query(self) -> dict:
-        return self.__query
+        return self._query

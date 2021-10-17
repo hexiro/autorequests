@@ -5,10 +5,8 @@
 
 # doesn't import from __init__.py
 from .body import Body
-from .case import Case
-from .class_ import Class
 from .parameter import Parameter
 from .url import URL
 # imports from __init__.py
+from .class_ import Class
 from .method import Method
-from .inputfile import InputFile

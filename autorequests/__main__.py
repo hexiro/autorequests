@@ -1,184 +1,221 @@
 import argparse
 from pathlib import Path
-from typing import List
+from typing import List, Optional, Dict, Generator
 
-from autorequests.classes.outputfile import OutputFile
-from .classes import Class, InputFile
-from .utils import PathType
+import rich
+from rich.box import MINIMAL
+from rich.table import Table
+
+from .classes import Class, Method
+from .utilities import cached_property
+from .utilities.inspector import inspect
+from .utilities.parsing import method_from_text
+
+__version__ = "1.1.0"
+__all__ = (
+    "AutoRequests",
+    "main",
+    "__version__"
+)
+
+console = rich.get_console()
 
 
-class AutoRequests(argparse.ArgumentParser):
-    # filepath: PathType
-    # filename: str
-    # file: File
+class AutoRequests:
 
-    def __init__(self):
-        super().__init__()
-        self.add_argument("-i", "--input", default=None, help="Input Directory")
-        self.add_argument("-o", "--output", default=None, help="Output Directory")
-        self.add_argument("--return-text", action="store_true",
-                          help="Makes the generated method's responses return .text instead of .json()"
-                          )
-        self.add_argument("--single-quote", action="store_true", help="Uses single quotes instead of double quotes")
-        self.add_argument("--no-headers", action="store_true", help="Removes all headers from the operation")
-        self.add_argument("--no-cookies", action="store_true", help="Removes all cookies from the operation")
-        self.add_argument("--compare", action="store_true",
-                          help="Compares the previously generated files to the new files."
-                          )
-        self.add_argument("--parameters",
-                          action="store_true",
-                          help="Replaces hardcoded params, json, data, etc with parameters that have default values")
-        args = self.parse_args()
+    def __init__(self, *,
+                 input_path: Path,
+                 output_path: Path,
+                 return_text: bool = False,
+                 no_headers: bool = False,
+                 no_cookies: bool = False,
+                 parameters: bool = False
+                 ):
 
-        # resolves path
-        self.__input = (Path(args.i) if args.input else Path.cwd()).resolve()
-        self.__output = (Path(args.o) if args.output else Path.cwd()).resolve()
-        self.__single_quote = args.single_quote
-        self.__return_text = args.return_text
-        self.__no_headers = args.no_headers
-        self.__no_cookies = args.no_cookies
-        self.__compare = args.compare
-        self.__parameters_mode = args.parameters
+        # params
 
-        # dynamic tings from here on out
-        self.__classes = []
-        self.__input_files = []
-        self.__output_files = []
-        self.__has_written = False
+        self._return_text: bool = return_text
+        self._no_headers: bool = no_headers
+        self._no_cookies: bool = no_cookies
+        self._parameters: bool = parameters
 
-    @property
-    def input(self) -> PathType:
-        return self.__input
+        # dynamic
+        self._input_path: Path = input_path
+        self._output_path: Path = output_path
+        self._input_methods: Dict[Path, Method] = {}
+        self._output_classes: Dict[Path, Class] = {}
 
-    @property
-    def output(self) -> PathType:
-        return self.__output
+        self._methods: List[Method] = self.methods_from_path(self.input_path)
+        self._classes: List[Class] = \
+            [Class(name=name, output_path=output_path, return_text=return_text, no_headers=no_headers,
+                   no_cookies=no_cookies, parameters=parameters)
+             for name in {method.class_name for method in self.methods}]
 
-    @property
-    def single_quote(self) -> bool:
-        return self.__single_quote
+        for cls in self.classes:
+            if cls.folder != self.output_path:
+                self.methods.extend(self.methods_from_path(cls.folder))
+
+        for method in self.methods:
+            cls = self.find_class(method.class_name)
+            cls.add_method(method)
+            method.class_ = cls
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} classes={self.classes!r}>"
 
     @property
     def return_text(self) -> bool:
-        return self.__return_text
+        return self._return_text
 
     @property
     def no_headers(self) -> bool:
-        return self.__no_headers
+        return self._no_headers
 
     @property
     def no_cookies(self) -> bool:
-        return self.__no_cookies
+        return self._no_cookies
 
     @property
-    def compare(self) -> bool:
-        return self.__compare
+    def parameters(self) -> bool:
+        return self._parameters
 
     @property
-    def parameters_mode(self) -> bool:
-        return self.__parameters_mode
-
-    # dynamic
+    def input_path(self) -> Path:
+        return self._input_path
 
     @property
+    def output_path(self) -> Path:
+        return self._output_path
+
+    @property
+    def input_methods(self):
+        return self._input_methods
+
+    @property
+    def output_classes(self):
+        return self._output_classes
+
+    @cached_property
+    def methods(self) -> List[Method]:
+        return self._methods
+
+    @cached_property
     def classes(self) -> List[Class]:
-        return self.__classes
+        return self._classes
+
+    def class_output_path(self, cls: Class):
+        if self.output_path.name != cls.name:
+            return self.output_path / cls.name
+
+        return cls
+
+    def methods_from_path(self, path: Path) -> List[Method]:
+        methods = []
+        for file in self.files_from_path(path):
+            text = file.read_text(encoding="utf8", errors="ignore")
+            method = method_from_text(text)
+            if method is None:
+                continue
+            methods.append(method)
+            self.input_methods[file] = method
+        return methods
 
     @property
-    def input_files(self) -> List[InputFile]:
-        return self.__input_files
-
-    @property
-    def output_files(self) -> List[OutputFile]:
-        return self.__output_files
-
-    @property
-    def has_written(self) -> bool:
-        return self.__has_written
-
-    def load_local_files(self):
-        self.parse_directory(self.input)
-
-    def load_external_files(self):
-        for output_file in self.output_files:
-            if not output_file.in_same_dir():
-                if output_file.folder.is_dir():
-                    self.parse_directory(output_file.folder)
-                else:
-                    output_file.folder.mkdir()
+    def top(self):
+        return ("import requests\n"
+                "\n"
+                "\n"
+                "# Automatically generated by https://github.com/Hexiro/autorequests.\n"
+                "\n")
 
     def write(self):
-        if self.has_written:
-            return
+        for cls in self.classes:
+            if not cls.folder.exists():
+                cls.folder.mkdir()
+            main_py = cls.folder / "main.py"
+            main_py.write_text(data=self.top + cls.code, encoding="utf8", errors="strict")
+            self.output_classes[main_py] = cls
+        for file, method in self.input_methods.items():
+            class_name = method.class_name
+            if self.output_path.name != class_name:
+                file.rename(self.output_path / class_name / file.name)
 
-        for output_file in self.output_files:
-            # need to check changes before writing again
-            if self.compare and output_file.python_file.is_file():
-                output_file.write_changes()
-            output_file.write()
+    @staticmethod
+    def files_from_path(path: Path) -> Generator[Path, None, None]:
+        return path.glob("*.txt")
 
-        self.__has_written = True
+    def find_class(self, name: str) -> Optional[Class]:
+        return next((cls for cls in self.classes if cls.name == name), None)
 
-    def move_into_class_folder(self):
-        for file in self.input_files:
-            class_name = file.method.class_name
-            if self.output.name != class_name:
-                file.rename(self.output / class_name / file.name)
+    def main(self):
+        self.write()
+        self.print_results()
 
     def print_results(self):
-        if len(self.classes) == 0:
+        if not self.output_classes:
             print("No request data could be located.")
             return
-        if not self.has_written:
-            print("Modules haven't been written to the filesystem yet.")
-            return
-        num_classes = len(self.classes)
-        num_methods = len(self.input_files)
-        classes_noun = "classes" if num_classes > 1 else "class"
-        methods_noun = "methods" if num_methods > 1 else "method"
-        print(f"Successfully wrote {num_classes} {classes_noun} with a total of {num_methods} {methods_noun}.")
+        table = Table(box=MINIMAL, border_style="bold red")
+        code = []
+        for path, cls in self.output_classes.items():
+            # p.s. if you try and make an object, python will throw an error because `requests` isn't defined
+            # thankfully, the class can be created which is pretty cool (thanks interpreter :))
 
-    def parse_directory(self, directory: Path):
-        if not directory.is_dir():
-            return
-        for filename in directory.glob("*.txt"):
-            file = InputFile(filename)
-            method = file.method
-            if method:
-                class_name = file.method.class_name
-                classes_search = [c for c in self.classes if c.name == class_name]
+            try:
+                try:
+                    exec(cls.code)
+                except SyntaxError as err:
+                    # "invalid syntax in the code generated. is this worth reporting?"
+                    err.msg += " in the code generated. is this worth reporting?"
+                    raise
+            except SyntaxError:
+                console.print_exception()
+                return
 
-                if not classes_search:
-                    class_object = Class(name=class_name,
-                                         return_text=self.return_text,
-                                         single_quote=self.single_quote,
-                                         parameters_mode=self.parameters_mode)
-                    self.classes.append(class_object)
-                    self.output_files.append(OutputFile(self.output, class_object))
-                else:
-                    class_object = classes_search[0]
-
-                # needs to be added first
-                # modifying methods after adding it to the class is perfectly fine
-
-                class_object.add_method(method)
-                self.input_files.append(file)
-
-                # maybe this could be optimized?
-                # cpu is wasted calculating headers and cookies only to be deleted
-                if self.no_headers:
-                    file.method.headers = {}
-                if self.no_cookies:
-                    file.method.cookies = {}
+            name = path.parent.name
+            table.add_column(f"[bold red]{name}[/bold red]")
+            generated_cls = eval(cls.name)
+            code.append(inspect(generated_cls))
+        table.width = 65 * len(code)
+        table.add_row(*code)
+        console.print(table)
 
 
 def main():
-    auto_requests = AutoRequests()
-    auto_requests.load_local_files()
-    auto_requests.load_external_files()
-    auto_requests.write()
-    auto_requests.move_into_class_folder()
-    auto_requests.print_results()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i", "--input", default=None, help="Input Directory")
+    parser.add_argument("-o", "--output", default=None, help="Output Directory")
+    parser.add_argument("-v", "--version", action="store_true")
+    parser.add_argument("--return-text",
+                        action="store_true",
+                        help="Makes the generated method's responses return .text instead of .json()"
+                        )
+    parser.add_argument("--no-headers", action="store_true", help="Removes all headers from the operation")
+    parser.add_argument("--no-cookies", action="store_true", help="Removes all cookies from the operation")
+    parser.add_argument("--parameters",
+                        action="store_true",
+                        help="Replaces hardcoded params, json, data, etc with parameters that have default values")
+    args = parser.parse_args()
+
+    if not args:
+        parser.print_help()
+        return
+    if args.version:
+        print(f"AutoRequests {__version__}")
+        return
+
+    input_path = (Path(args.input) if args.input else Path.cwd()).resolve()
+    output_path = (Path(args.output) if args.output else Path.cwd()).resolve()
+
+    auto_requests = AutoRequests(
+        input_path=input_path,
+        output_path=output_path,
+        return_text=args.return_text,
+        no_headers=args.no_headers,
+        no_cookies=args.no_cookies,
+        parameters=args.parameters
+    )
+    auto_requests.main()
 
 
 if __name__ == "__main__":

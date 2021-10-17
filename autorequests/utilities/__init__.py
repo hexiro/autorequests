@@ -1,22 +1,28 @@
 import functools
 import json
 import keyword
-import string
 import sys
-from pathlib import Path
-from typing import List, Dict, Iterable, Optional
+from typing import List, Dict, Iterable, Optional, Callable, Union
 
-# Path() returns type WindowsPath or PosixPath based on os
-# I could replicate their os check, but this is safer in case they change it in the future.
-
-PathType = type(Path())
-
+from .regexp import leading_integer_regexp
 
 # pretty simplistic names tbf
 # a lot of these aren't super self explanatory so they have docstring
 
+__all__ = (
+    "cached_property",
+    "indent",
+    "uses_accepted_chars",
+    "is_pythonic_name",
+    "extract_cookies",
+    "compare_dicts",
+    "format_dict",
+    "written_form",
+    "unique_name"
+)
 
-def cached_property(func):
+
+def cached_property(func: Callable):
     if sys.version_info > (3, 8):
         return functools.cached_property(func)
     return property(functools.lru_cache()(func))
@@ -25,13 +31,13 @@ def cached_property(func):
 def indent(data: str, spaces: int = 4) -> str:
     """
     indents a code block a set amount of spaces
-    note: is faster than textwrap.indent()
+    note: is ~1.5x faster than textwrap.indent(data, " " * spaces)
     (from my testing)
     """
     # using this var is slightly slower on small operations,
     # and a lot faster on big operations
     indent_block = " " * spaces
-    return "\n".join(indent_block + line for line in data.splitlines())
+    return "\n".join((indent_block + line if line else line) for line in data.splitlines())
 
 
 def uses_accepted_chars(text: str, chars: Iterable) -> bool:
@@ -40,18 +46,8 @@ def uses_accepted_chars(text: str, chars: Iterable) -> bool:
 
 
 def is_pythonic_name(text: str) -> bool:
-    if not text:
-        return False
-    # functions can't start with a digit
-    if text[0].isdigit():
-        return False
-    # function names can only contain letters, numbers, and _s
-    if not uses_accepted_chars(text, string.ascii_letters + string.digits + "_"):
-        return False
-    # if function name is a reserved keyword
-    if keyword.iskeyword(text):
-        return False
-    return True
+    """ :returns: true if the string provided is a valid function name """
+    return text.isidentifier() and not keyword.iskeyword(text)
 
 
 def extract_cookies(headers: Dict[str, str]) -> Dict[str, str]:
@@ -66,7 +62,7 @@ def extract_cookies(headers: Dict[str, str]) -> Dict[str, str]:
     return cookie_dict
 
 
-def compare_dicts(dicts: List[dict]) -> dict:
+def compare_dicts(*dicts: Dict[str, str]) -> Dict[str, str]:
     """ :returns: a dictionary with the items that all of the dicts in the list share """
     # if there is 0 or 1 dicts, there will be no matches
     if len(dicts) <= 1:
@@ -74,20 +70,7 @@ def compare_dicts(dicts: List[dict]) -> dict:
 
     # they ALL have to share an item for it to be accepted,
     # therefore we can just loop over the first dict in the list and check if it matches the other items
-    return {k: v for k, v in dicts[0].items() if all(dict_.get(k) == v for dict_ in dicts[1:])}
-
-
-# compare_lists isn't used yet
-
-def compare_lists(lists: List[list]) -> list:
-    """ :returns: a list of items that all the lists share """
-    # if there is 0 or 1 lists, there will be no matches
-    if len(lists) <= 1:
-        return []
-
-    # they ALL have to contain an item for it to be accepted,
-    # therefore we can just loop over the first list in the list and check all the other lists share the match
-    return [p for i, p in enumerate(lists[0]) if all(list_[i] == p for list_ in lists[1:])]
+    return {k: v for k, v in dicts[0].items() if all(x.get(k) == v for x in dicts[1:])}
 
 
 def format_dict(data: dict, indent: Optional[int] = 4, variables: List[str] = None) -> str:
@@ -108,7 +91,7 @@ def format_dict(data: dict, indent: Optional[int] = 4, variables: List[str] = No
     return formatted
 
 
-# kinda fucked if english changes
+# kinda screwed if english changes
 # if english has progressed please make a pr :pray:
 
 ones_dict = {"1": "one",
@@ -142,13 +125,32 @@ unique_dict = {"11": "eleven",
                "19": "nineteen"}
 
 
-def written_form(num: int) -> str:
-    """ :returns: written form of an integer 0-999 """
+def written_form(num: Union[int, str]) -> str:
+    """ :returns: written form of an integer 0-999, or for the leading integer of a string """
+    if isinstance(num, str):
+        # if string is an integer
+        if num.isdigit():
+            return written_form(int(num))
+        # try to parse leading integer
+        match = leading_integer_regexp.search(num)
+        if not match:
+            return num
+        # if str starts with integer
+        initial_num = match.group(0)
+        written_num = written_form(int(initial_num))
+        rest = num[match.end():]
+        return f"{written_num}_{rest}"
     if num > 999:
         raise NotImplementedError("numbers > 999 not supported")
+    if num < 0:
+        raise NotImplementedError("numbers < 0 not supported")
     if num == 0:
         return "zero"
-    hundreds, tens, ones = str(num).zfill(3)
+    # mypy & pycharm don't like string unpacking
+    full_num = str(num).zfill(3)
+    hundreds = full_num[0]
+    tens = full_num[1]
+    ones = full_num[2]
     ones_match = ones_dict.get(ones)
     tens_match = tens_dict.get(tens)
     unique_match = unique_dict.get((tens + ones))
@@ -177,15 +179,3 @@ def unique_name(name: str, other_names: List[str]) -> str:
         raise NotImplementedError(">999 methods with similar names not supported")
     written = written_form(matched_names_length + 1)
     return name + "_" + written
-
-
-def combine_dicts(dicts: List[dict]) -> dict:
-    """ combines dicts with unique names """
-    combined = {}
-    for dict_ in dicts:
-        for key, value in dict_.items():
-            if key in combined:
-                key = unique_name(name=key,
-                                  other_names=list(combined.keys()))
-            combined[key] = value
-    return combined

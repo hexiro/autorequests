@@ -1,9 +1,15 @@
+# ide settings
 .idea/
+.vscode/
+
+# virtual environment
+venv/
+
+# python build stuff
 __pycache__/
-*.xml
-*.pyc
-autorequests.egg-info/
-build/
+*.py[cod]
+*$py.class
 dist/
-reinstall.bat
-build.bat
+
+# pytest cache
+.pytest_cache/
