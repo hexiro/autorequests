@@ -159,11 +159,18 @@ class AutoRequests:
         for path, cls in self.output_classes.items():
             # p.s. if you try and make an object, python will throw an error because `requests` isn't defined
             # thankfully, the class can be created which is pretty cool (thanks interpreter :))
+
             try:
-                exec(cls.code)
+                try:
+                    exec(cls.code)
+                except SyntaxError as err:
+                    # "invalid syntax in the code generated. is this worth reporting?"
+                    err.msg += " in the code generated. is this worth reporting?"
+                    raise
             except SyntaxError:
                 console.print_exception()
                 return
+
             name = path.parent.name
             table.add_column(f"[bold red]{name}[/bold red]")
             generated_cls = eval(cls.name)
