@@ -108,16 +108,15 @@ class Body:
         for item in body.split(boundary):
             # remove leading & trailing /n
             item = item.strip("\n")
-            # get two main details
-            try:
-                details, content = item.split("\n\n")
-                details = details.lstrip(boundary + "\n")
-                details_dict = {k: v for k, v in
-                                (line.split(": ", maxsplit=1) for line in details.splitlines() if ": " in line)}
-            except ValueError:
-                # bad data that wasn't caught earlier
-                # this should never be reached, it's kind of just a safeguard in case the data is corrupted asf
+            if not item:
                 continue
+            # get two main details
+            # try:
+            item_split = item.split("\n\n", maxsplit=1)
+            details = item_split.pop(0)
+            content = item_split.pop() if item_split else ""
+            details_dict = {k: v for k, v in
+                            (line.split(": ", maxsplit=1) for line in details.splitlines() if ": " in line)}
             content_disposition = details_dict.get("Content-Disposition")
             content_type = details_dict.get("Content-Type")
             if not content_disposition:
@@ -137,6 +136,6 @@ class Body:
                 self._data[name] = content
             # if it has a filename it's a file
             elif content_type:
-                self._files[name] = (filename, content, content_type)
+                self._files[name] = (filename, "...", content_type)
             else:
-                self._files[name] = (filename, content)
+                self._files[name] = (filename, "...")
