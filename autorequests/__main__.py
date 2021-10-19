@@ -1,14 +1,15 @@
 import argparse
+import ast
 from pathlib import Path
 from typing import List, Optional, Dict, Generator
 
 import rich
 from rich.box import MINIMAL
+from rich.syntax import Syntax
 from rich.table import Table
 
 from .classes import Class, Method
-from .utilities import cached_property
-from .utilities.inspector import inspect
+from .utilities import cached_property, indent
 from .utilities.parsing import method_from_text
 
 __version__ = "1.1.0"
@@ -135,10 +136,10 @@ class AutoRequests:
             main_py = cls.folder / "main.py"
             main_py.write_text(data=self.top + cls.code, encoding="utf8", errors="strict")
             self.output_classes[main_py] = cls
-        for file, method in self.input_methods.items():
-            class_name = method.class_name
-            if self.output_path.name != class_name:
-                file.rename(self.output_path / class_name / file.name)
+        # for file, method in self.input_methods.items():
+        #     class_name = method.class_name
+        #     if self.output_path.name != class_name:
+        #         file.rename(self.output_path / class_name / file.name)
 
     @staticmethod
     def files_from_path(path: Path) -> Generator[Path, None, None]:
@@ -158,15 +159,11 @@ class AutoRequests:
         table = Table(box=MINIMAL, border_style="bold red")
         code = []
         for path, cls in self.output_classes.items():
-            # p.s. if you try and make an object, python will throw an error because `requests` isn't defined
-            # thankfully, the class can be created which is pretty cool (thanks interpreter :))
-
             try:
                 try:
-                    exec(cls.code)
+                    ast.parse(cls.code)
                 except SyntaxError as err:
-                    # "invalid syntax in the code generated. is this worth reporting?"
-                    err.msg += " in the code generated. is this worth reporting?"
+                    err.msg = "invalid syntax in the code generated. is this worth reporting?"
                     raise
             except SyntaxError:
                 console.print_exception()
@@ -174,8 +171,8 @@ class AutoRequests:
 
             name = path.parent.name
             table.add_column(f"[bold red]{name}[/bold red]")
-            generated_cls = eval(cls.name)
-            code.append(inspect(generated_cls))
+            signatures_with_docstrings = [method.signature + "\n" + indent(method.docstring) for method in cls.methods]
+            code.append(Syntax("\n\n".join(signatures_with_docstrings), "python", theme="fruity"))
         table.width = 65 * len(code)
         table.add_row(*code)
         console.print(table)
