@@ -8,8 +8,7 @@ AutoRequests provides an easy way to create a simple API wrapper from request da
 
 ### 📺 Demo
 
-** the website shown in this example is [imperialb.in](https://imperialb.in)
-![example showcase gif](https://i.imgur.com/75tMMIW.gif)
+![Demo](https://user-images.githubusercontent.com/42787085/137994635-cadbafad-4371-4c22-892a-7e9a82785c56.gif)
 
 ### 💼 Example Use Cases
 
@@ -19,14 +18,14 @@ AutoRequests provides an easy way to create a simple API wrapper from request da
 
 ### ✂️ How to Copy
 
-1.  Inspect Element
-2.  Go to `Network` tab
-3.  Find web request
-4.  Right-Click
-5.  Copy
-6.  Choose one of the following:
-     1. Powershell 
-     2. Node.JS fetch
+1. Inspect Element
+2. Go to `Network` tab
+3. Find web request
+4. Right-Click
+5. Copy
+6. Choose one of the following:
+    1. Powershell
+    2. Node.JS fetch
 
 ## 📦 Installation
 
@@ -68,16 +67,16 @@ generation options
 
 * Method names are parsed from the url, but if the URL doesn't have any paths with a valid method name, an invalid
   method name will be used.
-* Sometimes when copying from the browser, important headers aren't included which causes the resulting API
-  wrapper to fail requests.
+* Sometimes when copying from the browser, important headers aren't included which causes the resulting API wrapper to
+  fail requests.
 * Parsing multipart/form-data when copying with the powershell mode isn't supported
 
 ## 🐞 Contributing
 
 see [CONTRIBUTING.md](./CONTRIBUTING.md)
 
-
 ## 📅 # TODO
+
 * unit tests w/ pytest
 * clean up cli
 * replace ***--compare*** with ***--diff*** which shows diffs in console
