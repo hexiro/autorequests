@@ -5,7 +5,7 @@ from typing import Optional, Dict, Tuple, Union
 
 class Body:
 
-    def __init__(self, body: Optional[str]):
+    def __init__(self, body: Optional[str] = None):
         if body:
             # parse escape sequences :thumbs_up:
             # ignore/replace are kind of just guesses at what i think would be best

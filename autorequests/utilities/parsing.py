@@ -1,9 +1,9 @@
 import json
 from typing import Optional
 
-from . import regexp
-from autorequests.classes import Method, URL, Body
 from . import extract_cookies
+from . import regexp
+from ..classes import Method, URL, Body
 
 
 def method_from_text(text: str) -> Optional[Method]:  # type: ignore
@@ -26,15 +26,30 @@ def method_from_fetch(text: str) -> Optional[Method]:
       "mode": <MODE>
     });
     """
-    fetch = regexp.fetch_regexp.search(text)
-    if not fetch:
-        return  # type: ignore
+    signature_split = text.split("\"")
 
-    headers = json.loads(fetch["headers"])
+    if len(signature_split) < 3:
+        return
+
+    if signature_split[0] != "fetch(":
+        return
+
+    url = URL(signature_split[1])
+
+    if not signature_split[2].startswith(","):
+        # no options specified -- should never be reached
+        return
+
+    left_brace = text.find("{")
+    right_brace = text.rfind("}") + 1
+
+    options = json.loads(text[left_brace:right_brace])
+
+    headers = options["headers"]
     # referer is spelled wrong in the HTTP header
     # referrer policy is not
-    referrer = fetch["referrer"]
-    referrer_policy = fetch["referrer_policy"]
+    referrer = options.get("referrer")
+    referrer_policy = options.get("referrerPolicy")
     if referrer:
         headers["referer"] = referrer
     if referrer_policy:
@@ -42,9 +57,8 @@ def method_from_fetch(text: str) -> Optional[Method]:
 
     cookies = extract_cookies(headers)
 
-    method = fetch["method"]
-    url = URL(fetch["url"])
-    body = Body(fetch["body"])
+    method = options["method"]
+    body = Body(options["body"])
 
     return Method(method=method,
                   url=url,
