@@ -1,6 +1,6 @@
 from typing import Optional, Dict, List
 
-from ..classes import URL, Body, Method
+from ..lib import URL, Body, Method
 
 __all__ = ("parse_powershell_to_method",)
 

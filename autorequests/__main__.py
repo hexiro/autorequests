@@ -8,7 +8,7 @@ from rich.box import MINIMAL
 from rich.syntax import Syntax
 from rich.table import Table
 
-from .classes import Class, Method
+from .lib import Class, Method
 from .utilities import cached_property, indent
 from .parsing import parse_to_method
 

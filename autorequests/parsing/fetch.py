@@ -1,7 +1,7 @@
 import json
 from typing import Optional
 
-from ..classes import Method, URL, Body
+from ..lib import Method, URL, Body
 from ..utilities import extract_cookies
 
 __all__ = ("parse_fetch_to_method",)
