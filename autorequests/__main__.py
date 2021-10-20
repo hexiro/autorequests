@@ -10,7 +10,7 @@ from rich.table import Table
 
 from .classes import Class, Method
 from .utilities import cached_property, indent
-from .utilities.parsing import method_from_text
+from .parsing import parse_to_method
 
 __version__ = "1.1.0"
 __all__ = (
@@ -114,7 +114,7 @@ class AutoRequests:
         methods = []
         for file in self.files_from_path(path):
             text = file.read_text(encoding="utf8", errors="ignore")
-            method = method_from_text(text)
+            method = parse_to_method(text)
             if method is None:
                 continue
             methods.append(method)
@@ -136,10 +136,10 @@ class AutoRequests:
             main_py = cls.folder / "main.py"
             main_py.write_text(data=self.top + cls.code, encoding="utf8", errors="strict")
             self.output_classes[main_py] = cls
-        # for file, method in self.input_methods.items():
-        #     class_name = method.class_name
-        #     if self.output_path.name != class_name:
-        #         file.rename(self.output_path / class_name / file.name)
+        for file, method in self.input_methods.items():
+            class_name = method.class_name
+            if self.output_path.name != class_name:
+                file.rename(self.output_path / class_name / file.name)
 
     @staticmethod
     def files_from_path(path: Path) -> Generator[Path, None, None]:

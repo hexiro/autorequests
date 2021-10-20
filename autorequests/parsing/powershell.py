@@ -1,82 +1,20 @@
-import json
 from typing import Optional, Dict, List
 
-from . import extract_cookies
-from ..classes import Method, URL, Body
+from ..classes import URL, Body, Method
+
+__all__ = ("parse_powershell_to_method",)
 
 
-def method_from_text(text: str) -> Optional[Method]:  # type: ignore
-    # short circuiting
-    if text:
-        return method_from_fetch(text) or method_from_powershell(text)
-
-
-def method_from_fetch(text: str) -> Optional[Method]:
-    """
-    Parses a file that follows this format:
-    (with some being optional)
-
-    fetch(<URL>, {
-      "headers": <HEADERS>,
-      "referrer": <REFERRER>,
-      "referrerPolicy": <REFERRER-POLICY>,
-      "body": <BODY>,
-      "method": <METHOD>,
-      "mode": <MODE>
-    });
-    """
-    signature_split = text.split("\"")
-
-    if len(signature_split) < 3:
-        return
-
-    if signature_split[0] != "fetch(":
-        return
-
-    url = URL(signature_split[1])
-
-    if not signature_split[2].startswith(","):
-        # no options specified -- should never be reached
-        return
-
-    left_brace = text.find("{")
-    right_brace = text.rfind("}") + 1
-
-    options = json.loads(text[left_brace:right_brace])
-
-    headers = options["headers"]
-    # referer is spelled wrong in the HTTP header
-    # referrer policy is not
-    referrer = options.get("referrer")
-    referrer_policy = options.get("referrerPolicy")
-    if referrer:
-        headers["referer"] = referrer
-    if referrer_policy:
-        headers["referrer-policy"] = referrer_policy
-
-    cookies = extract_cookies(headers)
-
-    method = options["method"]
-    body = Body(options["body"])
-
-    return Method(method=method,
-                  url=url,
-                  body=body,
-                  headers=headers,
-                  cookies=cookies,
-                  )
-
-
-def method_from_powershell(text: str) -> Optional[Method]:
+def parse_powershell_to_method(text: str) -> Optional[Method]:
     """
     Parses a file that follows this format:
     (with some potentially being optional)
 
     Invoke-WebRequest -Uri <URL> `
-    -Method <METHOD> `   # optional; defaults to GET if not set
+    -Method <METHOD> `
     -Headers <HEADERS> `
-    -ContentType <CONTENT-TYPE> `   # optional; only exists w/ body
-    -Body <BODY>     # optional; only exists if a body is present
+    -ContentType <CONTENT-TYPE> `
+    -Body <BODY>
     """
     headers: Dict[str, str] = {}
     cookies: Dict[str, str] = {}
