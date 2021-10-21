@@ -2,18 +2,15 @@ import json
 import urllib.parse
 from typing import Optional, Dict, Tuple, Union
 
+from ..utilities import fix_escape_chars
+
 
 class Body:
 
     def __init__(self, body: Optional[str] = None):
         if body:
-            # parse escape sequences :thumbs_up:
-            # ignore/replace are kind of just guesses at what i think would be best
-            # if there is a more logical reason to use something else LMK!
-            body = (body
-                    .encode(encoding="utf8", errors="ignore")
-                    .decode(encoding="unicode_escape", errors="replace"))
-            # replace line breaks with \n(s)
+            body = fix_escape_chars(body)
+            # normalize newlines
             body = "\n".join(body.splitlines())
         self._body: Optional[str] = body
         self._data: Dict[str, str] = {}
@@ -23,6 +20,7 @@ class Body:
         # 2. content
         # 3. content-type
         # 4. extra headers
+        # (4th will never be used)
         self._files: Dict[str, Union[Tuple[str, str], Tuple[str, str, str]]] = {}
 
         # multipart is the most broad and obvious so it goes first

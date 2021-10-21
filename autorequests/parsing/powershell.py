@@ -4,6 +4,8 @@ from ..lib import URL, Body, Method
 
 __all__ = ("parse_powershell_to_method",)
 
+from ..utilities import fix_escape_chars
+
 
 def parse_powershell_to_method(text: str) -> Optional[Method]:
     """
@@ -49,7 +51,7 @@ def parse_headers(args, headers):
     headers_string = args["Headers"][3:-2]
     for header in headers_string.split("\" \""):
         key, value = header.split("\"=\"", maxsplit=1)
-        headers[key] = value
+        headers[key] = fix_escape_chars(value)
 
 
 def parse_session(cookies, headers, lines):

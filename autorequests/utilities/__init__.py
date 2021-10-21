@@ -18,7 +18,8 @@ __all__ = (
     "compare_dicts",
     "format_dict",
     "written_form",
-    "unique_name"
+    "unique_name",
+    "fix_escape_chars"
 )
 
 
@@ -179,3 +180,15 @@ def unique_name(name: str, other_names: List[str]) -> str:
         raise NotImplementedError(">999 methods with similar names not supported")
     written = written_form(matched_names_length + 1)
     return name + "_" + written
+
+
+def fix_escape_chars(text: str) -> str:
+    """
+    replaces escaped \\ followed by a letter to the appropriate char
+    ignore/replace are kind of just guesses at what i think would be best
+    if there is a more logical reason to use something else LMK!
+    (ex. "\\t" --> "\t")
+    """
+    return (text
+            .encode(encoding="utf8", errors="ignore")
+            .decode(encoding="unicode_escape", errors="replace"))
