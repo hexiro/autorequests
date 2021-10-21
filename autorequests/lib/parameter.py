@@ -11,6 +11,11 @@ class Parameter:
     def __repr__(self):
         return f"<Parameter {self.code}>"
 
+    def __eq__(self, other):
+        if not isinstance(other, Parameter):
+            return NotImplemented
+        return self.code == other.code
+
     @property
     def code(self):
         if self.typehint and self.default:

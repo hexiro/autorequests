@@ -28,6 +28,11 @@ class URL:
     def __str__(self):
         return f"{self.protocol}://{self.domain}{self.path}"
 
+    def __eq__(self, other):
+        if not isinstance(other, URL):
+            return NotImplemented
+        return str(self) == str(other)
+
     @property
     def protocol(self) -> str:
         return self._protocol

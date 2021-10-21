@@ -6,5 +6,6 @@ from ..lib import Method
 
 __all__ = ("parse_to_method",)
 
+
 def parse_to_method(text: str) -> Optional[Method]:
     return parse_fetch_to_method(text) or parse_powershell_to_method(text)

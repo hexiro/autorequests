@@ -47,6 +47,11 @@ class Body:
             return "<Body data=None json=None files=None>"
         return base + ">"
 
+    def __eq__(self, other):
+        if not isinstance(other, Body):
+            return NotImplemented
+        return self.body == other.body
+
     @property
     def body(self):
         return self._body

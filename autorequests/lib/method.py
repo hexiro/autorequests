@@ -31,6 +31,16 @@ class Method:
     def __repr__(self) -> str:
         return f"<{self.signature}>"
 
+    def __eq__(self, other):
+        if not isinstance(other, Method):
+            return NotImplemented
+        return (self.method == other.method and
+                self.url == other.url and
+                self.body == other.body and
+                self.parameters == other.parameters and
+                self.headers == other.headers and
+                self.cookies == other.cookies)
+
     @property
     def name(self) -> str:
         return self._name
