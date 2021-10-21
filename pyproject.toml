@@ -23,5 +23,10 @@ autorequests = "autorequests:main"
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.mypy]
+# mypy wants 'return None' not 'return'
+disable_error_code = "return-value"
+show_error_codes = true
+
 [tool.pytest.ini_options]
-addopts = "--mypy"
+addopts = "--mypy -vv"
