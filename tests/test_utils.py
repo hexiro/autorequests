@@ -57,3 +57,9 @@ def test_unique_name():
     assert utilities.unique_name("a", []) == "a"
     assert utilities.unique_name("a", ["a_one"]) == "a_two"
     assert utilities.unique_name("a", ["a_one", "a_two"]) == "a_three"
+
+
+def test_fix_escape_chars():
+    assert utilities.fix_escape_chars("\\t") == "\t"
+    assert utilities.fix_escape_chars("\\n") == "\n"
+    assert utilities.fix_escape_chars("\\r\\n") == "\r\n"

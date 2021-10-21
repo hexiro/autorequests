@@ -37,7 +37,7 @@ def parse_powershell_to_method(text: str) -> Optional[Method]:
     body = Body(args.get("Body"))
 
     parse_headers(args, headers)
-    headers.pop("method", None)
+    method = headers.pop("method", "GET")
 
     return Method(method=method,
                   url=url,
