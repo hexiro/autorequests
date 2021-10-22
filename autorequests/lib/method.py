@@ -41,6 +41,9 @@ class Method:
                 self.headers == other.headers and
                 self.cookies == other.cookies)
 
+    def __hash__(self):
+        return hash((self.method, self.url, self.body, *self._parameters))
+
     @property
     def name(self) -> str:
         return self._name

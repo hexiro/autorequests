@@ -16,6 +16,9 @@ class Parameter:
             return NotImplemented
         return self.code == other.code
 
+    def __hash__(self):
+        return hash(self.code)
+
     @property
     def code(self):
         if self.typehint and self.default:

@@ -33,6 +33,9 @@ class URL:
             return NotImplemented
         return str(self) == str(other)
 
+    def __hash__(self):
+        return hash(str(self))
+
     @property
     def protocol(self) -> str:
         return self._protocol

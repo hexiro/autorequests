@@ -52,6 +52,9 @@ class Body:
             return NotImplemented
         return self.body == other.body
 
+    def __hash__(self):
+        return hash(self.body)
+
     @property
     def body(self):
         return self._body
