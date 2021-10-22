@@ -118,8 +118,7 @@ class Body:
             item_split = item.split("\n\n", maxsplit=1)
             details = item_split.pop(0)
             content = item_split.pop() if item_split else ""
-            details_dict = {k: v for k, v in
-                            (line.split(": ", maxsplit=1) for line in details.splitlines() if ": " in line)}
+            details_dict = dict((line.split(": ", maxsplit=1) for line in details.splitlines() if ": " in line))
             content_disposition = details_dict.get("Content-Disposition")
             content_type = details_dict.get("Content-Type")
             if not content_disposition:
