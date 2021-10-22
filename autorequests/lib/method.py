@@ -38,8 +38,8 @@ class Method:
                 self.url == other.url and
                 self.body == other.body and
                 self.parameters == other.parameters and
-                self.headers == other.headers and
-                self.cookies == other.cookies)
+                self.all_headers == other.all_headers and
+                self.all_cookies == other.all_cookies)
 
     def __hash__(self):
         return hash((self.method, self.url, self.body, *self._parameters))
