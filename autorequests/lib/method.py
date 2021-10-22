@@ -37,7 +37,7 @@ class Method:
         return (self.method == other.method and
                 self.url == other.url and
                 self.body == other.body and
-                self.parameters == other.parameters and
+                self.all_parameters == other.all_parameters and
                 self.all_headers == other.all_headers and
                 self.all_cookies == other.all_cookies)
 
@@ -75,6 +75,10 @@ class Method:
     @class_.setter
     def class_(self, new_class: "class_.Class"):
         self._class = new_class
+
+    @property
+    def all_parameters(self) -> List[Parameter]:
+        return self._parameters
 
     @cached_property
     def parameters(self) -> List[Parameter]:
