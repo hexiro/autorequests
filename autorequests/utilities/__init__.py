@@ -1,7 +1,7 @@
 import functools
 import json
 import keyword
-from typing import List, Dict, Iterable, Optional, Callable, Union
+from typing import List, Dict, Optional, Callable, Union
 
 from .regexp import leading_integer_regexp
 
@@ -11,7 +11,6 @@ from .regexp import leading_integer_regexp
 __all__ = (
     "cached_property",
     "indent",
-    "uses_accepted_chars",
     "is_pythonic_name",
     "extract_cookies",
     "compare_dicts",
@@ -38,11 +37,6 @@ def indent(data: str, spaces: int = 4) -> str:
     # and a lot faster on big operations
     indent_block = " " * spaces
     return "\n".join((indent_block + line if line else line) for line in data.splitlines())
-
-
-def uses_accepted_chars(text: str, chars: Iterable) -> bool:
-    """ :returns: true if all characters in text are accepted chars set by `chars`"""
-    return all(t in chars for t in text)
 
 
 def is_pythonic_name(text: str) -> bool:

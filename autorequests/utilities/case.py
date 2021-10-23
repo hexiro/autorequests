@@ -1,9 +1,11 @@
 import string
+from typing import Iterable
 
-from . import uses_accepted_chars
 from .regexp import fix_snake_case_regexp
 
 # accepted chars for each case convention
+# doesn't support numbers for the time being
+
 SNAKE_CASE_CHARS = string.ascii_lowercase + "_"
 KEBAB_CASE_CHARS = string.ascii_lowercase + "-"
 DOT_CASE_CHARS = string.ascii_lowercase + "."
@@ -11,11 +13,13 @@ CAMEL_CASE_CHARS = string.ascii_letters
 PASCAL_CASE_CHARS = string.ascii_letters
 
 
+# indirect conversions
+
 def snake_case(text: str):
     """
     Tries to parse snake case from an unknown case convention
     """
-    if is_no_case(text):
+    if is_any_case(text):
         return text
     if is_kebab_case(text):
         return kebab_to_snake(text)
@@ -50,34 +54,42 @@ def dot_case(text: str):
     return snake_to_dot(snake_case(text))
 
 
-def is_no_case(text: str) -> bool:
+# boolean functions
+
+def matches_charset(text: str, chars: Iterable) -> bool:
+    """ :returns: true if all characters in text are found in 'chars' iterable"""
+    return all(t in chars for t in text)
+
+
+def is_any_case(text: str) -> bool:
     """
-    :returns: true if text is a single lowercase word
-    that could be considered any case convention really (besides pascal ig)
+    :returns: a boolean that checks if text is alpha and lowercase
     """
-    return text.islower() and uses_accepted_chars(text, string.ascii_lowercase)
+    return text.islower() and text.isalpha()
 
 
 def is_snake_case(text: str) -> bool:
-    return text.islower() and uses_accepted_chars(text, SNAKE_CASE_CHARS)
+    return text.islower() and matches_charset(text, SNAKE_CASE_CHARS)
 
 
 def is_kebab_case(text: str) -> bool:
-    return text.islower() and uses_accepted_chars(text, KEBAB_CASE_CHARS)
+    return text.islower() and matches_charset(text, KEBAB_CASE_CHARS)
 
 
 def is_dot_case(text: str) -> bool:
-    return text.islower() and uses_accepted_chars(text, DOT_CASE_CHARS)
+    return text.islower() and matches_charset(text, DOT_CASE_CHARS)
 
 
 def is_camel_case(text: str) -> bool:
     return text[0].islower() and not text.islower() and \
-           uses_accepted_chars(text, CAMEL_CASE_CHARS)
+           matches_charset(text, CAMEL_CASE_CHARS)
 
 
 def is_pascal_case(text: str) -> bool:
-    return text[0].isupper() and uses_accepted_chars(text, PASCAL_CASE_CHARS)
+    return text[0].isupper() and matches_charset(text, PASCAL_CASE_CHARS)
 
+
+# direct conversions
 
 def camel_to_snake(text: str) -> str:
     return "".join("_" + t.lower() if t.isupper() else t for t in text).lstrip("_")

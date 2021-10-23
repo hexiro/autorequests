@@ -10,11 +10,6 @@ def test_indent():
     assert utilities.indent("a", spaces=8) == "        a"
 
 
-def test_uses_accepted_chars():
-    assert utilities.uses_accepted_chars("a", "a")
-    assert not utilities.uses_accepted_chars("a", "b")
-
-
 def test_is_pythonic_name():
     assert utilities.is_pythonic_name("a")
     assert not utilities.is_pythonic_name("class")
