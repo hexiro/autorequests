@@ -142,11 +142,7 @@ class Method:
 
     @cached_property
     def class_name(self) -> str:
-        # DOMAIN of url
-        # domains with two dots break this (ex. .co.uk)
-        class_name = self.url.domain.split(".")[-2]
-        # remove port
-        class_name = class_name.split(":")[0]
+        class_name = self.url.domain.split(".")[0]
         return pascal_case(written_form(class_name))
 
     @cached_property
