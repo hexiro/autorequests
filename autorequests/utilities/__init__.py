@@ -1,7 +1,6 @@
 import functools
 import json
 import keyword
-import sys
 from typing import List, Dict, Iterable, Optional, Callable, Union
 
 from .regexp import leading_integer_regexp
@@ -22,11 +21,11 @@ __all__ = (
     "fix_escape_chars"
 )
 
-
-def cached_property(func: Callable):
-    if sys.version_info > (3, 8):
-        return functools.cached_property(func)
-    return property(functools.lru_cache()(func))
+try:
+    from functools import cached_property
+except ImportError:
+    def cached_property(func: Callable):
+        return property(functools.lru_cache()(func))
 
 
 def indent(data: str, spaces: int = 4) -> str:
