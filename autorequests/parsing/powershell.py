@@ -20,7 +20,7 @@ def parse_powershell_to_method(text: str) -> Optional[Method]:
     """
     headers: Dict[str, str] = {}
     cookies: Dict[str, str] = {}
-    method: str = "GET"
+    method: str
     url: Optional[URL]
     body: Optional[Body]
 
@@ -33,11 +33,13 @@ def parse_powershell_to_method(text: str) -> Optional[Method]:
 
     # parse arguments
     args = parse_args("".join(lines))
+    if not args or "Uri" not in args:
+        return
     url = URL(args["Uri"])
     body = Body(args.get("Body"))
 
     parse_headers(args, headers)
-    method = headers.pop("method", "GET")
+    method = headers.pop("method", args.get("Method", "GET"))
 
     return Method(method=method,
                   url=url,
@@ -47,14 +49,14 @@ def parse_powershell_to_method(text: str) -> Optional[Method]:
                   )
 
 
-def parse_headers(args, headers):
+def parse_headers(args: Dict[str, str], headers: Dict[str, str]):
     headers_string = args["Headers"][3:-2]
     for header in headers_string.split("\" \""):
         key, value = header.split("\"=\"", maxsplit=1)
         headers[key] = fix_escape_chars(value)
 
 
-def parse_session(cookies, headers, lines):
+def parse_session(cookies: Dict[str, str], headers: Dict[str, str], lines: List[str]):
     while lines[0].startswith("$session"):
         line = lines.pop(0)
         if line.startswith("$session.UserAgent"):
@@ -74,7 +76,7 @@ def parse_session(cookies, headers, lines):
             cookies[name] = value
 
 
-def parse_args(line: str):
+def parse_args(line: str) -> Dict[str, str]:
     args: Dict[str, str] = {}
 
     line_split: List[str] = line.split()
