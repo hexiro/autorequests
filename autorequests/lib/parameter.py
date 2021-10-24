@@ -1,4 +1,3 @@
-import sys
 from typing import Any, Optional
 
 # called a sentinel. more can be read here:
@@ -46,13 +45,12 @@ class Parameter:
     def typehint(self) -> Optional[str]:
         if self._typehint is _MISSING:
             return
-        # prim types
+        # typing module
+        if hasattr(self._typehint, "_name"):
+            return str(self._typehint)
+        # built-in types
         if hasattr(self._typehint, "__name__"):
             return self._typehint.__name__
-        # typing module
-        if sys.version_info >= (3, 10):
-            return f"typing.{self._typehint}"
-        return str(self._typehint)
 
     @property
     def default(self) -> Optional[str]:
