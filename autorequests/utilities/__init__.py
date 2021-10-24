@@ -23,7 +23,7 @@ __all__ = (
 )
 
 try:
-    from functools import cached_property
+    from functools import cached_property  # type: ignore[attr-defined]
 except ImportError:
     def cached_property(func: Callable):  # type: ignore[no-redef]
         return property(functools.lru_cache()(func))
@@ -35,8 +35,6 @@ def indent(data: str, spaces: int = 4) -> str:
     note: is ~1.5x faster than textwrap.indent(data, " " * spaces)
     (from my testing)
     """
-    # using this var is slightly slower on small operations,
-    # and a lot faster on big operations
     indent_block = " " * spaces
     return "\n".join((indent_block + line if line else line) for line in data.splitlines())
 

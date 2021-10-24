@@ -27,8 +27,9 @@ def test_url():
 
 
 def test_parameter():
-    assert Parameter("what").code == "what"
-    assert Parameter("what", typehint=str).code == "what: str"
-    assert Parameter("what", default=None).code == "what=None"
-    assert Parameter("what", typehint=str, default="hello!").code == "what: str = 'hello!'"
-    assert Parameter("what", typehint=Optional[str], default=None).code == "what: typing.Optional[str] = None"
+    assert Parameter("a").code == "a"
+    assert Parameter("a", typehint=str).code == "a: str"
+    assert Parameter("a", default=None).code == "a=None"
+    assert Parameter("a", typehint=str, default="hello!").code == "a: str = 'hello!'"
+    assert Parameter("a", typehint=Optional[str], default=None).code in ("a: typing.Optional[str] = None",
+                                                                         "a: typing.Union[str, NoneType] = None")
