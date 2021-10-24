@@ -51,6 +51,7 @@ class Parameter:
         # built-in types
         if hasattr(self._typehint, "__name__"):
             return self._typehint.__name__
+        return
 
     @property
     def default(self) -> Optional[str]:
