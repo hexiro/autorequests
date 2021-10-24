@@ -13,7 +13,7 @@ __all__ = (
     "indent",
     "is_pythonic_name",
     "extract_cookies",
-    "compare_dicts",
+    "merge_dicts",
     "format_dict",
     "written_form",
     "unique_name",
@@ -23,7 +23,7 @@ __all__ = (
 try:
     from functools import cached_property
 except ImportError:
-    def cached_property(func: Callable):
+    def cached_property(func: Callable):  # type: ignore[no-redef]
         return property(functools.lru_cache()(func))
 
 
@@ -56,7 +56,7 @@ def extract_cookies(headers: Dict[str, str]) -> Dict[str, str]:
     return cookie_dict
 
 
-def compare_dicts(*dicts: Dict[str, str]) -> Dict[str, str]:
+def merge_dicts(*dicts: Dict[str, str]) -> Dict[str, str]:
     """ :returns: a dictionary with the items that all of the dicts in the list share """
     # if there is 0 or 1 dicts, there will be no matches
     if len(dicts) <= 1:

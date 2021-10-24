@@ -9,8 +9,8 @@ from rich.syntax import Syntax
 from rich.table import Table
 
 from .lib import Class, Method
-from .utilities import cached_property, indent
 from .parsing import parse_to_method
+from .utilities import cached_property, indent
 
 __version__ = "1.1.0"
 __all__ = (
@@ -57,7 +57,7 @@ class AutoRequests:
                 self.methods.extend(self.methods_from_path(cls.folder))
 
         for method in self.methods:
-            cls = self.find_class(method.class_name)
+            cls: Class = self.find_class(method.class_name)  # type: ignore[no-redef]
             cls.add_method(method)
             method.class_ = cls
 

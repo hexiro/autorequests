@@ -8,28 +8,29 @@ from autorequests import utilities
 def test_indent():
     assert utilities.indent("a") == "    a"
     assert utilities.indent("a", spaces=8) == "        a"
+    assert utilities.indent("a\n\na") == "    a\n\n    a"
 
 
 def test_is_pythonic_name():
     assert utilities.is_pythonic_name("a")
     assert not utilities.is_pythonic_name("class")
+    assert not utilities.is_pythonic_name("0a")
 
 
 def test_extract_cookies():
     assert utilities.extract_cookies({}) == {}
     headers = {"a": "a", "cookie": "a=1; b=1"}
     assert utilities.extract_cookies(headers) == {"a": "1", "b": "1"}
-    assert "cookie" not in headers
-    assert headers.get("a") == "a"
+    assert headers == {"a": "a"}
 
 
 def test_compare_dicts():
     dict_one = {"a": "a"}
     dict_two = {"a": "b"}
-    assert utilities.compare_dicts(dict_one, dict_two) == {}
+    assert utilities.merge_dicts(dict_one, dict_two) == {}
     dict_one = {"a": "a"}
     dict_two = {"a": "a"}
-    assert utilities.compare_dicts(dict_one, dict_two) == {"a": "a"}
+    assert utilities.merge_dicts(dict_one, dict_two) == {"a": "a"}
 
 
 def test_format_dict():

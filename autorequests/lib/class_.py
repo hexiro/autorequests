@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import List, Dict
 
 from . import method
-from ..utilities import format_dict, indent, compare_dicts, cached_property
+from ..utilities import format_dict, indent, merge_dicts, cached_property
 
 
 # "class" is a reserved keyword so I can't name a file "class"
@@ -115,8 +115,8 @@ class Class:
         method.ensure_unique_name()
         self._methods.append(method)
         if len(self.methods) >= 2:
-            self._headers = compare_dicts(*(method.all_headers for method in self.methods))
-            self._cookies = compare_dicts(*(method.all_cookies for method in self.methods))
+            self._headers = merge_dicts(*(method.all_headers for method in self.methods))
+            self._cookies = merge_dicts(*(method.all_cookies for method in self.methods))
 
         if self.no_headers:
             method.remove_headers()
