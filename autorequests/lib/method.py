@@ -1,9 +1,11 @@
-from typing import List, Dict, Optional
+from typing import TYPE_CHECKING, List, Dict, Optional
 
 from . import URL, Body, Parameter
-from . import class_
 from ..utilities import format_dict, indent, is_pythonic_name, cached_property, unique_name, written_form
 from ..utilities.case import snake_case, pascal_case
+
+if TYPE_CHECKING:
+    from .class_ import Class
 
 
 class Method:
@@ -26,7 +28,7 @@ class Method:
         self._headers: Dict[str, str] = headers or {}
         self._cookies: Dict[str, str] = cookies or {}
         self._name: str = self.default_name
-        self._class: Optional["class_.Class"] = None
+        self._class: Optional["Class"] = None
 
     def __repr__(self) -> str:
         return f"<{self.signature}>"
@@ -69,11 +71,11 @@ class Method:
         return f"def {self.name}({', '.join(param.code for param in self.parameters)}):"
 
     @property
-    def class_(self) -> Optional["class_.Class"]:
+    def class_(self) -> Optional["Class"]:
         return self._class
 
     @class_.setter
-    def class_(self, new_class: "class_.Class"):
+    def class_(self, new_class: "Class"):
         self._class = new_class
 
     @property
