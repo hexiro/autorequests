@@ -14,7 +14,6 @@ class URL:
         # https://www.rfc-editor.org/rfc/rfc1808.html#section-2.1
         # urlsplit automatically appends `params` to the end of path
         parsed = urllib.parse.urlsplit(url)
-        self._url: str = url
         self._protocol: str = parsed.scheme
         self._path: str = parsed.path
         self._query = parse_url_encoded(parsed.query)
@@ -26,6 +25,7 @@ class URL:
         self._username: Optional[str] = None
         self._password: Optional[str] = None
         self._domain: str
+        self._subdomain: Optional[str] = None
         # it would also make sense to default this to 80
         # None means that there is none set explicitly in the url, however
         self._port: Optional[int] = None
@@ -40,6 +40,11 @@ class URL:
                 self._port = int(port)
         else:
             self._domain = host
+
+        domain_split_dots = self._domain.split(".")
+        if len(domain_split_dots) >= 3:
+            self._subdomain = domain_split_dots.pop(0)
+            self._domain = ".".join(domain_split_dots)
 
     def __repr__(self):
         return f"<URL {self.url}>"
@@ -57,7 +62,8 @@ class URL:
 
     @property
     def url(self) -> str:
-        return self._url
+        """url without query string params"""
+        return f"{self.protocol}://{self.subdomain}{self.domain}{self.path}"
 
     @property
     def protocol(self) -> str:
@@ -74,6 +80,10 @@ class URL:
     @property
     def domain(self) -> str:
         return self._domain
+
+    @property
+    def subdomain(self) -> Optional[str]:
+        return self._subdomain
 
     @property
     def port(self) -> Optional[int]:
