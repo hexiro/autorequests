@@ -1,3 +1,4 @@
+import sys
 from typing import Any, Optional
 
 # called a sentinel. more can be read here:
@@ -49,6 +50,8 @@ class Parameter:
         if hasattr(self._typehint, "__name__"):
             return self._typehint.__name__
         # typing module
+        if sys.version_info >= (3, 10):
+            return f"typing.{self._typehint}"
         return str(self._typehint)
 
     @property

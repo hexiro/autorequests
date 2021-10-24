@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Union
 
 from autorequests.lib import URL, Parameter
 
@@ -31,5 +31,4 @@ def test_parameter():
     assert Parameter("a", typehint=str).code == "a: str"
     assert Parameter("a", default=None).code == "a=None"
     assert Parameter("a", typehint=str, default="hello!").code == "a: str = 'hello!'"
-    assert Parameter("a", typehint=Optional[str], default=None).code in ("a: typing.Optional[str] = None",
-                                                                         "a: typing.Union[str, NoneType] = None")
+    assert Parameter("a", typehint=Union[str, int], default=None).code == "a: typing.Union[str, int] = None"
