@@ -40,6 +40,10 @@ def test_format_dict():
     assert utilities.format_dict({"a": "False"}) == '{\n    "a": "False"\n}'
 
 
+def test_parse_url_encoded():
+    assert utilities.parse_url_encoded("a=1&b=2") == {"a": "1", "b": "2"}
+
+
 def test_written_form():
     assert utilities.written_form(0) == "zero"
     assert utilities.written_form(100) == "one_hundred"

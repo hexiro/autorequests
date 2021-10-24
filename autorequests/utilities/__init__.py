@@ -1,6 +1,7 @@
 import functools
 import json
 import keyword
+import urllib.parse
 from typing import List, Dict, Optional, Callable, Union
 
 from .regexp import leading_integer_regexp
@@ -15,9 +16,10 @@ __all__ = (
     "extract_cookies",
     "merge_dicts",
     "format_dict",
+    "parse_url_encoded",
     "written_form",
     "unique_name",
-    "fix_escape_chars"
+    "fix_escape_chars",
 )
 
 try:
@@ -83,6 +85,11 @@ def format_dict(data: dict, indent: Optional[int] = 4, variables: List[str] = No
     for var in variables:
         formatted = formatted.replace(f": \"{var}\"", f": {var}")
     return formatted
+
+
+def parse_url_encoded(data: str) -> Dict[str, str]:
+    """ parses application/x-www-form-urlencoded and query string params """
+    return dict(urllib.parse.parse_qsl(data, keep_blank_values=True))
 
 
 # kinda screwed if english changes

@@ -1,8 +1,7 @@
 import json
-import urllib.parse
 from typing import Optional, Dict, Tuple, Union
 
-from ..utilities import fix_escape_chars
+from ..utilities import fix_escape_chars, parse_url_encoded
 
 
 class Body:
@@ -96,13 +95,7 @@ class Body:
             self._json = json_
 
     def _parse_urlencoded(self):
-        # urllib.parse.parse_qs doesn't work here btw
-        # if a key doesn't have a value then it gets excluded with parse_qs
-        # not sure if unquote_plus() would be better
-        body = urllib.parse.unquote(self.body)
-        for param in body.split("&"):
-            key, value = param.split("=", maxsplit=1)
-            self._data[key] = value
+        self._data = parse_url_encoded(self.body)
 
     def _parse_multipart_form_data(self):
         # let's all take a moment and pray for whoever has to refactor this (me probably)

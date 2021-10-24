@@ -1,6 +1,8 @@
 import urllib.parse
 from typing import Dict, Optional
 
+from ..utilities import parse_url_encoded
+
 
 class URL:
 
@@ -15,7 +17,7 @@ class URL:
         self._url: str = url
         self._protocol: str = parsed.scheme
         self._path: str = parsed.path
-        self._query = dict(urllib.parse.parse_qsl(parsed.query, keep_blank_values=True))
+        self._query = parse_url_encoded(parsed.query)
         self._fragment = parsed.fragment
 
         # <user>:<password>@<host>:<port>
