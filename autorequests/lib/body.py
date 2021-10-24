@@ -1,5 +1,5 @@
 import json
-from typing import Optional, Dict, Tuple, Union
+from typing import Optional, Dict, Tuple, Union, Any, List, Type
 
 from ..utilities import fix_escape_chars, parse_url_encoded
 
@@ -13,7 +13,7 @@ class Body:
             body = "\n".join(body.splitlines())
         self._body: Optional[str] = body
         self._data: Dict[str, str] = {}
-        self._json: Dict[str, str] = {}
+        self._json: Dict[str, Union[List[Any], int, str, float, bool, Type[None]]] = {}
         # tuple of four items
         # 1. filename
         # 2. content
@@ -55,15 +55,15 @@ class Body:
         return hash(self.body)
 
     @property
-    def body(self):
+    def body(self) -> Optional[str]:
         return self._body
 
     @property
-    def data(self):
+    def data(self) -> Dict[str, str]:
         return self._data
 
     @property
-    def json(self):
+    def json(self) -> Dict[str, Union[List[Any], int, str, float, bool, Type[None]]]:
         return self._json
 
     @property
@@ -71,7 +71,7 @@ class Body:
         return self._files
 
     @property
-    def is_json(self):
+    def is_json(self) -> bool:
         try:
             json.loads(self.body)
             return True
@@ -79,23 +79,23 @@ class Body:
             return False
 
     @property
-    def is_urlencoded(self):
+    def is_urlencoded(self) -> bool:
         if "=" not in self.body:
             return False
         return all(item.count("=") > 0 for item in self.body.split("&"))
 
     @property
-    def is_multipart_form_data(self):
+    def is_multipart_form_data(self) -> bool:
         return "------WebKitFormBoundary" in self.body
 
     def _parse_json(self):
         # sometimes body is "null" but we want our json to be a dict and not None
         json_ = json.loads(self.body)
         if json_ is not None:
-            self._json = json_
+            self._json.update(json_)
 
     def _parse_urlencoded(self):
-        self._data = parse_url_encoded(self.body)
+        self._data.update(parse_url_encoded(self.body))
 
     def _parse_multipart_form_data(self):
         # let's all take a moment and pray for whoever has to refactor this (me probably)
