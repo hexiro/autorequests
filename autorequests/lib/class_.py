@@ -115,8 +115,8 @@ class Class:
         method.ensure_unique_name()
         self._methods.append(method)
         if len(self.methods) >= 2:
-            self._headers = merge_dicts(*(method.all_headers for method in self.methods))
-            self._cookies = merge_dicts(*(method.all_cookies for method in self.methods))
+            self._headers = merge_dicts(*(method.local_headers for method in self.methods))
+            self._cookies = merge_dicts(*(method.local_cookies for method in self.methods))
 
         if self.no_headers:
             method.remove_headers()

@@ -37,9 +37,9 @@ class Method:
         return (self.method == other.method and
                 self.url == other.url and
                 self.body == other.body and
-                self.all_parameters == other.all_parameters and
-                self.all_headers == other.all_headers and
-                self.all_cookies == other.all_cookies)
+                self.local_parameters == other.local_parameters and
+                self.local_headers == other.local_headers and
+                self.local_cookies == other.local_cookies)
 
     def __hash__(self):
         return hash((self.method, self.url, self.body, *self._parameters))
@@ -77,7 +77,7 @@ class Method:
         self._class = new_class
 
     @property
-    def all_parameters(self) -> List[Parameter]:
+    def local_parameters(self) -> List[Parameter]:
         return self._parameters
 
     @cached_property
@@ -161,7 +161,7 @@ class Method:
         return snake_case(split[-1])
 
     @property
-    def all_headers(self) -> Dict[str, str]:
+    def local_headers(self) -> Dict[str, str]:
         return self._headers
 
     @property
@@ -171,7 +171,7 @@ class Method:
         return {h: v for h, v in self._headers.items() if h not in self._class.headers}
 
     @property
-    def all_cookies(self) -> Dict[str, str]:
+    def local_cookies(self) -> Dict[str, str]:
         return self._cookies
 
     @property
