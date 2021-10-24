@@ -1,15 +1,23 @@
+from typing import Any, Optional
+
+# called a sentinel. more can be read here:
+# https://www.python.org/dev/peps/pep-0661/
+# https://en.wikipedia.org/wiki/Sentinel_value
+_MISSING = object()
+
+
 class Parameter:
 
-    def __init__(self, name: str, **kwargs):
-        # isn't really used to it's full potential right now
-        # we'll have to see if a good way to implement custom parameters is found
-        self._name = name
-        # resolves <class 'str'> to str
-        self._default = repr(kwargs["default"]) if "default" in kwargs else None
-        self._typehint = kwargs["typehint"].__name__ if "typehint" in kwargs else None
+    def __init__(self, name: str, *, default: Any = _MISSING, typehint: Any = _MISSING):
+        self._name: str = name
+        self._default: Any = default
+        self._typehint: Any = typehint
 
     def __repr__(self):
         return f"<Parameter {self.code}>"
+
+    def __str__(self):
+        return self.code
 
     def __eq__(self, other):
         if not isinstance(other, Parameter):
@@ -34,9 +42,17 @@ class Parameter:
         return self._name
 
     @property
-    def typehint(self):
-        return self._typehint
+    def typehint(self) -> Optional[str]:
+        if self._typehint is _MISSING:
+            return
+        # prim types
+        if hasattr(self._typehint, "__name__"):
+            return self._typehint.__name__
+        # typing module
+        return str(self._typehint)
 
     @property
-    def default(self):
-        return self._default
+    def default(self) -> Optional[str]:
+        if self._default is _MISSING:
+            return
+        return repr(self._default)

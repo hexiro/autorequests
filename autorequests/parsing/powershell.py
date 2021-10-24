@@ -10,8 +10,11 @@ from ..utilities import fix_escape_chars
 def parse_powershell_to_method(text: str) -> Optional[Method]:
     """
     Parses a file that follows this format:
-    (with some potentially being optional)
+    (with some parts being optional)
 
+    $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+    $session.UserAgent = <USER-AGENT>
+    $session.Cookies.Add(<COOKIE>)
     Invoke-WebRequest -Uri <URL> `
     -Method <METHOD> `
     -Headers <HEADERS> `

@@ -1,9 +1,12 @@
-from autorequests.lib import URL
+from typing import Optional
+
+from autorequests.lib import URL, Parameter
 
 
 def test_url():
     url_one = URL("https://username:password@httpbin.org:80/cookies;hello=world#section")
     assert url_one.url == "https://username:password@httpbin.org:80/cookies;hello=world#section"
+    assert str(url_one) == "https://username:password@httpbin.org:80/cookies;hello=world#section"
     assert url_one.protocol == "https"
     assert url_one.username == "username"
     assert url_one.password == "password"
@@ -21,3 +24,11 @@ def test_url():
     assert url_three.password is None
     assert url_three.domain == "httpbin.org"
     assert url_three.port == 80
+
+
+def test_parameter():
+    assert Parameter("what").code == "what"
+    assert Parameter("what", typehint=str).code == "what: str"
+    assert Parameter("what", default=None).code == "what=None"
+    assert Parameter("what", typehint=str, default="hello!").code == "what: str = 'hello!'"
+    assert Parameter("what", typehint=Optional[str], default=None).code == "what: typing.Optional[str] = None"
