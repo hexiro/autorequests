@@ -42,6 +42,9 @@ class URL:
     def __repr__(self):
         return f"<URL {self.url}>"
 
+    def __str__(self):
+        return self.url
+
     def __eq__(self, other):
         if not isinstance(other, URL):
             return NotImplemented
