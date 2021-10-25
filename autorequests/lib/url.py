@@ -1,5 +1,5 @@
 import urllib.parse
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple, Union
 
 from ..utilities import parse_url_encoded
 
@@ -16,35 +16,32 @@ class URL:
         parsed = urllib.parse.urlsplit(url)
         self._protocol: str = parsed.scheme
         self._path: str = parsed.path
-        self._query = parse_url_encoded(parsed.query)
-        self._fragment = parsed.fragment
+        self._query: Dict[str, str] = parse_url_encoded(parsed.query)
+        self._fragment: str = parsed.fragment
 
         # <user>:<password>@<host>:<port>
         # https://www.rfc-editor.org/rfc/rfc1738#section-3.1
-        network_location = parsed.netloc
+        self._network_location: str = parsed.netloc
+
         self._username: Optional[str] = None
         self._password: Optional[str] = None
         self._domain: str
+        self._domain_name: str
         self._subdomain: Optional[str] = None
         # it would also make sense to default this to 80
         # None means that there is none set explicitly in the url, however
         self._port: Optional[int] = None
 
-        host: str = network_location
-        if "@" in network_location:
-            credentials, host = network_location.split("@", maxsplit=1)
-            self._username, self._password = credentials.split(":", maxsplit=1)
-        if ":" in host:
-            self._domain, port = host.split(":", maxsplit=1)
-            if port.isdigit():
-                self._port = int(port)
-        else:
-            self._domain = host
+        host: str
+        self._username, self._password, host = self._credentials(self._network_location)
+        self._domain, self._port = self._domain_and_port(host)
 
-        domain_split_dots = self._domain.split(".")
-        if len(domain_split_dots) >= 3:
-            self._subdomain = domain_split_dots.pop(0)
-            self._domain = ".".join(domain_split_dots)
+        # subdomain, domain
+        if self._domain.count(".") >= 3:
+            self._subdomain, self._domain = self._domain.split(".", maxsplit=1)
+
+        # domain name
+        self._domain_name = self._domain.split(".")[0]
 
     def __repr__(self):
         return f"<URL {self.url}>"
@@ -60,14 +57,46 @@ class URL:
     def __hash__(self):
         return hash(self.url)
 
+    @staticmethod
+    def _domain_and_port(host) -> Tuple[str, Optional[int]]:
+        if ":" in host:
+            domain, port = host.split(":", maxsplit=1)
+            port = int(port) if port.isdigit() else None
+            return domain, port
+        return host, None
+
+    @staticmethod
+    def _credentials(network_location) -> Union[Tuple[Optional[str], Optional[str], str]]:
+        if "@" in network_location:
+            credentials, host = network_location.split("@", maxsplit=1)
+            username, password = credentials.split(":", maxsplit=1)
+            return username, password, host
+        return None, None, network_location
+
     @property
     def url(self) -> str:
         """url without query string params"""
-        return f"{self.protocol}://{self.subdomain}{self.domain}{self.path}"
+        return f"{self.protocol}://{self.network_location}{self.path}{'#'+self.fragment if self.fragment else ''}"
 
     @property
     def protocol(self) -> str:
         return self._protocol
+
+    @property
+    def path(self) -> str:
+        return self._path
+
+    @property
+    def query(self) -> Dict[str, str]:
+        return self._query
+
+    @property
+    def fragment(self) -> str:
+        return self._fragment
+
+    @property
+    def network_location(self) -> str:
+        return self._network_location
 
     @property
     def username(self) -> Optional[str]:
@@ -82,21 +111,13 @@ class URL:
         return self._domain
 
     @property
+    def domain_name(self) -> str:
+        return self._domain_name
+
+    @property
     def subdomain(self) -> Optional[str]:
         return self._subdomain
 
     @property
     def port(self) -> Optional[int]:
         return self._port
-
-    @property
-    def path(self) -> str:
-        return self._path
-
-    @property
-    def query(self) -> Dict[str, str]:
-        return self._query
-
-    @property
-    def fragment(self) -> str:
-        return self._fragment

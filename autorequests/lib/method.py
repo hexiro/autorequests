@@ -144,8 +144,7 @@ class Method:
 
     @cached_property
     def class_name(self) -> str:
-        class_name = self.url.domain.split(".")[0]
-        return pascal_case(written_form(class_name))
+        return pascal_case(written_form(self.url.domain_name))
 
     @cached_property
     def default_name(self) -> str:

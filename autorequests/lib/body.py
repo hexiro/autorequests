@@ -13,7 +13,7 @@ class Body:
             body = "\n".join(body.splitlines())
         self._body: Optional[str] = body
         self._data: Dict[str, str] = {}
-        self._json: Dict[str, Union[List[Any], int, str, float, bool, Type[None]]] = {}
+        self._json: dict = {}
         # tuple of four items
         # 1. filename
         # 2. content
@@ -22,9 +22,9 @@ class Body:
         # (4th will never be used)
         self._files: Dict[str, Union[Tuple[str, str], Tuple[str, str, str]]] = {}
 
-        # multipart is the most broad and obvious so it goes first
         if not body:
             pass
+        # multipart is the most broad and obvious so it goes first
         elif self.is_multipart_form_data:
             self._parse_multipart_form_data()
         elif self.is_json:
@@ -63,7 +63,7 @@ class Body:
         return self._data
 
     @property
-    def json(self) -> Dict[str, Union[List[Any], int, str, float, bool, Type[None]]]:
+    def json(self) -> dict:
         return self._json
 
     @property
@@ -72,6 +72,8 @@ class Body:
 
     @property
     def is_json(self) -> bool:
+        if not self.body:
+            return False
         try:
             json.loads(self.body)
             return True
@@ -80,13 +82,13 @@ class Body:
 
     @property
     def is_urlencoded(self) -> bool:
-        if "=" not in self.body:
+        if not self.body or "=" not in self.body:
             return False
         return all(item.count("=") > 0 for item in self.body.split("&"))
 
     @property
     def is_multipart_form_data(self) -> bool:
-        return "------WebKitFormBoundary" in self.body
+        return "------WebKitFormBoundary" in self.body if self.body else False
 
     def _parse_json(self):
         # sometimes body is "null" but we want our json to be a dict and not None
