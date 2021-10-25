@@ -36,8 +36,8 @@ class URL:
         self._username, self._password, host = self._credentials(self._network_location)
         self._domain, self._port = self._domain_and_port(host)
 
-        # subdomain, domain
-        if self._domain.count(".") >= 3:
+        # subdomain, domain (this might break with domains like .co.uk)
+        if self._domain.count(".") >= 2:
             self._subdomain, self._domain = self._domain.split(".", maxsplit=1)
 
         # domain name
