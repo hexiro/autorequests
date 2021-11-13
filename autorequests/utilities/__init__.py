@@ -1,6 +1,7 @@
 import functools
 import json
 import keyword
+import sys
 import urllib.parse
 from typing import List, Dict, Optional, Callable, Union
 
@@ -22,9 +23,9 @@ __all__ = (
     "fix_escape_chars",
 )
 
-try:
-    from functools import cached_property  # type: ignore[attr-defined]
-except ImportError:
+if sys.version_info >= (3, 8):
+    from functools import cached_property
+else:
     def cached_property(func: Callable):  # type: ignore[no-redef]
         return property(functools.lru_cache()(func))
 
@@ -40,7 +41,7 @@ def indent(data: str, spaces: int = 4) -> str:
 
 
 def is_pythonic_name(text: str) -> bool:
-    """ :returns: true if the string provided is a valid function name """
+    """ :returns: true if the string provided is a valid function, class, or var name """
     return text.isidentifier() and not keyword.iskeyword(text)
 
 

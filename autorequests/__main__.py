@@ -9,7 +9,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 
 from .lib import Class, Method
-from .parsing import parse_to_method
+from .parsing import text_to_method
 from .utilities import cached_property, indent
 
 __version__ = "1.1.0"
@@ -114,7 +114,7 @@ class AutoRequests:
         methods = []
         for file in self.files_from_path(path):
             text = file.read_text(encoding="utf8", errors="ignore")
-            method = parse_to_method(text)
+            method = text_to_method(text)
             if method is None:
                 continue
             methods.append(method)

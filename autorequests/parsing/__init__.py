@@ -1,11 +1,11 @@
 from typing import Optional
 
-from .fetch import parse_fetch_to_method
-from .powershell import parse_powershell_to_method
+from .fetch import fetch_to_method
+from .powershell import powershell_to_method
 from ..lib import Method
 
-__all__ = ("parse_to_method",)
+__all__ = ("text_to_method",)
 
 
-def parse_to_method(text: str) -> Optional[Method]:
-    return parse_fetch_to_method(text) or parse_powershell_to_method(text)
+def text_to_method(text: str) -> Optional[Method]:
+    return fetch_to_method(text) or powershell_to_method(text)

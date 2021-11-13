@@ -21,7 +21,7 @@
 
 ### 📺 Demo
 
-![Demo](https://user-images.githubusercontent.com/42787085/137994635-cadbafad-4371-4c22-892a-7e9a82785c56.gif)
+<img alt="Demo" src="https://user-images.githubusercontent.com/42787085/137994635-cadbafad-4371-4c22-892a-7e9a82785c56.gif"/>
 
 ### 💼 Example Use Cases
 
@@ -38,7 +38,7 @@
 5. Copy
 6. Choose one of the following:
     1. Powershell
-    2. Node.JS fetch
+    2. Node.js fetch
 
 ## 📦 Installation
 

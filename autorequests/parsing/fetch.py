@@ -4,10 +4,10 @@ from typing import Optional
 from ..lib import Method, URL, Body
 from ..utilities import extract_cookies
 
-__all__ = ("parse_fetch_to_method",)
+__all__ = ("fetch_to_method",)
 
 
-def parse_fetch_to_method(text: str) -> Optional[Method]:
+def fetch_to_method(text: str) -> Optional[Method]:
     """
     Parses a file that follows this format:
     (with some being optional)

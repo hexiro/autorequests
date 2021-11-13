@@ -1,13 +1,12 @@
 from typing import Optional, Dict, List
 
 from ..lib import URL, Body, Method
-
-__all__ = ("parse_powershell_to_method",)
-
 from ..utilities import fix_escape_chars
 
+__all__ = ("powershell_to_method",)
 
-def parse_powershell_to_method(text: str) -> Optional[Method]:
+
+def powershell_to_method(text: str) -> Optional[Method]:
     """
     Parses a file that follows this format:
     (with some parts being optional)
