@@ -12,7 +12,7 @@ from .lib import Class, Method
 from .parsing import text_to_method
 from .utilities import cached_property, indent
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 __all__ = (
     "AutoRequests",
     "main",
