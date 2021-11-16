@@ -52,8 +52,8 @@ def fetch_to_method(text: str) -> Optional[Method]:
 
     cookies = extract_cookies(headers)
 
-    method = options["method"]
-    body = Body(options["body"])
+    method = options.get("method", "GET")
+    body = Body(options.get("body"))
 
     return Method(method=method,
                   url=url,

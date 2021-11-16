@@ -59,6 +59,8 @@ def parse_headers(args: Dict[str, str], headers: Dict[str, str]):
 
 
 def parse_session(cookies: Dict[str, str], headers: Dict[str, str], lines: List[str]):
+    if not lines:
+        return
     while lines[0].startswith("$session"):
         line = lines.pop(0)
         if line.startswith("$session.UserAgent"):
