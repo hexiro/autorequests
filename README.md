@@ -90,8 +90,6 @@ see [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## 📅 # TODO
 
-* unit tests w/ pytest
-* clean up cli
-* replace ***--compare*** with ***--diff*** which shows diffs in console
-* better output w/ rich
-* possibly decouple method & class ?
+* better unit test coverage
+* more cli options
+* better cli output
