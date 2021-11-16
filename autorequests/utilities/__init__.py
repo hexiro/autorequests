@@ -140,10 +140,8 @@ def written_form(num: Union[int, str]) -> str:
         written_num = written_form(int(initial_num))
         rest = num[match.end():]
         return f"{written_num}_{rest}"
-    if num > 999:
-        raise NotImplementedError("numbers > 999 not supported")
-    if num < 0:
-        raise NotImplementedError("numbers < 0 not supported")
+    if 0 >= num > 999:
+        raise NotImplementedError("Numbers must be in range 0...999 inclusive")
     if num == 0:
         return "zero"
     # mypy & pycharm don't like string unpacking
@@ -153,15 +151,15 @@ def written_form(num: Union[int, str]) -> str:
     ones = full_num[2]
     ones_match = ones_dict.get(ones)
     tens_match = tens_dict.get(tens)
-    unique_match = unique_dict.get((tens + ones))
+    unique_match = unique_dict.get(f"{tens}{ones}")
     hundreds_match = ones_dict.get(hundreds)
     written = []
     if hundreds_match:
-        written.append(hundreds_match + "_hundred")
+        written.append(f"{hundreds_match}_hundred")
     if unique_match:
         written.append(unique_match)
     elif tens_match and ones_match:
-        written.append(tens_match + "_" + ones_match)
+        written.append(f"{tens_match}_{ones_match}")
     elif tens_match:
         written.append(tens_match)
     elif ones_match:

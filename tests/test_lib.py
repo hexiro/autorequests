@@ -4,32 +4,45 @@ from autorequests.lib import URL, Parameter
 
 
 def test_url():
-    url_one = URL("https://username:password@httpbin.org:80/cookies;hello=world#section")
-    assert url_one.url == str(url_one) == "https://username:password@httpbin.org:80/cookies;hello=world#section"
-    assert url_one.protocol == "https"
-    assert url_one.username == "username"
-    assert url_one.password == "password"
-    assert url_one.domain == "httpbin.org"
-    assert url_one.domain_name == "httpbin"
-    assert url_one.port == 80
-    assert url_one.path == "/cookies;hello=world"
-    assert url_one.fragment == "section"
-    url_two = URL("https://username:password@www.httpbin.org/")
-    assert url_two.url == str(url_two) == "https://username:password@www.httpbin.org/"
-    assert url_two.username == "username"
-    assert url_two.password == "password"
-    assert url_two.subdomain == "www"
-    assert url_two.domain == "httpbin.org"
-    assert url_two.domain_name == "httpbin"
-    assert url_two.port is None
-    url_three = URL("https://httpbin.org:80/?hello=world")
+    url: URL
+    url = URL("https://username:password@httpbin.org:80/cookies;hello=world#section")
+    assert url.url == str(url) == "https://username:password@httpbin.org:80/cookies;hello=world#section"
+    assert url.protocol == "https"
+    assert url.username == "username"
+    assert url.password == "password"
+    assert url.domain == "httpbin.org"
+    assert url.domain_name == "httpbin"
+    assert url.port == 80
+    assert url.path == "/cookies;hello=world"
+    assert url.fragment == "section"
+    url = URL("https://username:password@www.httpbin.org/")
+    assert url.url == str(url) == "https://username:password@www.httpbin.org/"
+    assert url.username == "username"
+    assert url.password == "password"
+    assert url.subdomain == "www"
+    assert url.domain == "httpbin.org"
+    assert url.domain_name == "httpbin"
+    assert url.port is None
+    url = URL("https://httpbin.org:80/?hello=world")
     # query params removed
-    assert url_three.url == str(url_three) == "https://httpbin.org:80/"
-    assert url_three.username is None
-    assert url_three.password is None
-    assert url_three.domain == "httpbin.org"
-    assert url_three.port == 80
-    assert url_three.query == {"hello": "world"}
+    assert url.url == str(url) == "https://httpbin.org:80/"
+    assert url.username is None
+    assert url.password is None
+    assert url.domain == "httpbin.org"
+    assert url.port == 80
+    assert url.query == {"hello": "world"}
+
+    for x in [
+        "https://httpbin.org/",
+        "https://httpbin.org:443/",
+        "https://username:password@httpbin.org/",
+        "https://www.httpbin.org/",
+        "https://username:password@httpbin.org:443/",
+        "https://username:password@www.httpbin.org/",
+        "https://www.httpbin.org:443/",
+    ]:
+        assert str(URL(x)) == x
+
 
 def test_parameter():
     assert Parameter("a").code == "a"

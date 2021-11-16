@@ -46,6 +46,9 @@ def test_parse_url_encoded():
 
 def test_written_form():
     assert utilities.written_form(0) == "zero"
+    assert utilities.written_form(10) == "ten"
+    assert utilities.written_form(11) == "eleven"
+    assert utilities.written_form(15) == "fifteen"
     assert utilities.written_form(100) == "one_hundred"
     assert utilities.written_form(999) == "nine_hundred_and_ninety_nine"
     assert utilities.written_form(999) == utilities.written_form("999")
