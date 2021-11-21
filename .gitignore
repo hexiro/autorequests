@@ -2,14 +2,15 @@
 .idea/
 .vscode/
 
-# virtual environment
-venv/
-
 # python build stuff
 __pycache__/
 *.py[cod]
 *$py.class
 dist/
 
-# pytest cache
+# cache
+.mypy_cache
 .pytest_cache/
+
+# autorequests input
+*.txt
