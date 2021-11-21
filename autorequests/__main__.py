@@ -107,7 +107,6 @@ class AutoRequests:
     def class_output_path(self, cls: Class):
         if self.output_path.name != cls.name:
             return self.output_path / cls.name
-
         return cls
 
     def methods_from_path(self, path: Path) -> List[Method]:
@@ -146,7 +145,9 @@ class AutoRequests:
         return path.glob("*.txt")
 
     def find_class(self, name: str) -> Optional[Class]:
-        return next((cls for cls in self.classes if cls.name == name), None)
+        for cls in self.classes:
+            if cls.name == name:
+                return cls
 
     def main(self):
         self.write()
@@ -171,7 +172,7 @@ class AutoRequests:
 
             name = path.parent.name
             table.add_column(f"[bold red]{name}[/bold red]")
-            signatures_with_docstrings = [method.signature + "\n" + indent(method.docstring) for method in cls.methods]
+            signatures_with_docstrings = [f"{method.signature}\n{indent(method.docstring)}" for method in cls.methods]
             code.append(Syntax("\n\n".join(signatures_with_docstrings), "python", theme="fruity"))
         table.width = 65 * len(code)
         table.add_row(*code)
@@ -201,8 +202,12 @@ def main():
         print(f"AutoRequests {__version__}")
         return
 
-    input_path = (Path(args.input) if args.input else Path.cwd()).resolve()
-    output_path = (Path(args.output) if args.output else Path.cwd()).resolve()
+    input_path = Path.cwd()
+    output_path = Path.cwd()
+    if args.input:
+        input_path = Path(args.input).resolve()
+    if args.output:
+        input_path = Path(args.output).resolve()
 
     auto_requests = AutoRequests(
         input_path=input_path,
