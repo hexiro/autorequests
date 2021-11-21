@@ -135,6 +135,8 @@ class AutoRequests:
             main_py = cls.folder / "main.py"
             main_py.write_text(data=self.top + cls.code, encoding="utf8", errors="strict")
             self.output_classes[main_py] = cls
+
+    def move_input_files(self):
         for file, method in self.input_methods.items():
             class_name = method.class_name
             if self.output_path.name != class_name:
@@ -144,7 +146,7 @@ class AutoRequests:
     def files_from_path(path: Path) -> Generator[Path, None, None]:
         return path.glob("*.txt")
 
-    def find_class(self, name: str) -> Optional[Class]:
+    def find_class(self, name: str) -> Optional[Class]:  # type: ignore[return]
         for cls in self.classes:
             if cls.name == name:
                 return cls
@@ -152,6 +154,7 @@ class AutoRequests:
     def main(self):
         self.write()
         self.print_results()
+        self.move_input_files()
 
     def print_results(self):
         if not self.output_classes:
