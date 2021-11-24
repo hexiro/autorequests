@@ -68,7 +68,7 @@ def merge_dicts(*dicts: Dict[str, str]) -> Dict[str, str]:
     return {k: v for k, v in dicts[0].items() if all(x.get(k) == v for x in dicts[1:])}
 
 
-def format_dict(data: dict, indent: Optional[int] = 4, variables: List[str] = None) -> str:
+def format_dict(data: dict, indent: Optional[int] = 4, variables: Optional[List[str]] = None) -> str:
     """ format a dictionary """
     variables = variables or []
     # I'm not sure it's possible to pretty-format this with something like

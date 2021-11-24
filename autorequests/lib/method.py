@@ -14,9 +14,9 @@ class Method:
                  method: str,
                  url: URL,
                  body: Body,
-                 parameters: List[Parameter] = None,
-                 headers: Dict[str, str] = None,
-                 cookies: Dict[str, str] = None
+                 parameters: Optional[List[Parameter]] = None,
+                 headers: Optional[Dict[str, str]] = None,
+                 cookies: Optional[Dict[str, str]] = None
                  ):
         # request method (ex. GET, POST)
         self._method: str = method

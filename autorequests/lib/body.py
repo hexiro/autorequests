@@ -1,5 +1,5 @@
 import json
-from typing import Optional, Dict, Tuple, Union
+from typing import Optional, Dict, Tuple
 
 from ..utilities import fix_escape_chars, parse_url_encoded
 
@@ -20,18 +20,17 @@ class Body:
         # 3. content-type
         # 4. extra headers
         # (4th will never be used)
-        self._files: Dict[str, Union[Tuple[str, str], Tuple[str, str, str]]] = {}
+        self._files: Dict[str, Tuple[str, ...]] = {}
 
-        if not body:
-            pass
         # multipart is the most broad and obvious so it goes first
-        elif self.is_multipart_form_data:
-            self._parse_multipart_form_data()
-        elif self.is_json:
-            self._parse_json()
         # urlencoded is the simplest (hardest to check) so it goes last
-        elif self.is_urlencoded:
-            self._parse_urlencoded()
+        if body:
+            if self.is_multipart_form_data:
+                self._parse_multipart_form_data()
+            elif self.is_json:
+                self._parse_json()
+            elif self.is_urlencoded:
+                self._parse_urlencoded()
 
     def __repr__(self):
         base = "<Body"
@@ -116,26 +115,28 @@ class Body:
             item_split = item.split("\n\n", maxsplit=1)
             details = item_split.pop(0)
             content = item_split.pop() if item_split else ""
-            details_dict = dict((line.split(": ", maxsplit=1) for line in details.splitlines() if ": " in line))
+            details_dict: Dict[str, str] = dict(
+                (line.split(": ", maxsplit=1) for line in details.splitlines() if ": " in line))
             content_disposition = details_dict.get("Content-Disposition")
-            content_type = details_dict.get("Content-Type")
             if not content_disposition:
                 continue
             # get filename && name
-            content_disposition_dict = {}
+            content_disposition_dict: Dict[str, str] = {}
             for detail in content_disposition[11:].split("; "):
                 key, value = detail.split("=", maxsplit=1)
                 value = value[1:-1]
                 content_disposition_dict[key] = value
-            name = content_disposition_dict.get("name")
-            filename = content_disposition_dict.get("filename")
 
-            if not name:
-                pass
-            elif not filename:
+            if "name" not in content_disposition_dict:
+                return
+            name = content_disposition_dict["name"]
+            if "filename" not in content_disposition_dict:
                 self._data[name] = content
+                return
             # if it has a filename it's a file
-            elif content_type:
-                self._files[name] = (filename, "...", content_type)
-            else:
+            filename = content_disposition_dict["filename"]
+            if "Content-Type" not in details_dict:
                 self._files[name] = (filename, "...")
+                return
+            content_type = details_dict["Content-Type"]
+            self._files[name] = (filename, "...", content_type)

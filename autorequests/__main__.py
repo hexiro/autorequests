@@ -57,7 +57,9 @@ class AutoRequests:
                 self.methods.extend(self.methods_from_path(cls.folder))
 
         for method in self.methods:
-            cls: Class = self.find_class(method.class_name)  # type: ignore[no-redef]
+            cls: Optional[Class] = self.find_class(method.class_name)  # type: ignore[no-redef]
+            if not cls:
+                continue
             cls.add_method(method)
             method.class_ = cls
 
