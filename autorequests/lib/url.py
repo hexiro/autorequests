@@ -32,7 +32,6 @@ class URL:
         # None means that there is none set explicitly in the url, however
         self._port: Optional[int] = None
 
-        host: str
         self._username, self._password, host = self._credentials(self._network_location)
         self._domain, self._port = self._domain_and_port(host)
 
