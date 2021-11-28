@@ -9,15 +9,15 @@ if TYPE_CHECKING:
 
 
 class Method:
-
-    def __init__(self,
-                 method: str,
-                 url: URL,
-                 body: Body,
-                 parameters: Optional[List[Parameter]] = None,
-                 headers: Optional[Dict[str, str]] = None,
-                 cookies: Optional[Dict[str, str]] = None
-                 ):
+    def __init__(
+        self,
+        method: str,
+        url: URL,
+        body: Body,
+        parameters: Optional[List[Parameter]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        cookies: Optional[Dict[str, str]] = None,
+    ):
         # request method (ex. GET, POST)
         self._method: str = method
         self._url: URL = url
@@ -36,12 +36,14 @@ class Method:
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Method):
             return NotImplemented
-        return (self.method == other.method and
-                self.url == other.url and
-                self.body == other.body and
-                self.local_parameters == other.local_parameters and
-                self.local_headers == other.local_headers and
-                self.local_cookies == other.local_cookies)
+        return (
+            self.method == other.method
+            and self.url == other.url
+            and self.body == other.body
+            and self.local_parameters == other.local_parameters
+            and self.local_headers == other.local_headers
+            and self.local_cookies == other.local_cookies
+        )
 
     def __hash__(self) -> int:
         return hash((self.method, self.url, self.body, *self._parameters))
@@ -88,10 +90,12 @@ class Method:
         if not params or params[0].name != "self":
             params.insert(0, Parameter("self"))
         if self.class_ and self.class_.parameters:
-            for key, value in {**self.url.query,
-                               **self.body.data,
-                               **self.body.json,
-                               **self.body.files}.items():  # type: ignore[arg-type]
+            for key, value in {
+                **self.url.query,
+                **self.body.data,
+                **self.body.json,
+                **self.body.files,
+            }.items():  # type: ignore[arg-type]
                 params.append(Parameter(key, default=value))
         return params
 
@@ -99,13 +103,15 @@ class Method:
     def code(self) -> str:
         # only use session if headers or cookies are set in class
         requests_call = "self.session" if self.class_ and self.class_.use_initializer else "requests"
-        body = f"{self.docstring}\nreturn {requests_call}.{self.method.lower()}(\"{self.url}\""
-        for kwarg, data in {"params": self.url.query,
-                            "data": self.body.data,
-                            "json": self.body.json,
-                            "files": self.body.files,
-                            "headers": self.headers,
-                            "cookies": self.cookies}.items():
+        body = f'{self.docstring}\nreturn {requests_call}.{self.method.lower()}("{self.url}"'
+        for kwarg, data in {
+            "params": self.url.query,
+            "data": self.body.data,
+            "json": self.body.json,
+            "files": self.body.files,
+            "headers": self.headers,
+            "cookies": self.cookies,
+        }.items():
             if not data:
                 continue
             variables = None
@@ -121,12 +127,14 @@ class Method:
     @property
     def docstring(self) -> str:
         details: List[str] = []
-        for kwarg, data in {"param": self.url.query,
-                            "data item": self.body.data,
-                            "json item": self.body.json,
-                            "file": self.body.files,
-                            "header": self.headers,
-                            "cookie": self.cookies}.items():
+        for kwarg, data in {
+            "param": self.url.query,
+            "data item": self.body.data,
+            "json item": self.body.json,
+            "file": self.body.files,
+            "header": self.headers,
+            "cookie": self.cookies,
+        }.items():
             if not data:
                 continue
             len_data = len(data)
@@ -137,10 +145,7 @@ class Method:
         if len(details) > 1:
             details[-1] = f"and {details[-1]}."
         details_string = ", ".join(details) if details else "no data."
-        return ("\"\"\"\n"
-                f"{self.method} {self.url}.\n"
-                f"Contains {details_string}\n"
-                "\"\"\"")
+        return '"""\n' f"{self.method} {self.url}.\n" f"Contains {details_string}\n" '"""'
 
     @cached_property
     def class_name(self) -> str:

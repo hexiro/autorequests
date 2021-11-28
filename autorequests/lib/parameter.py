@@ -7,7 +7,6 @@ _MISSING = object()
 
 
 class Parameter:
-
     def __init__(self, name: str, *, default: Any = _MISSING, typehint: Any = _MISSING):
         self._name: str = name
         self._default: Any = default

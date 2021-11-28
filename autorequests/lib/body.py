@@ -5,7 +5,6 @@ from ..utilities import fix_escape_chars, parse_url_encoded
 
 
 class Body:
-
     def __init__(self, body: Optional[str] = None):
         if body:
             body = fix_escape_chars(body)
@@ -114,9 +113,11 @@ class Body:
             item_split = item.split("\n\n", maxsplit=1)
             details = item_split.pop(0)
             content = item_split.pop() if item_split else ""
-            details_generator: Generator[Tuple[str, str], None, None] = \
-                (tuple(line.split(": ", maxsplit=1)) for line in details.splitlines() if  # type: ignore[misc]
-                 ": " in line)
+            details_generator: Generator[Tuple[str, str], None, None] = (
+                tuple(line.split(": ", maxsplit=1))
+                for line in details.splitlines()
+                if ": " in line  # type: ignore[misc]
+            )
             details_dict: Dict[str, str] = dict(details_generator)
             content_disposition = details_dict.get("Content-Disposition")
             if not content_disposition:

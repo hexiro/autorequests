@@ -15,6 +15,7 @@ PASCAL_CASE_CHARS = string.ascii_letters
 
 # indirect conversions
 
+
 def snake_case(text: str) -> str:
     """
     Tries to parse snake case from an unknown case convention
@@ -56,8 +57,9 @@ def dot_case(text: str) -> str:
 
 # boolean functions
 
+
 def matches_charset(text: str, chars: Iterable) -> bool:
-    """ :returns: true if all characters in text are found in 'chars' iterable"""
+    """:returns: true if all characters in text are found in 'chars' iterable"""
     return all(t in chars for t in text)
 
 
@@ -81,8 +83,7 @@ def is_dot_case(text: str) -> bool:
 
 
 def is_camel_case(text: str) -> bool:
-    return text[0].islower() and not text.islower() and \
-           matches_charset(text, CAMEL_CASE_CHARS)
+    return text[0].islower() and not text.islower() and matches_charset(text, CAMEL_CASE_CHARS)
 
 
 def is_pascal_case(text: str) -> bool:
@@ -90,6 +91,7 @@ def is_pascal_case(text: str) -> bool:
 
 
 # direct conversions
+
 
 def camel_to_snake(text: str) -> str:
     return "".join("_" + t.lower() if t.isupper() else t for t in text).lstrip("_")

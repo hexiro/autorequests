@@ -21,7 +21,7 @@ def fetch_to_method(text: str) -> Optional[Method]:
       "mode": <MODE>
     });
     """
-    signature_split = text.split("\"")
+    signature_split = text.split('"')
 
     if len(signature_split) < 3:
         return
@@ -55,9 +55,10 @@ def fetch_to_method(text: str) -> Optional[Method]:
     method = options.get("method", "GET")
     body = Body(options.get("body"))
 
-    return Method(method=method,
-                  url=url,
-                  body=body,
-                  headers=headers,
-                  cookies=cookies,
-                  )
+    return Method(
+        method=method,
+        url=url,
+        body=body,
+        headers=headers,
+        cookies=cookies,
+    )

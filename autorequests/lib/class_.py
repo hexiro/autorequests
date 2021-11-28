@@ -9,15 +9,17 @@ if TYPE_CHECKING:
 
 # "class" is a reserved keyword so I can't name a file "class"
 
-class Class:
 
-    def __init__(self,
-                 name: str,
-                 output_path: Path,
-                 return_text: bool = False,
-                 no_headers: bool = False,
-                 no_cookies: bool = False,
-                 parameters: bool = False):
+class Class:
+    def __init__(
+        self,
+        name: str,
+        output_path: Path,
+        return_text: bool = False,
+        no_headers: bool = False,
+        no_cookies: bool = False,
+        parameters: bool = False,
+    ):
         self._name: str = name
         self._output_path: Path = output_path
         self._methods: List["Method"] = []
@@ -92,7 +94,7 @@ class Class:
             code += format_dict(self.headers)
             code += ")\n"
         for cookie, value in self.cookies.items():
-            code += f"self.session.cookies.set(\"{cookie}\", \"{value}\")\n"
+            code += f'self.session.cookies.set("{cookie}", "{value}")\n'
         return signature + indent(code)
 
     @property

@@ -26,6 +26,7 @@ __all__ = (
 if sys.version_info >= (3, 8):
     from functools import cached_property
 else:
+
     def cached_property(func: Callable):
         return property(functools.lru_cache()(func))
 
@@ -41,12 +42,12 @@ def indent(data: str, spaces: int = 4) -> str:
 
 
 def is_pythonic_name(text: str) -> bool:
-    """ :returns: true if the string provided is a valid function, class, or var name """
+    """:returns: true if the string provided is a valid function, class, or var name"""
     return text.isidentifier() and not keyword.iskeyword(text)
 
 
 def extract_cookies(headers: Dict[str, str]) -> Dict[str, str]:
-    """ :returns: a dict of cookies based off the 'cookie' header """
+    """:returns: a dict of cookies based off the 'cookie' header"""
     cookie_header = headers.pop("cookie", None)
     if not cookie_header:
         return {}
@@ -58,7 +59,7 @@ def extract_cookies(headers: Dict[str, str]) -> Dict[str, str]:
 
 
 def merge_dicts(*dicts: Dict[str, str]) -> Dict[str, str]:
-    """ :returns: a dictionary with the items that all of the dicts in the list share """
+    """:returns: a dictionary with the items that all of the dicts in the list share"""
     # if there is 0 or 1 dicts, there will be no matches
     if len(dicts) <= 1:
         return {}
@@ -69,7 +70,7 @@ def merge_dicts(*dicts: Dict[str, str]) -> Dict[str, str]:
 
 
 def format_dict(data: dict, indent: Optional[int] = 4, variables: Optional[List[str]] = None) -> str:
-    """ format a dictionary """
+    """format a dictionary"""
     variables = variables or []
     # I'm not sure it's possible to pretty-format this with something like
     # pprint, but if it is possible LMK!
@@ -82,51 +83,57 @@ def format_dict(data: dict, indent: Optional[int] = 4, variables: Optional[List[
     # parse when key names are the same as value
     # leading ": " means that it will replace the value and not the key
     for var in variables:
-        formatted = formatted.replace(f": \"{var}\"", f": {var}")
+        formatted = formatted.replace(f': "{var}"', f": {var}")
     return formatted
 
 
 def parse_url_encoded(data: str) -> Dict[str, str]:
-    """ parses application/x-www-form-urlencoded and query string params """
+    """parses application/x-www-form-urlencoded and query string params"""
     return dict(urllib.parse.parse_qsl(data, keep_blank_values=True))
 
 
 # kinda screwed if english changes
 # if english has progressed please make a pr :pray:
 
-ones_dict = {"1": "one",
-             "2": "two",
-             "3": "three",
-             "4": "four",
-             "5": "five",
-             "6": "six",
-             "7": "seven",
-             "8": "eight",
-             "9": "nine"}
+ones_dict = {
+    "1": "one",
+    "2": "two",
+    "3": "three",
+    "4": "four",
+    "5": "five",
+    "6": "six",
+    "7": "seven",
+    "8": "eight",
+    "9": "nine",
+}
 
-tens_dict = {"1": "ten",
-             "2": "twenty",
-             "3": "thirty",
-             "4": "forty",
-             "5": "fifty",
-             "6": "sixty",
-             "7": "seventy",
-             "8": "eighty",
-             "9": "ninety"}
+tens_dict = {
+    "1": "ten",
+    "2": "twenty",
+    "3": "thirty",
+    "4": "forty",
+    "5": "fifty",
+    "6": "sixty",
+    "7": "seventy",
+    "8": "eighty",
+    "9": "ninety",
+}
 
-unique_dict = {"11": "eleven",
-               "12": "twelve",
-               "13": "thirteen",
-               "14": "fourteen",
-               "15": "fifteen",
-               "16": "sixteen",
-               "17": "seventeen",
-               "18": "eighteen",
-               "19": "nineteen"}
+unique_dict = {
+    "11": "eleven",
+    "12": "twelve",
+    "13": "thirteen",
+    "14": "fourteen",
+    "15": "fifteen",
+    "16": "sixteen",
+    "17": "seventeen",
+    "18": "eighteen",
+    "19": "nineteen",
+}
 
 
 def written_form(num: Union[int, str]) -> str:
-    """ :returns: written form of an integer 0-999, or for the leading integer of a string """
+    """:returns: written form of an integer 0-999, or for the leading integer of a string"""
     if isinstance(num, str):
         # if string is an integer
         if num.isdigit():
@@ -138,7 +145,7 @@ def written_form(num: Union[int, str]) -> str:
         # if str starts with integer
         initial_num = match.group(0)
         written_num = written_form(int(initial_num))
-        rest = num[match.end():]
+        rest = num[match.end() :]
         return f"{written_num}_{rest}"
     if 0 >= num > 999:
         raise NotImplementedError("Numbers must be in range 0...999 inclusive")
@@ -168,7 +175,7 @@ def written_form(num: Union[int, str]) -> str:
 
 
 def unique_name(name: str, other_names: List[str]) -> str:
-    """ :returns a unique name based on the name passed and the taken names """
+    """:returns a unique name based on the name passed and the taken names"""
     matches = [item for item in other_names if item.startswith(name)]
     if not any(matches):
         return name
@@ -186,6 +193,4 @@ def fix_escape_chars(text: str) -> str:
     if there is a more logical reason to use something else LMK!
     (ex. "\\t" --> "\t")
     """
-    return (text
-            .encode(encoding="utf8", errors="ignore")
-            .decode(encoding="unicode_escape", errors="replace"))
+    return text.encode(encoding="utf8", errors="ignore").decode(encoding="unicode_escape", errors="replace")

@@ -43,18 +43,13 @@ def powershell_to_method(text: str) -> Optional[Method]:
     parse_headers(args, headers)
     method = headers.pop("method", args.get("Method", "GET"))
 
-    return Method(method=method,
-                  url=url,
-                  headers=headers,
-                  cookies=cookies,
-                  body=body
-                  )
+    return Method(method=method, url=url, headers=headers, cookies=cookies, body=body)
 
 
 def parse_headers(args: Dict[str, str], headers: Dict[str, str]) -> None:
     headers_string = args["Headers"][3:-2]
-    for header in headers_string.split("\" \""):
-        key, value = header.split("\"=\"", maxsplit=1)
+    for header in headers_string.split('" "'):
+        key, value = header.split('"="', maxsplit=1)
         headers[key] = fix_escape_chars(value)
 
 
@@ -65,7 +60,7 @@ def parse_session(cookies: Dict[str, str], headers: Dict[str, str], lines: List[
         line = lines.pop(0)
         if line.startswith("$session.UserAgent"):
             # $session.UserAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en) AppleWebKit (KHTML, like Gecko)"
-            headers["User-Agent"] = line.split("\"")[1]
+            headers["User-Agent"] = line.split('"')[1]
         elif line.startswith("$session.Cookies.Add"):
             # $session.Cookies.Add((New-Object System.Net.Cookie("hello-from", "autorequests", "/", "httpbin.org")))
             # System.Net.Cookie("hello-from", "autorequests", "/", "httpbin.org")
@@ -75,7 +70,7 @@ def parse_session(cookies: Dict[str, str], headers: Dict[str, str], lines: List[
             left_paren = line.rfind("(") + 1
             right_paren = line.find(")")
             # ["hello-from", "autorequests", "/", "httpbin.org"]
-            strings = [x.strip("\"") for x in line[left_paren:right_paren].split(", ")]
+            strings = [x.strip('"') for x in line[left_paren:right_paren].split(", ")]
             name, value = strings[:2]
             cookies[name] = value
 
@@ -99,7 +94,7 @@ def parse_args(line: str) -> Dict[str, str]:
 
     for key, value in args.items():
         value = value.lstrip()
-        if value.startswith("\"") and value.endswith("\""):
+        if value.startswith('"') and value.endswith('"'):
             value = value[1:-1]
         args[key] = value
 

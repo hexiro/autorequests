@@ -5,7 +5,6 @@ from ..utilities import parse_url_encoded
 
 
 class URL:
-
     def __init__(self, url: str):
         """
         Uniform Resource Locator (URL) as per
