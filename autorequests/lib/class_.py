@@ -29,43 +29,43 @@ class Class:
         self._no_cookies: bool = no_cookies
         self._parameters: bool = parameters
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Class {self.name}>"
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
 
     @property
-    def output_path(self):
+    def output_path(self) -> Path:
         return self._output_path
 
     @property
-    def methods(self):
+    def methods(self) -> List["Method"]:
         return self._methods
 
     @property
-    def headers(self):
+    def headers(self) -> Dict[str, str]:
         return self._headers
 
     @property
-    def cookies(self):
+    def cookies(self) -> Dict[str, str]:
         return self._cookies
 
     @property
-    def return_text(self):
+    def return_text(self) -> bool:
         return self._return_text
 
     @property
-    def parameters(self):
+    def parameters(self) -> bool:
         return self._parameters
 
     @property
-    def no_headers(self):
+    def no_headers(self) -> bool:
         return self._no_headers
 
     @property
-    def no_cookies(self):
+    def no_cookies(self) -> bool:
         return self._no_cookies
 
     @cached_property
@@ -76,15 +76,15 @@ class Class:
         return self.output_path
 
     @property
-    def file(self):
+    def file(self) -> Path:
         return self.folder / "main.py"
 
     @property
-    def signature(self):
+    def signature(self) -> str:
         return f"class {self.name}:"
 
     @property
-    def initializer(self):
+    def initializer(self) -> str:
         signature = "def __init__(self):\n"
         code = "self.session = requests.Session()\n"
         if self.headers:
@@ -100,19 +100,16 @@ class Class:
         return bool(self.headers or self.cookies)
 
     @property
-    def code(self):
-        code = self.signature
+    def code(self) -> str:
         # not actually two newlines; adds \n to end of previous line
+        code = self.signature + "\n\n"
         if self.use_initializer:
-            code += "\n\n"
             code += indent(self.initializer)
         for method in self.methods:
-            code += "\n\n"
             code += indent(method.code)
-        code += "\n"
-        return code
+        return code + "\n"
 
-    def add_method(self, method: "Method"):
+    def add_method(self, method: "Method") -> None:
         method.class_ = self
         method.ensure_unique_name()
         self._methods.append(method)

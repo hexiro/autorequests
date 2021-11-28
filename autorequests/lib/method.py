@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List, Dict, Optional
+from typing import TYPE_CHECKING, List, Dict, Optional, Any
 
 from . import URL, Body, Parameter
 from ..utilities import format_dict, indent, is_pythonic_name, cached_property, unique_name, written_form
@@ -33,7 +33,7 @@ class Method:
     def __repr__(self) -> str:
         return f"<{self.signature}>"
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Method):
             return NotImplemented
         return (self.method == other.method and
@@ -43,7 +43,7 @@ class Method:
                 self.local_headers == other.local_headers and
                 self.local_cookies == other.local_cookies)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self.method, self.url, self.body, *self._parameters))
 
     @property
@@ -51,7 +51,7 @@ class Method:
         return self._name
 
     @name.setter
-    def name(self, new_name: str):
+    def name(self, new_name: str) -> None:
         self._name = new_name
 
     @property
@@ -75,7 +75,7 @@ class Method:
         return self._class
 
     @class_.setter
-    def class_(self, new_class: "Class"):
+    def class_(self, new_class: "Class") -> None:
         self._class = new_class
 
     @property
@@ -91,7 +91,7 @@ class Method:
             for key, value in {**self.url.query,
                                **self.body.data,
                                **self.body.json,
-                               **self.body.files}.items():
+                               **self.body.files}.items():  # type: ignore[arg-type]
                 params.append(Parameter(key, default=value))
         return params
 
@@ -181,7 +181,7 @@ class Method:
             return self._cookies
         return {c: v for c, v in self._cookies.items() if c not in self.class_.cookies}
 
-    def ensure_unique_name(self):
+    def ensure_unique_name(self) -> None:
         if not self._class:
             return
         other_methods = self._class.methods
@@ -193,8 +193,8 @@ class Method:
             return
         self.name = unique_name(self.name, [method.name for method in other_methods])
 
-    def remove_headers(self):
+    def remove_headers(self) -> None:
         self._headers = {}
 
-    def remove_cookies(self):
+    def remove_cookies(self) -> None:
         self._cookies = {}

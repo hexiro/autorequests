@@ -51,14 +51,14 @@ def powershell_to_method(text: str) -> Optional[Method]:
                   )
 
 
-def parse_headers(args: Dict[str, str], headers: Dict[str, str]):
+def parse_headers(args: Dict[str, str], headers: Dict[str, str]) -> None:
     headers_string = args["Headers"][3:-2]
     for header in headers_string.split("\" \""):
         key, value = header.split("\"=\"", maxsplit=1)
         headers[key] = fix_escape_chars(value)
 
 
-def parse_session(cookies: Dict[str, str], headers: Dict[str, str], lines: List[str]):
+def parse_session(cookies: Dict[str, str], headers: Dict[str, str], lines: List[str]) -> None:
     if not lines:
         return
     while lines[0].startswith("$session"):

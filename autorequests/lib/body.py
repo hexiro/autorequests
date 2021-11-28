@@ -1,5 +1,5 @@
 import json
-from typing import Optional, Dict, Tuple
+from typing import Optional, Dict, Tuple, Any, Generator
 
 from ..utilities import fix_escape_chars, parse_url_encoded
 
@@ -11,7 +11,7 @@ class Body:
             body = fix_escape_chars(body)
             # normalize newlines
             body = "\n".join(body.splitlines())
-        self._body: Optional[str] = body
+        self._body: str = body or ""
         self._data: Dict[str, str] = {}
         self._json: dict = {}
         # tuple of four items
@@ -24,7 +24,7 @@ class Body:
 
         # multipart is the most broad and obvious so it goes first
         # urlencoded is the simplest (hardest to check) so it goes last
-        if body:
+        if self.body:
             if self.is_multipart_form_data:
                 self._parse_multipart_form_data()
             elif self.is_json:
@@ -32,7 +32,7 @@ class Body:
             elif self.is_urlencoded:
                 self._parse_urlencoded()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         base = "<Body"
         if self.body:
             if self.data:
@@ -45,16 +45,16 @@ class Body:
             return "<Body data=None json=None files=None>"
         return base + ">"
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Body):
             return NotImplemented
         return self.body == other.body
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.body)
 
     @property
-    def body(self) -> Optional[str]:
+    def body(self) -> str:
         return self._body
 
     @property
@@ -66,7 +66,7 @@ class Body:
         return self._json
 
     @property
-    def files(self):
+    def files(self) -> Dict[str, Tuple[str, ...]]:
         return self._files
 
     @property
@@ -87,18 +87,18 @@ class Body:
 
     @property
     def is_multipart_form_data(self) -> bool:
-        return "------WebKitFormBoundary" in self.body if self.body else False
+        return "------WebKitFormBoundary" in self.body
 
-    def _parse_json(self):
+    def _parse_json(self) -> None:
         # sometimes body is "null" but we want our json to be a dict and not None
-        json_ = json.loads(self.body)
+        json_: Optional[dict] = json.loads(self.body)
         if json_ is not None:
             self._json.update(json_)
 
-    def _parse_urlencoded(self):
+    def _parse_urlencoded(self) -> None:
         self._data.update(parse_url_encoded(self.body))
 
-    def _parse_multipart_form_data(self):
+    def _parse_multipart_form_data(self) -> None:
         # let's all take a moment and pray for whoever has to refactor this (me probably)
         try:
             boundary, body = self.body.split("\n", maxsplit=1)
@@ -111,12 +111,13 @@ class Body:
             if not item:
                 continue
             # get two main details
-            # try:
             item_split = item.split("\n\n", maxsplit=1)
             details = item_split.pop(0)
             content = item_split.pop() if item_split else ""
-            details_dict: Dict[str, str] = dict(
-                (line.split(": ", maxsplit=1) for line in details.splitlines() if ": " in line))
+            details_generator: Generator[Tuple[str, str], None, None] = \
+                (tuple(line.split(": ", maxsplit=1)) for line in details.splitlines() if  # type: ignore[misc]
+                 ": " in line)
+            details_dict: Dict[str, str] = dict(details_generator)
             content_disposition = details_dict.get("Content-Disposition")
             if not content_disposition:
                 continue

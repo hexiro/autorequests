@@ -1,5 +1,5 @@
 import urllib.parse
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union, Any
 
 from ..utilities import parse_url_encoded
 
@@ -42,35 +42,36 @@ class URL:
         # domain name
         self._domain_name = self._domain.split(".")[0]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<URL {self.url}>"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.url
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, URL):
             return NotImplemented
         return self.url == other.url
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.url)
 
     @staticmethod
-    def _domain_and_port(host) -> Tuple[str, Optional[int]]:
-        if ":" in host:
-            domain, port = host.split(":", maxsplit=1)
-            port = int(port) if port.isdigit() else None
-            return domain, port
-        return host, None
+    def _domain_and_port(host: str) -> Tuple[str, Optional[int]]:
+        if ":" not in host:
+            return host, None
+        split = host.split(":", maxsplit=1)
+        domain = split[0]
+        port = int(split[1]) if split[1].isdigit() else None
+        return domain, port
 
     @staticmethod
-    def _credentials(network_location) -> Union[Tuple[Optional[str], Optional[str], str]]:
-        if "@" in network_location:
-            credentials, host = network_location.split("@", maxsplit=1)
-            username, password = credentials.split(":", maxsplit=1)
-            return username, password, host
-        return None, None, network_location
+    def _credentials(network_location: str) -> Union[Tuple[Optional[str], Optional[str], str]]:
+        if "@" not in network_location:
+            return None, None, network_location
+        credentials, host = network_location.split("@", maxsplit=1)
+        username, password = credentials.split(":", maxsplit=1)
+        return username, password, host
 
     @property
     def url(self) -> str:

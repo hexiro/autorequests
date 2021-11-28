@@ -3,7 +3,7 @@ from typing import Union
 from autorequests.lib import URL, Parameter
 
 
-def test_url():
+def test_url() -> None:
     url: URL
     url = URL("https://username:password@httpbin.org:80/cookies;hello=world#section")
     assert url.url == str(url) == "https://username:password@httpbin.org:80/cookies;hello=world#section"
@@ -44,7 +44,7 @@ def test_url():
         assert str(URL(x)) == x
 
 
-def test_parameter():
+def test_parameter() -> None:
     assert Parameter("a").code == "a"
     assert Parameter("a", typehint=str).code == "a: str"
     assert Parameter("a", default=None).code == "a=None"

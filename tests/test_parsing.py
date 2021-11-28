@@ -4,11 +4,11 @@ from .common.fetch_examples import fetch_examples
 from .common.powershell_examples import powershell_examples
 
 
-def test_parse_powershell_to_method():
+def test_parse_powershell_to_method() -> None:
     for example, method in powershell_examples.items():
         assert powershell_to_method(example) == method
 
 
-def test_parse_fetch_to_method():
+def test_parse_fetch_to_method() -> None:
     for example, method in fetch_examples.items():
         assert fetch_to_method(example) == method

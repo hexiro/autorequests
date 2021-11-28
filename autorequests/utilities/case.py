@@ -15,7 +15,7 @@ PASCAL_CASE_CHARS = string.ascii_letters
 
 # indirect conversions
 
-def snake_case(text: str):
+def snake_case(text: str) -> str:
     """
     Tries to parse snake case from an unknown case convention
     """
@@ -38,19 +38,19 @@ def snake_case(text: str):
     return fix_snake_case_regexp.sub("_", snaked_text)
 
 
-def camel_case(text: str):
+def camel_case(text: str) -> str:
     return snake_to_camel(snake_case(text))
 
 
-def pascal_case(text: str):
+def pascal_case(text: str) -> str:
     return snake_to_pascal(snake_case(text))
 
 
-def kebab_case(text: str):
+def kebab_case(text: str) -> str:
     return snake_to_kebab(snake_case(text))
 
 
-def dot_case(text: str):
+def dot_case(text: str) -> str:
     return snake_to_dot(snake_case(text))
 
 
