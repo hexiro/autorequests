@@ -47,6 +47,13 @@ build-backend = "poetry.core.masonry.api"
 # mypy wants 'return None' not 'return'
 disable_error_code = "return-value"
 show_error_codes = true
+no_implicit_optional = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+implicit_reexport = false
 
 [tool.pytest.ini_options]
 addopts = "--mypy -vv"
