@@ -145,7 +145,7 @@ class Method:
         if len(details) > 1:
             details[-1] = f"and {details[-1]}."
         details_string = ", ".join(details) if details else "no data."
-        return '"""\n' f"{self.method} {self.url}.\n" f"Contains {details_string}\n" '"""'
+        return f'"""\n{self.method} {self.url}.\nContains {details_string}\n"""'
 
     @cached_property
     def class_name(self) -> str:
