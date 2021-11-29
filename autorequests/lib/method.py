@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List, Dict, Optional, Any
+from typing import TYPE_CHECKING, List, Dict, Optional, Any, Union, Tuple
 
 from . import URL, Body, Parameter
 from ..utilities import format_dict, indent, is_pythonic_name, cached_property, unique_name, written_form
@@ -90,12 +90,13 @@ class Method:
         if not params or params[0].name != "self":
             params.insert(0, Parameter("self"))
         if self.class_ and self.class_.parameters:
-            for key, value in {
+            data: Dict[str, Union[str, Tuple[str, ...]]] = {
                 **self.url.query,
                 **self.body.data,
                 **self.body.json,
                 **self.body.files,
-            }.items():  # type: ignore[arg-type]
+            }
+            for key, value in data.items():
                 params.append(Parameter(key, default=value))
         return params
 

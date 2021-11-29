@@ -113,12 +113,7 @@ class Body:
             item_split = item.split("\n\n", maxsplit=1)
             details = item_split.pop(0)
             content = item_split.pop() if item_split else ""
-            details_generator: Generator[Tuple[str, str], None, None] = (
-                tuple(line.split(": ", maxsplit=1))
-                for line in details.splitlines()
-                if ": " in line  # type: ignore[misc]
-            )
-            details_dict: Dict[str, str] = dict(details_generator)
+            details_dict = self.details_dict(details)
             content_disposition = details_dict.get("Content-Disposition")
             if not content_disposition:
                 continue
@@ -142,3 +137,13 @@ class Body:
                 return
             content_type = details_dict["Content-Type"]
             self._files[name] = (filename, "...", content_type)
+
+    @staticmethod
+    def details_dict(details: str) -> Dict[str, str]:
+        details_dict: Dict[str, str] = {}
+        for line in details.splitlines():
+            if ": " not in line:
+                continue
+            key, value = line.split(": ", maxsplit=1)
+            details_dict[key] = value
+        return details_dict
