@@ -51,7 +51,7 @@ class Parameter:
         # built-in types
         if hasattr(self._typehint, "__name__"):
             #  __name__ is type str not Any
-            return self._typehint.__name__  # type: ignore[no-any-return]
+            return self._typehint.__name__
         # also hit in py 3.6
         return str(self._typehint)
 
