@@ -27,7 +27,7 @@ if sys.version_info >= (3, 8):
     from functools import cached_property
 else:
 
-    def cached_property(func: Callable):
+    def cached_property(func: Callable) -> property:
         return property(functools.lru_cache()(func))
 
 
