@@ -123,7 +123,7 @@ class Method:
             body += f", {kwarg}=" + format_dict(data, variables=variables)
         body += ")."
         body += "text" if self.class_ and self.class_.return_text else "json()"
-        return self.signature + "\n" + indent(body)
+        return f"{self.signature}\n{indent(body)}\n\n\n"
 
     @property
     def docstring(self) -> str:

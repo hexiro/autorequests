@@ -95,7 +95,7 @@ class Class:
             code += ")\n"
         for cookie, value in self.cookies.items():
             code += f'self.session.cookies.set("{cookie}", "{value}")\n'
-        return signature + indent(code)
+        return f"{signature}{indent(code)}\n\n\n"
 
     @property
     def use_initializer(self) -> bool:

@@ -31,7 +31,6 @@ class AutoRequests:
     ):
 
         # params
-
         self._return_text: bool = return_text
         self._no_headers: bool = no_headers
         self._no_cookies: bool = no_cookies
