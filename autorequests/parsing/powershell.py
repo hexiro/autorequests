@@ -60,7 +60,7 @@ def parse_session(cookies: Dict[str, str], headers: Dict[str, str], lines: List[
         line = lines.pop(0)
         if line.startswith("$session.UserAgent"):
             # $session.UserAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en) AppleWebKit (KHTML, like Gecko)"
-            headers["User-Agent"] = line.split('"')[1]
+            headers["user-agent"] = line.split('"')[1]
         elif line.startswith("$session.Cookies.Add"):
             # $session.Cookies.Add((New-Object System.Net.Cookie("hello-from", "autorequests", "/", "httpbin.org")))
             # System.Net.Cookie("hello-from", "autorequests", "/", "httpbin.org")
