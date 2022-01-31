@@ -93,3 +93,5 @@ see [CONTRIBUTING.md](./CONTRIBUTING.md)
 * better unit test coverage
 * more cli options
 * better cli output
+* better input files
+* AST / better code generation
