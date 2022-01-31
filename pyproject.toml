@@ -32,7 +32,7 @@ rich = "^10.0.0"
 
 [tool.poetry.dev-dependencies]
 requests = "^2.26.0"
-black = { version = "^21.10b0", python = "^3.6.2" }
+black = { version = "^21.10b0", python = "^3.7" }
 mypy = "^0.910"
 pytest = "^6.0.0"
 pytest-black = "^0.3.12"
