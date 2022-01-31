@@ -2,7 +2,7 @@ from typing import Dict
 
 from autorequests.lib import Method, URL, Body
 
-fetch_examples: Dict[str, Method] = {}
+fetch_samples: Dict[str, Method] = {}
 
 fetch_example_one = """fetch("https://httpbin.org/cookies", {
   "headers": {
@@ -23,7 +23,7 @@ fetch_example_one = """fetch("https://httpbin.org/cookies", {
   "mode": "cors"
 });"""
 
-fetch_examples[fetch_example_one] = Method(
+fetch_samples[fetch_example_one] = Method(
     method="GET",
     url=URL("https://httpbin.org/cookies"),
     body=Body(),

@@ -2,7 +2,7 @@ from typing import Dict
 
 from autorequests.lib import Method, URL, Body
 
-powershell_examples: Dict[str, Method] = {}
+powershell_samples: Dict[str, Method] = {}
 
 powershell_example_one = """$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
 $session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36 OPR/80.0.4170.48"
@@ -26,7 +26,7 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://httpbin.org/cookies" `
   "accept-language"="en-US,en;q=0.9"
 }"""
 
-powershell_examples[powershell_example_one] = Method(
+powershell_samples[powershell_example_one] = Method(
     method="GET",
     body=Body(),
     url=URL("https://httpbin.org/cookies"),
@@ -46,7 +46,7 @@ powershell_examples[powershell_example_one] = Method(
         "referer": "https://httpbin.org/",
         "accept-encoding": "gzip, deflate, br",
         "accept-language": "en-US,en;q=0.9",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36 OPR/80.0.4170.48",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36 OPR/80.0.4170.48",
     },
 )
 
@@ -75,7 +75,7 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://dev-api.impb.in/v1/document" \
 -ContentType "application/json" \
 -Body "{\"content\":\"yeah\",\"settings\":{\"longUrls\":false,\"shortUrls\":false,\"instantDelete\":false,\"encrypted\":false,\"imageEmbed\":false,\"expiration\":14,\"public\":false,\"editors\":[],\"language\":\"python\"}}"'''
 
-powershell_examples[powershell_example_two] = Method(
+powershell_samples[powershell_example_two] = Method(
     method="POST",
     url=URL("https://dev-api.impb.in/v1/document"),
     body=Body(
@@ -98,6 +98,6 @@ powershell_examples[powershell_example_two] = Method(
         "referer": "https://dev.impb.in/",
         "accept-encoding": "gzip, deflate, br",
         "accept-language": "en-US,en;q=0.9",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36 OPR/80.0.4170.48",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36 OPR/80.0.4170.48",
     },
 )
