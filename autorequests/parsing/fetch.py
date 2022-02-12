@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import json
-from typing import Optional
 
 from ..lib import Method, URL, Body
 from ..utilities import extract_cookies
@@ -7,7 +8,7 @@ from ..utilities import extract_cookies
 __all__ = ("fetch_to_method",)
 
 
-def fetch_to_method(text: str) -> Optional[Method]:
+def fetch_to_method(text: str) -> Method | None:
     """
     Parses a file that follows this format:
     (with some being optional)

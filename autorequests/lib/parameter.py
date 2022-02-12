@@ -1,6 +1,8 @@
-from typing import Any, Optional
+from __future__ import annotations
 
-# called a sentinel. more can be read here:
+from typing import Any
+
+# sentinel. more can be read here:
 # https://www.python.org/dev/peps/pep-0661/
 # https://en.wikipedia.org/wiki/Sentinel_value
 _MISSING = object()
@@ -41,7 +43,7 @@ class Parameter:
         return self._name
 
     @property
-    def typehint(self) -> Optional[str]:
+    def typehint(self) -> str | None:
         if self._typehint is _MISSING:
             return
         # typing module
@@ -56,7 +58,7 @@ class Parameter:
         return str(self._typehint)
 
     @property
-    def default(self) -> Optional[str]:
+    def default(self) -> str | None:
         if self._default is _MISSING:
             return
         return repr(self._default)

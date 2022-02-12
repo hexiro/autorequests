@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import functools
 import json
 import keyword
 import sys
 import urllib.parse
-from typing import List, Dict, Optional, Callable, Union
+from typing import Callable
 
 from .regexp import leading_integer_regexp
 
@@ -46,7 +48,7 @@ def is_pythonic_name(text: str) -> bool:
     return text.isidentifier() and not keyword.iskeyword(text)
 
 
-def extract_cookies(headers: Dict[str, str]) -> Dict[str, str]:
+def extract_cookies(headers: dict[str, str]) -> dict[str, str]:
     """:returns: a dict of cookies based off the 'cookie' header"""
     cookie_header = headers.pop("cookie", None)
     if not cookie_header:
@@ -58,7 +60,7 @@ def extract_cookies(headers: Dict[str, str]) -> Dict[str, str]:
     return cookie_dict
 
 
-def merge_dicts(*dicts: Dict[str, str]) -> Dict[str, str]:
+def merge_dicts(*dicts: dict[str, str]) -> dict[str, str]:
     """:returns: a dictionary with the items that all of the dicts in the list share"""
     # if there is 0 or 1 dicts, there will be no matches
     if len(dicts) <= 1:
@@ -69,7 +71,7 @@ def merge_dicts(*dicts: Dict[str, str]) -> Dict[str, str]:
     return {k: v for k, v in dicts[0].items() if all(x.get(k) == v for x in dicts[1:])}
 
 
-def format_dict(data: dict, indent: Optional[int] = 4, variables: Optional[List[str]] = None) -> str:
+def format_dict(data: dict, indent: int | None = 4, variables: list[str] | None = None) -> str:
     """format a dictionary"""
     variables = variables or []
     # I'm not sure it's possible to pretty-format this with something like
@@ -87,7 +89,7 @@ def format_dict(data: dict, indent: Optional[int] = 4, variables: Optional[List[
     return formatted
 
 
-def parse_url_encoded(data: str) -> Dict[str, str]:
+def parse_url_encoded(data: str) -> dict[str, str]:
     """parses application/x-www-form-urlencoded and query string params"""
     return dict(urllib.parse.parse_qsl(data, keep_blank_values=True))
 
@@ -132,7 +134,7 @@ unique_dict = {
 }
 
 
-def written_form(num: Union[int, str]) -> str:
+def written_form(num: int | str) -> str:
     """:returns: written form of an integer 0-999, or for the leading integer of a string"""
     if isinstance(num, str):
         # if string is an integer
@@ -148,7 +150,7 @@ def written_form(num: Union[int, str]) -> str:
         rest = num[match.end() :]
         return f"{written_num}_{rest}"
     if 0 >= num > 999:
-        raise NotImplementedError("Numbers must be in range 0...999 inclusive")
+        raise NotImplementedError("Numbers must be in range [0-999]")
     if num == 0:
         return "zero"
     # mypy & pycharm don't like string unpacking
@@ -174,7 +176,7 @@ def written_form(num: Union[int, str]) -> str:
     return "_and_".join(written)
 
 
-def unique_name(name: str, other_names: List[str]) -> str:
+def unique_name(name: str, other_names: list[str]) -> str:
     """:returns a unique name based on the name passed and the taken names"""
     matches = [item for item in other_names if item.startswith(name)]
     if not any(matches):

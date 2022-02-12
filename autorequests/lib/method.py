@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING, List, Dict, Optional, Any, Union, Tuple
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 from . import URL, Body, Parameter
 from ..utilities import format_dict, indent, is_pythonic_name, cached_property, unique_name, written_form
@@ -14,21 +16,20 @@ class Method:
         method: str,
         url: URL,
         body: Body,
-        parameters: Optional[List[Parameter]] = None,
-        headers: Optional[Dict[str, str]] = None,
-        cookies: Optional[Dict[str, str]] = None,
+        parameters: list[Parameter] | None = None,
+        headers: dict[str, str] | None = None,
+        cookies: dict[str, str] | None = None,
     ):
         # request method (ex. GET, POST)
         self._method: str = method
         self._url: URL = url
         # request body -- not to be confused with method body
         self._body: Body = body
-        # must append to `parameters` property, and not __parameters
-        self._parameters: List[Parameter] = parameters or []
-        self._headers: Dict[str, str] = headers or {}
-        self._cookies: Dict[str, str] = cookies or {}
+        self._parameters: list[Parameter] = parameters or []
+        self._headers: dict[str, str] = headers or {}
+        self._cookies: dict[str, str] = cookies or {}
         self._name: str = self.default_name
-        self._class: Optional["Class"] = None
+        self._class: Class | None = None
 
     def __repr__(self) -> str:
         return f"<{self.signature}>"
@@ -73,24 +74,24 @@ class Method:
         return f"def {self.name}({', '.join(param.code for param in self.parameters)}):"
 
     @property
-    def class_(self) -> Optional["Class"]:
+    def class_(self) -> Class | None:
         return self._class
 
     @class_.setter
-    def class_(self, new_class: "Class") -> None:
+    def class_(self, new_class: Class) -> None:
         self._class = new_class
 
     @property
-    def local_parameters(self) -> List[Parameter]:
+    def local_parameters(self) -> list[Parameter]:
         return self._parameters
 
     @cached_property
-    def parameters(self) -> List[Parameter]:
+    def parameters(self) -> list[Parameter]:
         params = self._parameters
         if not params or params[0].name != "self":
             params.insert(0, Parameter("self"))
         if self.class_ and self.class_.parameters:
-            data: Dict[str, Union[str, Tuple[str, ...]]] = {
+            data: dict[str, str | tuple[str, ...]] = {
                 **self.url.query,
                 **self.body.data,
                 **self.body.json,
@@ -127,7 +128,7 @@ class Method:
 
     @property
     def docstring(self) -> str:
-        details: List[str] = []
+        details: list[str] = []
         for kwarg, data in {
             "param": self.url.query,
             "data item": self.body.data,
@@ -168,21 +169,21 @@ class Method:
         return snake_case(split[-1])
 
     @property
-    def local_headers(self) -> Dict[str, str]:
+    def local_headers(self) -> dict[str, str]:
         return self._headers
 
     @property
-    def headers(self) -> Dict[str, str]:
+    def headers(self) -> dict[str, str]:
         if not self._class:
             return self._headers
         return {h: v for h, v in self._headers.items() if h not in self._class.headers}
 
     @property
-    def local_cookies(self) -> Dict[str, str]:
+    def local_cookies(self) -> dict[str, str]:
         return self._cookies
 
     @property
-    def cookies(self) -> Dict[str, str]:
+    def cookies(self) -> dict[str, str]:
         if not self.class_:
             return self._cookies
         return {c: v for c, v in self._cookies.items() if c not in self.class_.cookies}

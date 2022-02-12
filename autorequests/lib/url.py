@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import urllib.parse
-from typing import Dict, Optional, Tuple, Union, Any
+from typing import Any
 
 from ..utilities import parse_url_encoded
 
@@ -15,21 +17,21 @@ class URL:
         parsed = urllib.parse.urlsplit(url)
         self._protocol: str = parsed.scheme
         self._path: str = parsed.path
-        self._query: Dict[str, str] = parse_url_encoded(parsed.query)
+        self._query: dict[str, str] = parse_url_encoded(parsed.query)
         self._fragment: str = parsed.fragment
 
         # <user>:<password>@<host>:<port>
         # https://www.rfc-editor.org/rfc/rfc1738#section-3.1
         self._network_location: str = parsed.netloc
 
-        self._username: Optional[str] = None
-        self._password: Optional[str] = None
+        self._username: str | None = None
+        self._password: str | None = None
         self._domain: str
         self._domain_name: str
-        self._subdomain: Optional[str] = None
+        self._subdomain: str | None = None
         # it would also make sense to default this to 80
         # None means that there is none set explicitly in the url, however
-        self._port: Optional[int] = None
+        self._port: int | None = None
 
         self._username, self._password, host = self._credentials(self._network_location)
         self._domain, self._port = self._domain_and_port(host)
@@ -56,7 +58,7 @@ class URL:
         return hash(self.url)
 
     @staticmethod
-    def _domain_and_port(host: str) -> Tuple[str, Optional[int]]:
+    def _domain_and_port(host: str) -> tuple[str, int | None]:
         if ":" not in host:
             return host, None
         split = host.split(":", maxsplit=1)
@@ -65,7 +67,7 @@ class URL:
         return domain, port
 
     @staticmethod
-    def _credentials(network_location: str) -> Union[Tuple[Optional[str], Optional[str], str]]:
+    def _credentials(network_location: str) -> tuple[str | None, str | None, str]:
         if "@" not in network_location:
             return None, None, network_location
         credentials, host = network_location.split("@", maxsplit=1)
@@ -86,7 +88,7 @@ class URL:
         return self._path
 
     @property
-    def query(self) -> Dict[str, str]:
+    def query(self) -> dict[str, str]:
         return self._query
 
     @property
@@ -98,11 +100,11 @@ class URL:
         return self._network_location
 
     @property
-    def username(self) -> Optional[str]:
+    def username(self) -> str | None:
         return self._username
 
     @property
-    def password(self) -> Optional[str]:
+    def password(self) -> str | None:
         return self._password
 
     @property
@@ -114,9 +116,9 @@ class URL:
         return self._domain_name
 
     @property
-    def subdomain(self) -> Optional[str]:
+    def subdomain(self) -> str | None:
         return self._subdomain
 
     @property
-    def port(self) -> Optional[int]:
+    def port(self) -> int | None:
         return self._port

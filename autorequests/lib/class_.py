@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Dict
+from typing import TYPE_CHECKING
 
 from ..utilities import format_dict, indent, merge_dicts, cached_property
 
@@ -22,9 +24,9 @@ class Class:
     ):
         self._name: str = name
         self._output_path: Path = output_path
-        self._methods: List["Method"] = []
-        self._cookies: Dict[str, str] = {}
-        self._headers: Dict[str, str] = {}
+        self._methods: list[Method] = []
+        self._cookies: dict[str, str] = {}
+        self._headers: dict[str, str] = {}
 
         self._return_text: bool = return_text
         self._no_headers: bool = no_headers
@@ -43,15 +45,15 @@ class Class:
         return self._output_path
 
     @property
-    def methods(self) -> List["Method"]:
+    def methods(self) -> list[Method]:
         return self._methods
 
     @property
-    def headers(self) -> Dict[str, str]:
+    def headers(self) -> dict[str, str]:
         return self._headers
 
     @property
-    def cookies(self) -> Dict[str, str]:
+    def cookies(self) -> dict[str, str]:
         return self._cookies
 
     @property
@@ -87,7 +89,6 @@ class Class:
 
     @property
     def initializer(self) -> str:
-        signature = "def __init__(self):\n"
         code = "self.session = requests.Session()\n"
         if self.headers:
             code += "self.session.headers.update("
@@ -95,7 +96,7 @@ class Class:
             code += ")\n"
         for cookie, value in self.cookies.items():
             code += f'self.session.cookies.set("{cookie}", "{value}")\n'
-        return f"{signature}{indent(code)}\n\n\n"
+        return f"def __init__(self):\n{indent(code)}\n\n\n"
 
     @property
     def use_initializer(self) -> bool:
@@ -111,7 +112,7 @@ class Class:
             code += indent(method.code)
         return code + "\n"
 
-    def add_method(self, method: "Method") -> None:
+    def add_method(self, method: Method) -> None:
         method.class_ = self
         method.ensure_unique_name()
         self._methods.append(method)

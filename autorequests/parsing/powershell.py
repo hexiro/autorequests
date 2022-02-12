@@ -1,4 +1,4 @@
-from typing import Optional, Dict, List
+from __future__ import annotations
 
 from ..lib import URL, Body, Method
 from ..utilities import fix_escape_chars
@@ -6,7 +6,7 @@ from ..utilities import fix_escape_chars
 __all__ = ("powershell_to_method",)
 
 
-def powershell_to_method(text: str) -> Optional[Method]:
+def powershell_to_method(text: str) -> Method | None:
     """
     Parses a file that follows this format:
     (with some parts being optional)
@@ -20,15 +20,15 @@ def powershell_to_method(text: str) -> Optional[Method]:
     -ContentType <CONTENT-TYPE> `
     -Body <BODY>
     """
-    headers: Dict[str, str] = {}
-    cookies: Dict[str, str] = {}
+    headers: dict[str, str] = {}
+    cookies: dict[str, str] = {}
     method: str
-    url: Optional[URL]
-    body: Optional[Body]
+    url: URL | None
+    body: Body | None
 
     # parse escape character, `
     text = text.replace("`", "\\")
-    lines: List[str] = [e.rstrip("\\") for e in text.splitlines()]
+    lines: list[str] = [e.rstrip("\\") for e in text.splitlines()]
 
     # parse custom session
     parse_session(cookies, headers, lines)
@@ -46,14 +46,14 @@ def powershell_to_method(text: str) -> Optional[Method]:
     return Method(method=method, url=url, headers=headers, cookies=cookies, body=body)
 
 
-def parse_headers(args: Dict[str, str], headers: Dict[str, str]) -> None:
+def parse_headers(args: dict[str, str], headers: dict[str, str]) -> None:
     headers_string = args["Headers"][3:-2]
     for header in headers_string.split('" "'):
         key, value = header.split('"="', maxsplit=1)
         headers[key] = fix_escape_chars(value)
 
 
-def parse_session(cookies: Dict[str, str], headers: Dict[str, str], lines: List[str]) -> None:
+def parse_session(cookies: dict[str, str], headers: dict[str, str], lines: list[str]) -> None:
     if not lines:
         return
     while lines[0].startswith("$session"):
@@ -75,10 +75,9 @@ def parse_session(cookies: Dict[str, str], headers: Dict[str, str], lines: List[
             cookies[name] = value
 
 
-def parse_args(line: str) -> Dict[str, str]:
-    args: Dict[str, str] = {}
-
-    line_split: List[str] = line.split()
+def parse_args(line: str) -> dict[str, str]:
+    args: dict[str, str] = {}
+    line_split: list[str] = line.split()
 
     def last_key() -> str:
         return list(args.keys())[-1]

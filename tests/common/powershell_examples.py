@@ -1,8 +1,8 @@
-from typing import Dict
+from __future__ import annotations
 
 from autorequests.lib import Method, URL, Body
 
-powershell_samples: Dict[str, Method] = {}
+powershell_samples: dict[str, Method] = {}
 
 powershell_example_one = """$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
 $session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36 OPR/80.0.4170.48"

@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import argparse
 import ast
 from pathlib import Path
-from typing import List, Optional, Dict, Generator, Union
+from typing import Generator
 
 import rich
 from rich.box import MINIMAL
@@ -39,11 +41,11 @@ class AutoRequests:
         # dynamic
         self._input_path: Path = input_path
         self._output_path: Path = output_path
-        self._input_methods: Dict[Path, Method] = {}
-        self._output_classes: Dict[Path, Class] = {}
+        self._input_methods: dict[Path, Method] = {}
+        self._output_classes: dict[Path, Class] = {}
 
-        self._methods: List[Method] = self.methods_from_path(self.input_path)
-        self._classes: List[Class] = [
+        self._methods: list[Method] = self.methods_from_path(self.input_path)
+        self._classes: list[Class] = [
             Class(
                 name=name,
                 output_path=output_path,
@@ -60,7 +62,7 @@ class AutoRequests:
                 self.methods.extend(self.methods_from_path(cls.folder))
 
         for method in self.methods:
-            cls: Optional[Class] = self.find_class(method.class_name)  # type: ignore[no-redef]
+            cls: Class | None = self.find_class(method.class_name)  # type: ignore[no-redef]
             if not cls:
                 continue
             cls.add_method(method)
@@ -94,27 +96,22 @@ class AutoRequests:
         return self._output_path
 
     @property
-    def input_methods(self) -> Dict[Path, Method]:
+    def input_methods(self) -> dict[Path, Method]:
         return self._input_methods
 
     @property
-    def output_classes(self) -> Dict[Path, Class]:
+    def output_classes(self) -> dict[Path, Class]:
         return self._output_classes
 
     @cached_property
-    def methods(self) -> List[Method]:
+    def methods(self) -> list[Method]:
         return self._methods
 
     @cached_property
-    def classes(self) -> List[Class]:
+    def classes(self) -> list[Class]:
         return self._classes
 
-    def class_output_path(self, cls: Class) -> Union[Path, Class]:
-        if self.output_path.name != cls.name:
-            return self.output_path / cls.name
-        return cls
-
-    def methods_from_path(self, path: Path) -> List[Method]:
+    def methods_from_path(self, path: Path) -> list[Method]:
         methods = []
         for file in self.files_from_path(path):
             text = file.read_text(encoding="utf8", errors="ignore")
@@ -147,7 +144,7 @@ class AutoRequests:
     def files_from_path(path: Path) -> Generator[Path, None, None]:
         return path.glob("*.txt")
 
-    def find_class(self, name: str) -> Optional[Class]:  # type: ignore[return]
+    def find_class(self, name: str) -> Class | None:  # type: ignore[return]
         for cls in self.classes:
             if cls.name == name:
                 return cls

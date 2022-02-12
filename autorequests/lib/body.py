@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import json
-from typing import Optional, Dict, Tuple, Any, Generator
+from typing import Optional, Any
 
 from ..utilities import fix_escape_chars, parse_url_encoded
 
@@ -11,7 +13,7 @@ class Body:
             # normalize newlines
             body = "\n".join(body.splitlines())
         self._body: str = body or ""
-        self._data: Dict[str, str] = {}
+        self._data: dict[str, str] = {}
         self._json: dict = {}
         # tuple of four items
         # 1. filename
@@ -19,7 +21,7 @@ class Body:
         # 3. content-type
         # 4. extra headers
         # (4th will never be used)
-        self._files: Dict[str, Tuple[str, ...]] = {}
+        self._files: dict[str, tuple[str, ...]] = {}
 
         # multipart is the most broad and obvious so it goes first
         # urlencoded is the simplest (hardest to check) so it goes last
@@ -57,7 +59,7 @@ class Body:
         return self._body
 
     @property
-    def data(self) -> Dict[str, str]:
+    def data(self) -> dict[str, str]:
         return self._data
 
     @property
@@ -65,7 +67,7 @@ class Body:
         return self._json
 
     @property
-    def files(self) -> Dict[str, Tuple[str, ...]]:
+    def files(self) -> dict[str, tuple[str, ...]]:
         return self._files
 
     @property
@@ -90,7 +92,7 @@ class Body:
 
     def _parse_json(self) -> None:
         # sometimes body is "null" but we want our json to be a dict and not None
-        json_: Optional[dict] = json.loads(self.body)
+        json_: dict | None = json.loads(self.body)
         if json_ is not None:
             self._json.update(json_)
 
@@ -118,7 +120,7 @@ class Body:
             if not content_disposition:
                 continue
             # get filename && name
-            content_disposition_dict: Dict[str, str] = {}
+            content_disposition_dict: dict[str, str] = {}
             for detail in content_disposition[11:].split("; "):
                 key, value = detail.split("=", maxsplit=1)
                 value = value[1:-1]
@@ -139,8 +141,8 @@ class Body:
             self._files[name] = (filename, "...", content_type)
 
     @staticmethod
-    def details_dict(details: str) -> Dict[str, str]:
-        details_dict: Dict[str, str] = {}
+    def details_dict(details: str) -> dict[str, str]:
+        details_dict: dict[str, str] = {}
         for line in details.splitlines():
             if ": " not in line:
                 continue

@@ -1,8 +1,8 @@
-from typing import Dict
+from __future__ import annotations
 
 from autorequests.lib import Method, URL, Body
 
-fetch_samples: Dict[str, Method] = {}
+fetch_samples: dict[str, Method] = {}
 
 fetch_example_one = """fetch("https://httpbin.org/cookies", {
   "headers": {

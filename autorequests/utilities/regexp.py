@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 
 fix_snake_case_regexp = re.compile("_{2,}")

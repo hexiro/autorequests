@@ -27,12 +27,12 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"
 rich = "^10.0.0"
 
 [tool.poetry.dev-dependencies]
 requests = "^2.26.0"
-black = { version = "^21.10b0", python = "^3.7" }
+black = "^22.1.0"
 mypy = "^0.910"
 pytest = "^6.0.0"
 pytest-black = "^0.3.12"
@@ -47,7 +47,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 121
-target-version = ["py36", "py37", "py38", "py310"]
+target-version = ["py37", "py38", "py310"]
 
 [tool.mypy]
 # mypy wants 'return None' not 'return'
