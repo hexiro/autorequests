@@ -47,7 +47,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 121
-target-version = ["py37", "py38", "py310"]
+target-version = ["py37", "py38", "py39", "py310"]
 
 [tool.mypy]
 # mypy wants 'return None' not 'return'
@@ -55,10 +55,10 @@ disable_error_code = "return-value"
 show_error_codes = true
 no_implicit_optional = true
 disallow_untyped_calls = true
-disallow_untyped_defs = false
+disallow_untyped_defs = true
 warn_redundant_casts = true
 warn_unused_ignores = true
-warn_return_any = false
+warn_return_any = true
 implicit_reexport = false
 
 [tool.pytest.ini_options]
