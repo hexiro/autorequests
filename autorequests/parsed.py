@@ -39,26 +39,22 @@ class ParsedInput:
     json: dict[str, str] | None
     files: dict[str, tuple[str, ...]] | None
 
-    _request_data: dict[str, dict[str, str] | dict[str, tuple[str, ...]] | None] = field(
-        init=False, compare=False, repr=False, default_factory=dict
-    )
+    def generate_code(self, *, sync: bool, httpx: bool, no_headers: bool, no_cookies: bool) -> str:
 
-    def __post_init__(self):
-        self._request_data = {
-            "headers": self.headers,
-            "cookies": self.cookies,
+        method = self.method.lower()
+        url = repr(self.url)
+
+        request_data = {
+            "headers": self.headers if not no_headers else None,
+            "cookies": self.cookies if not no_cookies else None,
             "params": self.params,
             "data": self.data,
             "json": self.json,
             "files": self.files,
         }
 
-    def generate_code(self, *, sync: bool, httpx: bool) -> str:
-
-        method = self.method.lower()
-        url = repr(self.url)
-        define_data = self.define_request_data()
-        pass_data = self.pass_request_data()
+        define_data = self.define_request_data(request_data)
+        pass_data = self.pass_request_data(request_data)
 
         if sync and httpx:
             return SYNC_HTTPX.format(method=method, url=url, define_data=define_data, pass_data=pass_data)
@@ -69,18 +65,18 @@ class ParsedInput:
         else:
             return ASYNC_AIOHTTP.format(method=method, url=url, define_data=define_data, pass_data=pass_data)
 
-    def define_request_data(self) -> str:
+    def define_request_data(self, request_data: dict[str, dict[str, str] | dict[str, tuple[str, ...]] | None]) -> str:
         defined: str = ""
-        for key, value in self._request_data.items():
+        for key, value in request_data.items():
             if not value:
                 continue
             defined += f"{key} = {format_dict(value)}\n"
         defined = defined.rstrip("\n")
         return defined
 
-    def pass_request_data(self) -> str:
+    def pass_request_data(self, request_data: dict[str, dict[str, str] | dict[str, tuple[str, ...]] | None]) -> str:
         pass_list: list[str] = []
-        for key, value in self._request_data.items():
+        for key, value in request_data.items():
             if not value:
                 continue
             pass_list.append(f"{key}={key}")

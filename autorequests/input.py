@@ -104,9 +104,7 @@ def parse_powershell(text: str) -> ParsedInput | None:
     files: dict[str, tuple[str, ...]] | None
 
     def parse_session() -> None:
-        if not lines:
-            return
-        while lines[0].startswith("$session"):
+        while lines and lines[0].startswith("$session"):
             line = lines.pop(0)
             if line.startswith("$session.UserAgent"):
                 # $session.UserAgent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en) AppleWebKit (KHTML, like Gecko)"
