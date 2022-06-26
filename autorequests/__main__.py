@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import io
+    from typing import Generator
 
 import rich_click as click
 
@@ -13,7 +14,7 @@ click.rich_click.STYLE_METAVAR = "bold red"
 click.rich_click.MAX_WIDTH = 75
 
 
-def get_lines():
+def get_lines() -> Generator[str, None, None]:
     import sys
 
     """
