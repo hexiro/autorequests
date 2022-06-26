@@ -4,16 +4,6 @@ import json
 import urllib.parse
 
 
-def indent(data: str, spaces: int = 4) -> str:
-    """
-    indents a code block a set amount of spaces
-    note: is ~1.5x faster than textwrap.indent(data, " " * spaces)
-    (from my testing)
-    """
-    indent_block = " " * spaces
-    return "\n".join((indent_block + line if line else line) for line in data.splitlines())
-
-
 def extract_cookies(headers: dict[str, str]) -> dict[str, str]:
     """:returns: a dict of cookies based off the 'cookie' header"""
     cookie_header = headers.pop("cookie", None)
@@ -51,3 +41,22 @@ def format_string(text: str) -> str:
 def parse_url_encoded(x: str) -> dict[str, str]:
     """parses application/x-www-form-urlencoded and query string params"""
     return dict(urllib.parse.parse_qsl(x, keep_blank_values=True))
+
+
+def fix_escape_chars(body: str) -> str:
+    """
+    replaces escaped \\ followed by a letter to the appropriate char
+    (ex. "\\t" --> "\t")
+    """
+    return body.encode(encoding="utf8", errors="ignore").decode(encoding="unicode_escape", errors="ignore")
+
+
+def fix_fake_escape_chars(body: str) -> str:
+    """
+    replaces powershell's ` escape char with fake python escape chars and then
+    fixes the fake escape chars twice to not only fix the fake ones we added, but the fake ones that powershell added.
+    * could do with improvement in the future.
+    (ex. "`\"" --> "\"")
+    (ex. "\\t" --> "\t")
+    """
+    return fix_escape_chars(fix_escape_chars(body.replace("`", "\\")))

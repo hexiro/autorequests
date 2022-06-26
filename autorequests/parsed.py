@@ -1,3 +1,4 @@
+"""Handles code generation and interaction with the parsed input"""
 from dataclasses import dataclass
 import sys
 

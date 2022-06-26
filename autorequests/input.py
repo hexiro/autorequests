@@ -1,9 +1,10 @@
+"""Handles the parsing of the raw browser input"""
 import json
 
 
 from .body import parse_body
 from .url import parse_url
-from .commons import extract_cookies
+from .commons import extract_cookies, fix_fake_escape_chars
 from .parsed import ParsedInput
 
 
@@ -118,7 +119,7 @@ def parse_powershell(text: str) -> ParsedInput | None:
                 left_paren = line.rfind("(")
                 right_paren = line.find(")")
                 # ["hello-from", "autorequests", "/", "httpbin.org"]
-                strings = [x[1:-1] for x in line[left_paren + 1 : right_paren].split(", ")]
+                strings = [fix_fake_escape_chars(x[1:-1]) for x in line[left_paren + 1 : right_paren].split(", ")]
                 name, value = strings[:2]
                 cookies[name] = value
 

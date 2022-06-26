@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from .commons import parse_url_encoded
+from .commons import fix_escape_chars, parse_url_encoded
 
 
 def parse_body(
@@ -42,16 +42,6 @@ def parse_body(
     elif is_json():
         json_ = parse_json(body)
     return data, json_, files
-
-
-def fix_escape_chars(body: str) -> str:
-    """
-    replaces escaped \\ followed by a letter to the appropriate char
-    ignore/replace are kind of just guesses at what i think would be best
-    if there is a more logical reason to use something else LMK!
-    (ex. "\\t" --> "\t")
-    """
-    return body.encode(encoding="utf8", errors="ignore").decode(encoding="unicode_escape", errors="replace")
 
 
 def standardize_newlines(body: str) -> str:
