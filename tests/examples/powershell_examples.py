@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from autorequests.lib import Method, URL, Body
+from autorequests.parsed import ParsedInput
 
-powershell_samples: dict[str, Method] = {}
+
+powershell_examples: dict[str, ParsedInput] = {}
 
 powershell_example_one = """$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
 $session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36 OPR/80.0.4170.48"
@@ -26,12 +27,9 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://httpbin.org/cookies" `
   "accept-language"="en-US,en;q=0.9"
 }"""
 
-powershell_samples[powershell_example_one] = Method(
+powershell_examples[powershell_example_one] = ParsedInput(
     method="GET",
-    body=Body(),
-    url=URL("https://httpbin.org/cookies"),
-    parameters=None,
-    cookies={"hello-from": "autorequests"},
+    url="https://httpbin.org/cookies",
     headers={
         "authority": "httpbin.org",
         "scheme": "https",
@@ -48,6 +46,11 @@ powershell_samples[powershell_example_one] = Method(
         "accept-language": "en-US,en;q=0.9",
         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36 OPR/80.0.4170.48",
     },
+    cookies={"hello-from": "autorequests"},
+    params=None,
+    data=None,
+    json=None,
+    files=None,
 )
 
 powershell_example_two = '''$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
@@ -75,14 +78,9 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://dev-api.impb.in/v1/document" \
 -ContentType "application/json" \
 -Body "{\"content\":\"yeah\",\"settings\":{\"longUrls\":false,\"shortUrls\":false,\"instantDelete\":false,\"encrypted\":false,\"imageEmbed\":false,\"expiration\":14,\"public\":false,\"editors\":[],\"language\":\"python\"}}"'''
 
-powershell_samples[powershell_example_two] = Method(
+powershell_examples[powershell_example_two] = ParsedInput(
     method="POST",
-    url=URL("https://dev-api.impb.in/v1/document"),
-    body=Body(
-        '{"content":"yeah","settings":{"longUrls":false,"shortUrls":false,"instantDelete":false,"encrypted":false,"imageEmbed":false,"expiration":14,"public":false,"editors":[],"language":"python"}}'
-    ),
-    parameters=None,
-    cookies={},
+    url="https://dev-api.impb.in/v1/document",
     headers={
         "authority": "dev-api.impb.in",
         "scheme": "https",
@@ -100,4 +98,22 @@ powershell_samples[powershell_example_two] = Method(
         "accept-language": "en-US,en;q=0.9",
         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36 OPR/80.0.4170.48",
     },
+    cookies={},
+    params=None,
+    data=None,
+    json={
+        "content": "yeah",
+        "settings": {
+            "longUrls": False,
+            "shortUrls": False,
+            "instantDelete": False,
+            "encrypted": False,
+            "imageEmbed": False,
+            "expiration": 14,
+            "public": False,
+            "editors": [],
+            "language": "python",
+        },
+    },
+    files=None,
 )

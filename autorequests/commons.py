@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import json
 import urllib.parse
 
@@ -60,3 +61,19 @@ def fix_fake_escape_chars(body: str) -> str:
     (ex. "\\t" --> "\t")
     """
     return fix_escape_chars(fix_escape_chars(body.replace("`", "\\")))
+
+
+def fix_broken_json(text: str) -> str:
+    """
+    References:
+        https://stackoverflow.com/a/60978263
+    """
+    # compile a pattern to match "\"text" OR ""text" which needs replacing with a single doublequote
+    pattern1 = re.compile(r"(?i)(\"\"|\"\\\")")
+    # compile a second pattern to match "te"xt" which needs to be replacing with nothing/blank/just remove
+    pattern2 = re.compile(r"(?i)\b(\")\b")
+
+    text = pattern1.sub('"', text)
+    text = pattern2.sub("", text)
+
+    return text

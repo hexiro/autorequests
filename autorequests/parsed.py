@@ -1,6 +1,7 @@
 """Handles code generation and interaction with the parsed input"""
 from dataclasses import dataclass
 import sys
+from typing import Any
 
 from .commons import format_dict, format_string
 
@@ -37,10 +38,10 @@ class ParsedInput:
     cookies: dict[str, str] | None
     params: dict[str, str] | None
     data: dict[str, str] | None
-    json: dict[str, str] | None
+    json: dict[Any, Any] | list[Any] | None
     files: dict[str, tuple[str, ...]] | None
 
-    def generate_code(self, *, sync: bool, httpx: bool, no_headers: bool, no_cookies: bool) -> str:
+    def generate_code(self, sync: bool, httpx: bool, no_headers: bool, no_cookies: bool) -> str:
 
         method = self.method.lower()
         url = format_string(self.url)

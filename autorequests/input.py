@@ -4,7 +4,7 @@ import json
 
 from .body import parse_body
 from .url import parse_url
-from .commons import extract_cookies, fix_fake_escape_chars
+from .commons import extract_cookies, fix_escape_chars, fix_fake_escape_chars
 from .parsed import ParsedInput
 
 
@@ -147,10 +147,11 @@ def parse_powershell(text: str) -> ParsedInput | None:
 
         return args
 
-    def parse_headers() -> dict[str, str]:
-        headers_string = args["Headers"][1:].replace('" "', '", "').replace('"="', '": "') + "}"
-        headers = json.loads(headers_string)
-        return headers
+    def parse_headers() -> None:
+        headers_string = args["Headers"][3:-2]
+        for header in headers_string.split('" "'):
+            key, value = header.split('"="', maxsplit=1)
+            headers[key] = fix_escape_chars(value)
 
     # parse escape character, `
     text = text.replace("`", "\\")
@@ -162,13 +163,18 @@ def parse_powershell(text: str) -> ParsedInput | None:
     # parse arguments
     args = parse_args("".join(lines))
 
+    print(args)
+    print()
+    print(args["Headers"])
+    print()
+
     if not args or "Uri" not in args:
         return
 
     url, params = parse_url(args["Uri"])
     data, json_, files = parse_body(args.get("Body"))
 
-    headers = parse_headers()
+    parse_headers()
     method = headers.pop("method", args.get("Method", "GET"))
 
     return ParsedInput(

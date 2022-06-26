@@ -52,8 +52,8 @@ def standardize_newlines(body: str) -> str:
     return "\n".join(body.splitlines())
 
 
-def parse_json(self) -> dict[str, str] | None:
-    return json.loads(self.body)
+def parse_json(body: str) -> dict[str, str] | None:
+    return json.loads(body)
 
 
 def parse_urlencoded(body: str) -> dict[str, str] | None:
