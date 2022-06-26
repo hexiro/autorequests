@@ -1,4 +1,6 @@
 """Handles code generation and interaction with the parsed input"""
+from __future__ import annotations
+
 from dataclasses import dataclass
 import sys
 from typing import TYPE_CHECKING
