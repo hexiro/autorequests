@@ -1,11 +1,16 @@
 """Handles the parsing of the raw browser input"""
-import json
+from __future__ import annotations
 
+import json
+from typing import TYPE_CHECKING
 
 from .body import parse_body
 from .url import parse_url
 from .commons import extract_cookies, fix_escape_chars, fix_fake_escape_chars
 from .parsed import ParsedInput
+
+if TYPE_CHECKING:
+    from .typings import JSON, Data, Files
 
 
 def parse_input(text: str) -> ParsedInput | None:
@@ -31,9 +36,9 @@ def parse_fetch(text: str) -> ParsedInput | None:
     headers: dict[str, str] | None  # type: ignore
     cookies: dict[str, str] | None
     params: dict[str, str] | None
-    data: dict[str, str] | None
-    json_: dict[str, str] | None
-    files: dict[str, tuple[str, ...]] | None
+    data: Data | None
+    json_: JSON | None
+    files: Files | None
 
     signature_split = text.split('"')
 
@@ -100,9 +105,9 @@ def parse_powershell(text: str) -> ParsedInput | None:
     headers: dict[str, str] = {}
     cookies: dict[str, str] = {}
     params: dict[str, str] | None
-    data: dict[str, str] | None
-    json_: dict[str, str] | None
-    files: dict[str, tuple[str, ...]] | None
+    data: Data | None
+    json_: JSON | None
+    files: Files | None
 
     def parse_session() -> None:
         while lines and lines[0].startswith("$session"):

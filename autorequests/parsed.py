@@ -1,9 +1,14 @@
 """Handles code generation and interaction with the parsed input"""
 from dataclasses import dataclass
 import sys
-from typing import Any
+from typing import TYPE_CHECKING
 
-from .commons import format_dict, format_string
+from autorequests.typings import RequestData
+
+if TYPE_CHECKING:
+    from .typings import JSON, Data, Files
+
+from .commons import format_json_like, format_string
 
 opts = {}
 
@@ -37,9 +42,9 @@ class ParsedInput:
     headers: dict[str, str] | None
     cookies: dict[str, str] | None
     params: dict[str, str] | None
-    data: dict[str, str] | None
-    json: dict[Any, Any] | list[Any] | None
-    files: dict[str, tuple[str, ...]] | None
+    data: Data | None
+    json: JSON | None
+    files: Files | None
 
     def generate_code(self, sync: bool, httpx: bool, no_headers: bool, no_cookies: bool) -> str:
 
@@ -67,16 +72,16 @@ class ParsedInput:
         else:
             return ASYNC_AIOHTTP.format(method=method, url=url, define_data=define_data, pass_data=pass_data)
 
-    def define_request_data(self, request_data: dict[str, dict[str, str] | dict[str, tuple[str, ...]] | None]) -> str:
+    def define_request_data(self, request_data: RequestData) -> str:
         defined: str = ""
         for key, value in request_data.items():
             if not value:
                 continue
-            defined += f"{key} = {format_dict(value)}\n"
+            defined += f"{key} = {format_json_like(value)}\n"
         defined = defined.rstrip("\n")
         return defined
 
-    def pass_request_data(self, request_data: dict[str, dict[str, str] | dict[str, tuple[str, ...]] | None]) -> str:
+    def pass_request_data(self, request_data: RequestData) -> str:
         pass_list: list[str] = []
         for key, value in request_data.items():
             if not value:

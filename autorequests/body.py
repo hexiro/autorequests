@@ -2,15 +2,16 @@ from __future__ import annotations
 
 import json
 
+from .typings import JSON, Data, Files
 from .commons import fix_escape_chars, parse_url_encoded
 
 
 def parse_body(
     body: str | None,
-) -> tuple[dict[str, str] | None, dict[str, str] | None, dict[str, tuple[str, ...]] | None]:
-    data: dict[str, str] | None = None
-    json_: dict[str, str] | None = None
-    files: dict[str, tuple[str, ...]] | None = None
+) -> tuple[Data | None, JSON | None, Files | None]:
+    data: Data | None = None
+    json_: JSON | None = None
+    files: Files | None = None
 
     if not body:
         return data, json_, files
@@ -52,21 +53,19 @@ def standardize_newlines(body: str) -> str:
     return "\n".join(body.splitlines())
 
 
-def parse_json(body: str) -> dict[str, str] | None:
+def parse_json(body: str) -> JSON | None:
     return json.loads(body)
 
 
-def parse_urlencoded(body: str) -> dict[str, str] | None:
+def parse_urlencoded(body: str) -> Data | None:
     return parse_url_encoded(body)
 
 
-def parse_multipart_form_data(body: str) -> tuple[dict[str, str] | None, dict[str, tuple[str, ...]] | None]:
-    # let's all take a moment and pray for whoever has to refactor this (me probably)
+def parse_multipart_form_data(body: str) -> tuple[Data | None, Files | None]:
+    data: Data = {}
+    files: Files = {}
 
-    data: dict[str, str] = {}
-    files: dict[str, tuple[str, ...]] = {}
-
-    # it's too large to try and put raw file content in python file
+    # files are large, so it wouldn't make sense to include that data in the python code snippet
     placeholder_data = 'open("file.raw", "rb")'
 
     def parse_details_dict(details: str) -> dict[str, str]:

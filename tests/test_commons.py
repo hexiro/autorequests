@@ -15,9 +15,9 @@ def test_extract_cookies() -> None:
 
 
 def test_format_dict() -> None:
-    assert commons.format_dict({"a": "a"}) == '{\n    "a": "a"\n}'
-    assert commons.format_dict({"a": False}) == '{\n    "a": False\n}'
-    assert commons.format_dict({"a": "False"}) == '{\n    "a": "False"\n}'
+    assert commons.format_json_like({"a": "a"}) == '{\n    "a": "a"\n}'
+    assert commons.format_json_like({"a": False}) == '{\n    "a": False\n}'
+    assert commons.format_json_like({"a": "False"}) == '{\n    "a": "False"\n}'
 
 
 def test_parse_url_encoded() -> None:

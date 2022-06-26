@@ -3,6 +3,10 @@ from __future__ import annotations
 import re
 import json
 import urllib.parse
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .typings import JSON
 
 
 def extract_cookies(headers: dict[str, str]) -> dict[str, str]:
@@ -17,7 +21,7 @@ def extract_cookies(headers: dict[str, str]) -> dict[str, str]:
     return cookie_dict
 
 
-def format_dict(data: dict, indent: int | None = 4) -> str:
+def format_json_like(data: JSON, indent: int | None = 4) -> str:
     """format a dictionary"""
     # I'm not sure it's possible to pretty-format this with something like
     # pprint, but if it is possible LMK!
