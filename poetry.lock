@@ -66,7 +66,7 @@ unicode_backport = ["unicodedata2"]
 name = "click"
 version = "8.1.3"
 description = "Composable command line interface toolkit"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -105,7 +105,7 @@ python-versions = ">=3.5"
 name = "importlib-metadata"
 version = "4.12.0"
 description = "Read metadata from Python packages"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -278,6 +278,23 @@ typing-extensions = {version = ">=3.7.4,<5.0", markers = "python_version < \"3.8
 jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 
 [[package]]
+name = "rich-click"
+version = "1.5.1"
+description = "Format click help output nicely with rich"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+click = ">=7"
+importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
+rich = ">=10.7.0"
+
+[package.extras]
+dev = ["pre-commit"]
+typer = ["typer (>=0.4)"]
+
+[[package]]
 name = "toml"
 version = "0.10.2"
 description = "Python Library for Tom's Obvious, Minimal Language"
@@ -326,7 +343,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 name = "zipp"
 version = "3.8.0"
 description = "Backport of pathlib-compatible object wrapper for zip files"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -337,7 +354,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "b2c6f167845a2ffcc63166a31f47849c202b2b8e3cef3ba10fad4f5029a83e3f"
+content-hash = "c4fdb771d3e5ffd6244a8c241f9619b18e0913fcc02331dcbf7a40981a78e1a8"
 
 [metadata.files]
 atomicwrites = [
@@ -451,6 +468,10 @@ requests = [
 rich = [
     {file = "rich-10.16.2-py3-none-any.whl", hash = "sha256:c59d73bd804c90f747c8d7b1d023b88f2a9ac2454224a4aeaf959b21eeb42d03"},
     {file = "rich-10.16.2.tar.gz", hash = "sha256:720974689960e06c2efdb54327f8bf0cdbdf4eae4ad73b6c94213cad405c371b"},
+]
+rich-click = [
+    {file = "rich-click-1.5.1.tar.gz", hash = "sha256:2ca72637d618c8033891ecb73e6e0c01af15afdac80d134ca93a58f1cbcd5ded"},
+    {file = "rich_click-1.5.1-py3-none-any.whl", hash = "sha256:cf16bf9e390d5c9aa3b379c3884c52b47f54c8e6e2e7ddb7b2a002f4420c35c0"},
 ]
 toml = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
