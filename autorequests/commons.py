@@ -39,6 +39,15 @@ def format_dict(data: dict, indent: int | None = 4) -> str:
     return formatted
 
 
+def format_string(text: str) -> str:
+    """formats a string"""
+    if "'" in text or '"' in text:
+        # text contains a quote, so let python escape it optimally
+        return repr(text)
+    # double quotes by default
+    return f'"{text}"'
+
+
 def parse_url_encoded(x: str) -> dict[str, str]:
     """parses application/x-www-form-urlencoded and query string params"""
     return dict(urllib.parse.parse_qsl(x, keep_blank_values=True))

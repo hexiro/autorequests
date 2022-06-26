@@ -1,7 +1,7 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 import sys
 
-from autorequests.commons import format_dict
+from .commons import format_dict, format_string
 
 opts = {}
 
@@ -42,7 +42,7 @@ class ParsedInput:
     def generate_code(self, *, sync: bool, httpx: bool, no_headers: bool, no_cookies: bool) -> str:
 
         method = self.method.lower()
-        url = repr(self.url)
+        url = format_string(self.url)
 
         request_data = {
             "headers": self.headers if not no_headers else None,
