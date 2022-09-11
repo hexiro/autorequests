@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from autorequests.request import Request
 
-
 powershell_examples: dict[str, Request] = {}
 
 powershell_example_one = """$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession

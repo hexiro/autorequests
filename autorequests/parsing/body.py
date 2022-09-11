@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import json
+
 from requests_toolbelt.multipart import decoder
 
-
-from ..typings import JSON, Data, Files
 from ..commons import fix_escape_chars, parse_url_encoded
+from ..typings import JSON, Data, Files
 
 
 def parse_body(body: str | None, content_type: str) -> tuple[Data | None, JSON | None, Files | None]:

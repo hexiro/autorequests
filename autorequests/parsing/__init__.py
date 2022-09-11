@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from .fetch import parse_fetch, is_fetch
-from .powershell import parse_powershell, is_powershell
-
 from ..request import Request
+from .fetch import is_fetch, parse_fetch
+from .powershell import is_powershell, parse_powershell
 
 __all__ = ("parse_input", "parse_fetch", "parse_powershell", "is_fetch", "is_powershell")
 

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import re
 import json
+import re
+import typing as t
 import urllib.parse
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
+if t.TYPE_CHECKING:
     from .typings import JSON
 
 

@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import typing as t
 
-if TYPE_CHECKING:
-    from typing import Any, TypeAlias
-
-Data: TypeAlias = "dict[str, str]"
-JSON: TypeAlias = "dict[Any, Any] | list[Any]"
-Files: TypeAlias = "dict[str, bytes | tuple[str, bytes] | tuple[str, bytes, str]]"
-RequestData: TypeAlias = "dict[str, Data | JSON | Files | None]"
+Data: t.TypeAlias = "dict[str, str]"
+JSON: t.TypeAlias = "dict[t.Any, t.Any] | list[t.Any]"
+Files: t.TypeAlias = "dict[str, bytes | tuple[str, bytes] | tuple[str, bytes, str]]"
+RequestData: t.TypeAlias = "dict[str, Data | JSON | Files | None]"

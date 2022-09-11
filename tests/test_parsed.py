@@ -1,12 +1,14 @@
 from __future__ import annotations
+
 import ast
 import itertools
-from typing import TYPE_CHECKING
+import typing as t
 
 import pytest
+
 from .examples import fetch_examples, powershell_examples
 
-if TYPE_CHECKING:
+if t.TYPE_CHECKING:
     from autorequests.request import Request
 
 

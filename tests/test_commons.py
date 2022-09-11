@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from autorequests import commons
 
-
 # ensures commons are working properly
 # not necessarily needed, but it can be used to help debug
 

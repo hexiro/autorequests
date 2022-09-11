@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 import typing as t
 
+from ..commons import extract_cookies, parse_url
 from ..request import Request
-from ..commons import parse_url, extract_cookies
 from .body import parse_body
 
 if t.TYPE_CHECKING:

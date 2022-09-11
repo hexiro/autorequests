@@ -2,12 +2,12 @@
 from __future__ import annotations
 
 import sys
+import typing as t
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
 
 from autorequests.typings import RequestData
 
-if TYPE_CHECKING:
+if t.TYPE_CHECKING:
     from .typings import JSON, Data, Files
 
 from .commons import format_json_like, format_string

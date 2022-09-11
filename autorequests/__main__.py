@@ -1,14 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import typing as t
 
-
-if TYPE_CHECKING:
+if t.TYPE_CHECKING:
     import io
-    from typing import Generator
 
 import rich_click as click
-
 
 click.rich_click.STYLE_OPTION = "bold magenta"
 click.rich_click.STYLE_SWITCH = "bold blue"
@@ -16,7 +13,7 @@ click.rich_click.STYLE_METAVAR = "bold red"
 click.rich_click.MAX_WIDTH = 75
 
 
-def get_lines() -> Generator[str, None, None]:
+def get_lines() -> t.Generator[str, None, None]:
     import sys
 
     """

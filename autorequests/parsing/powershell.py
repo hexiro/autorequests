@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from collections import defaultdict
 import re
-
 import typing as t
+from collections import defaultdict
 
+from ..commons import fix_escape_chars, fix_fake_escape_chars, parse_url
 from ..request import Request
-from ..commons import fix_fake_escape_chars, fix_escape_chars, parse_url
 from .body import parse_body
 
 if t.TYPE_CHECKING:
