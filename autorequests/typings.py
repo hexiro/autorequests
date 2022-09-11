@@ -7,5 +7,5 @@ if TYPE_CHECKING:
 
 Data: TypeAlias = "dict[str, str]"
 JSON: TypeAlias = "dict[Any, Any] | list[Any]"
-Files: TypeAlias = "dict[str, tuple[str, ...]]"
+Files: TypeAlias = "dict[str, bytes | tuple[str, bytes] | tuple[str, bytes, str]]"
 RequestData: TypeAlias = "dict[str, Data | JSON | Files | None]"

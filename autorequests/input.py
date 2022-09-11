@@ -72,7 +72,7 @@ def parse_fetch(text: str) -> ParsedInput | None:
     cookies = extract_cookies(headers)
 
     method = options.get("method", "GET")
-    data, json_, files = parse_body(options.get("body"))
+    data, json_, files = parse_body(options.get("body"), headers["content-type"])
 
     return ParsedInput(
         method=method,
@@ -176,8 +176,10 @@ def parse_powershell(text: str) -> ParsedInput | None:
     if not args or "Uri" not in args:
         return
 
+    content_type = args["ContentType"]
+
     url, params = parse_url(args["Uri"])
-    data, json_, files = parse_body(args.get("Body"))
+    data, json_, files = parse_body(args.get("Body"), content_type=content_type)
 
     parse_headers()
     method = headers.pop("method", args.get("Method", "GET"))
