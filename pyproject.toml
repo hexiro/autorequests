@@ -31,14 +31,15 @@ rich = "^10.0.0"
 rich-click = "^1.5.1"
 requests-toolbelt = "^0.9.1"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.scripts]
+autorequests = "autorequests.__main__:cli"
+
+[tool.poetry.group.dev.dependencies]
 requests = "^2.26.0"
 black = "^22.1.0"
 pytest = "^6.0.0"
 pytest-black = "^0.3.12"
-
-[tool.poetry.scripts]
-autorequests = "autorequests.__main__:cli"
+isort = "^5.10.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -47,6 +48,12 @@ build-backend = "poetry.core.masonry.api"
 [tool.black]
 line-length = 121
 target-version = ["py37", "py38", "py39", "py310"]
+
+[tool.isort]
+profile = "black"
+combine_as_imports = true
+combine_star = true
+line_length = 125
 
 [tool.pytest.ini_options]
 addopts = "--black -vv"
