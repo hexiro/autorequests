@@ -4,12 +4,12 @@ import typing as t
 
 import pytest
 
-from autorequests.input import parse_fetch, parse_powershell
+from autorequests.parsing import parse_fetch, parse_powershell
 
 from .examples import fetch_examples, powershell_examples
 
 if t.TYPE_CHECKING:
-    from autorequests.input import Request
+    from autorequests.request import Request
 
 
 @pytest.mark.parametrize("sample,expected", list(powershell_examples.items()))
