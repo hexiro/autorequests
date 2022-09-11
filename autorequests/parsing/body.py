@@ -8,7 +8,7 @@ from ..commons import fix_escape_chars, parse_url_encoded
 from ..typings import JSON, Data, Files
 
 
-def parse_body(body: str | None, content_type: str) -> tuple[Data | None, JSON | None, Files | None]:
+def parse_body(body: str | None, content_type: str | None) -> tuple[Data | None, JSON | None, Files | None]:
     data: Data | None = None
     json_: JSON | None = None
     files: Files | None = None
@@ -35,7 +35,7 @@ def parse_body(body: str | None, content_type: str) -> tuple[Data | None, JSON |
         except json.JSONDecodeError:
             return False
 
-    if is_multipart_form_data():
+    if is_multipart_form_data() and content_type:
         data, files = parse_multipart_form_data(body, content_type)
     elif is_urlencoded():
         data = parse_url_encoded(body)

@@ -73,7 +73,7 @@ def parse_fetch(text: str) -> Request | None:
     cookies = extract_cookies(headers)
 
     method = options.get("method", "GET")
-    data, json_, files = parse_body(options.get("body"), headers["content-type"])
+    data, json_, files = parse_body(options.get("body"), headers.get("content-type"))
 
     return Request(
         method=method,

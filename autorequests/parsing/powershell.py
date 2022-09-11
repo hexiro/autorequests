@@ -61,9 +61,7 @@ def parse_powershell(text: str) -> Request | None:
 
     if body:
         body = pre_parse_body(body)
-
-        content_type = args["ContentType"]
-        data, json_, files = parse_body(body, content_type=content_type)
+        data, json_, files = parse_body(body, args.get("ContentType"))
 
     parse_headers(args, headers)
     method = headers.pop("method", args.get("Method", "GET"))
