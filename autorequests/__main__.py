@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+
 if TYPE_CHECKING:
     import io
     from typing import Generator
@@ -29,7 +30,9 @@ def get_lines() -> Generator[str, None, None]:
 
 
 @click.command()
-@click.option("-f", "--file", type=click.File("r"), help="Optional file to read from")
+@click.option(
+    "-f", "--file", type=click.File("r", encoding="utf-8", errors="replace"), help="Optional file to read from"
+)
 @click.option("-s/-a", "--sync/--async", is_flag=True, default=True, help="Generate synchronous or asynchronous code.")
 @click.option("-h", "--httpx", is_flag=True, default=False, help="Use httpx library to make requests.")
 @click.option("-nh", "--no-headers", is_flag=True, default=False, help="Don't include headers in the output.")
@@ -41,7 +44,7 @@ def cli(file: io.TextIOWrapper, sync: bool, httpx: bool, no_headers: bool, no_co
     from rich.console import Console
     from rich.syntax import Syntax
 
-    from .input import parse_input
+    from .parsing import parse_input
 
     console = Console(markup=True)
 
@@ -64,8 +67,7 @@ def cli(file: io.TextIOWrapper, sync: bool, httpx: bool, no_headers: bool, no_co
 
     code = parsed_input.generate_code(sync=sync, httpx=httpx, no_headers=no_headers, no_cookies=no_cookies)
 
-    syntax = Syntax(code, "python")
-    console.print(syntax)
+    console.print(Syntax(code, "python"))
 
 
 if __name__ == "__main__":

@@ -7,11 +7,11 @@ import pytest
 from .examples import fetch_examples, powershell_examples
 
 if TYPE_CHECKING:
-    from autorequests.parsed import ParsedInput
+    from autorequests.request import Request
 
 
 @pytest.mark.parametrize("parsed_input", list(fetch_examples.values()) + list(powershell_examples.values()))
-def test_parsed_input_generate_code(parsed_input: ParsedInput) -> None:
+def test_parsed_input_generate_code(parsed_input: Request) -> None:
     num_arguments = len(["sync", "httpx", "no_headers", "no_cookies"])
     permutations = itertools.product([False, True], repeat=num_arguments)
 

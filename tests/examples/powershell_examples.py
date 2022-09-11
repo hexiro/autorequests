@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from autorequests.parsed import ParsedInput
+from autorequests.request import Request
 
 
-powershell_examples: dict[str, ParsedInput] = {}
+powershell_examples: dict[str, Request] = {}
 
 powershell_example_one = """$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
 $session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36 OPR/80.0.4170.48"
@@ -27,7 +27,7 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://httpbin.org/cookies" `
   "accept-language"="en-US,en;q=0.9"
 }"""
 
-powershell_examples[powershell_example_one] = ParsedInput(
+powershell_examples[powershell_example_one] = Request(
     method="GET",
     url="https://httpbin.org/cookies",
     headers={
@@ -78,7 +78,7 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://dev-api.impb.in/v1/document" \
 -ContentType "application/json" \
 -Body "{\"content\":\"yeah\",\"settings\":{\"longUrls\":false,\"shortUrls\":false,\"instantDelete\":false,\"encrypted\":false,\"imageEmbed\":false,\"expiration\":14,\"public\":false,\"editors\":[],\"language\":\"python\"}}"'''
 
-powershell_examples[powershell_example_two] = ParsedInput(
+powershell_examples[powershell_example_two] = Request(
     method="POST",
     url="https://dev-api.impb.in/v1/document",
     headers={

@@ -4,8 +4,8 @@ import json
 from requests_toolbelt.multipart import decoder
 
 
-from .typings import JSON, Data, Files
-from .commons import fix_escape_chars, parse_url_encoded
+from ..typings import JSON, Data, Files
+from ..commons import fix_escape_chars, parse_url_encoded
 
 
 def parse_body(body: str | None, content_type: str) -> tuple[Data | None, JSON | None, Files | None]:
@@ -17,7 +17,6 @@ def parse_body(body: str | None, content_type: str) -> tuple[Data | None, JSON |
         return data, json_, files
     else:
         body = fix_escape_chars(body)
-        body = standardize_newlines(body)
 
     def is_multipart_form_data() -> bool:
         return "------WebKitFormBoundary" in body
@@ -87,7 +86,7 @@ def parse_multipart_form_data(body: str, content_type: str) -> tuple[Data | None
         if not name:
             continue
         elif filename:
-            files[name] = (filename, b"(binary)")  # type: ignore
+            files[name] = (filename, "(binary)")  # type: ignore
         else:
             data[name] = part.text
 

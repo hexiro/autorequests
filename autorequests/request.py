@@ -1,8 +1,8 @@
 """Handles code generation and interaction with the parsed input"""
 from __future__ import annotations
 
-from dataclasses import dataclass
 import sys
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from autorequests.typings import RequestData
@@ -38,7 +38,7 @@ async with httpx.AsyncClient({pass_data}) as client:
 
 
 @dataclass(**opts)
-class ParsedInput:
+class Request:
     method: str
     url: str
     headers: dict[str, str] | None

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from autorequests.parsed import ParsedInput
+from autorequests.request import Request
 
-fetch_examples: dict[str, ParsedInput] = {}
+fetch_examples: dict[str, Request] = {}
 
 fetch_example_one = """fetch("https://httpbin.org/cookies", {
   "headers": {
@@ -23,7 +23,7 @@ fetch_example_one = """fetch("https://httpbin.org/cookies", {
   "mode": "cors"
 });"""
 
-fetch_examples[fetch_example_one] = ParsedInput(
+fetch_examples[fetch_example_one] = Request(
     method="GET",
     url="https://httpbin.org/cookies",
     headers={

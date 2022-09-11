@@ -21,6 +21,17 @@ def extract_cookies(headers: dict[str, str]) -> dict[str, str]:
     return cookie_dict
 
 
+def parse_url(url: str) -> tuple[str, dict[str, str] | None]:
+    parsed_url = urllib.parse.urlparse(url)
+    query = parse_url_encoded(parsed_url.query) or None
+
+    without_query = urllib.parse.ParseResult(
+        parsed_url.scheme, parsed_url.netloc, parsed_url.path, parsed_url.params, "", parsed_url.fragment
+    )
+
+    return without_query.geturl(), query
+
+
 def format_json_like(data: JSON, indent: int | None = 4) -> str:
     """format a dictionary"""
     # I'm not sure it's possible to pretty-format this with something like
@@ -31,6 +42,12 @@ def format_json_like(data: JSON, indent: int | None = 4) -> str:
     formatted = formatted.replace(" null", " None")
     formatted = formatted.replace(" true", " True")
     formatted = formatted.replace(" false", " False")
+    # replace lists with tuples
+    # (json doesn't support tuples)
+    formatted = formatted.replace("[", "(")
+    formatted = formatted.replace("]", ")")
+    # replace binary with actual bytes of binary
+    formatted = formatted.replace('"(binary)"', 'b"(binary)"')
     return formatted
 
 
