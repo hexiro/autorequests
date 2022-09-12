@@ -36,6 +36,7 @@ autorequests = "autorequests.__main__:cli"
 
 [tool.poetry.group.dev.dependencies]
 requests = "^2.26.0"
+mypy = "^0.971"
 isort = "^5.10.1"
 black = "^22.1.0"
 flake8 = "^5.0.4"
@@ -58,6 +59,12 @@ profile = "black"
 line_length = 121
 combine_as_imports = true
 combine_star = true
+
+[tool.mypy]
+python_version = 3.7
+warn_return_any = true
+warn_unused_configs = true
+show_error_codes = true
 
 [tool.pytest.ini_options]
 addopts = "--black -vv"
