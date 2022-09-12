@@ -21,8 +21,7 @@ jobs:
         with:
           poetry-version: 1.2
       - run: |
-          poetry config virtualenvs.create false
           poetry install
       - run: |
-          pre-commit install
-          pre-commit run --all-files
+          poetry run pre-commit install
+          poetry run pre-commit run --all-files
