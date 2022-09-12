@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 httpbin_example_one = """fetch("http://httpbin.org/ip", {
   "headers": {
     "accept": "application/json",

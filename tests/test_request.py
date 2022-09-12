@@ -23,19 +23,19 @@ def test_request_generate_code(req: Request) -> None:
     num_arguments = len(["sync", "httpx", "no_headers", "no_cookies"])
     permutations = itertools.product([False, True], repeat=num_arguments)
 
-    for sync, httpx, no_headers, no_cookies in permutations:
-        code = req.generate_code(sync, httpx, no_headers, no_cookies)
+    for sync, use_httpx, no_headers, no_cookies in permutations:
+        code = req.generate_code(sync, use_httpx, no_headers, no_cookies)
         ast.parse(code)
 
 
-async def aexec_code(code: str) -> httpx.Response | aiohttp.ClientResponse:
+async def aexec_code(code: str) -> httpx.Response | aiohttp.ClientResponse:  # type: ignore[return]
     """
     References:
         https://stackoverflow.com/a/53255739/10830115
     """
 
     # Make an async function with the code and `exec` it
-    func_body = "".join(f"\n {l}" for l in code.split("\n"))
+    func_body = "".join(f"\n {line}" for line in code.split("\n"))
     exec(f"async def __ex(): {func_body}\n return resp")
 
     try:
@@ -46,14 +46,14 @@ async def aexec_code(code: str) -> httpx.Response | aiohttp.ClientResponse:
         pytest.skip("Network unavailable")
 
 
-def exec_code(code: str) -> httpx.Response | requests.Response:
+def exec_code(code: str) -> httpx.Response | requests.Response:  # type: ignore[return]
     """
     References:
         https://stackoverflow.com/a/53255739/10830115
     """
 
     # Make a function with the code and `exec` it
-    func_body = "".join(f"\n {l}" for l in code.split("\n"))
+    func_body = "".join(f"\n {line}" for line in code.split("\n"))
     exec(f"def __ex(): {func_body}\n return resp")
 
     try:
