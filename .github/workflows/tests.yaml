@@ -19,7 +19,6 @@ jobs:
       - run: poetry check
       - run: poetry install
       - run: |
-          poetry shell
-          pytest
-          mypy .
-          flake8 .
+          poetry run pytest
+          poetry run mypy .
+          poetry run flake8 .

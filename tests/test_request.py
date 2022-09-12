@@ -87,7 +87,7 @@ def test_request_httpbin(sample: str) -> None:
             assert isinstance(response, (httpx.Response, aiohttp.ClientResponse))
             responses.append(response)
 
-    print(f"{responses=}")
+    print(responses)
 
     for response in responses:
         response.raise_for_status()
