@@ -16,12 +16,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
-      - name: install and configure poetry
-        uses: abatilo/actions-poetry@v2
-        with:
-          poetry-version: 1.2
-      - run: |
+      - name: install poetry & deps
+        run: |
+          pip install poetry
           poetry install
-      - run: |
+      - name: run pre-commit hooks
+        run: |
           poetry run pre-commit install
           poetry run pre-commit run --all-files
