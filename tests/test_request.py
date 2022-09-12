@@ -38,8 +38,12 @@ async def aexec_code(code: str) -> httpx.Response | aiohttp.ClientResponse | req
     func_body = "".join(f"\n {l}" for l in code.split("\n"))
     exec(f"async def __ex(): {func_body}\n return resp")
 
-    # Get `__ex` from local variables, call it and return the result
-    return await locals()["__ex"]()
+    try:
+        # Get `__ex` from local variables, call it and return the result
+        resp = await locals()["__ex"]()
+        return resp
+    except (httpx.NetworkError, aiohttp.ClientConnectionError):
+        pytest.skip("Network unavailable")
 
 
 def exec_code(code: str) -> httpx.Response | requests.Response:
@@ -52,8 +56,12 @@ def exec_code(code: str) -> httpx.Response | requests.Response:
     func_body = "".join(f"\n {l}" for l in code.split("\n"))
     exec(f"def __ex(): {func_body}\n return resp")
 
-    # Get `__ex` from local variables, call it and return the result
-    return locals()["__ex"]()
+    try:
+        # Get `__ex` from local variables, call it and return the result
+        resp = locals()["__ex"]()
+        return resp
+    except (httpx.NetworkError, requests.exceptions.ConnectionError):
+        pytest.skip("Network unavailable")
 
 
 @pytest.mark.parametrize("sample", [httpbin_examples.httpbin_example_one])
