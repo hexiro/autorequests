@@ -34,8 +34,8 @@ def parse_fetch(text: str) -> Request | None:
     """
     method: str
     url: str
-    headers: dict[str, str] | None  # type: ignore
-    cookies: dict[str, str] | None
+    headers: dict[str, str]
+    cookies: dict[str, str]
     params: dict[str, str] | None
     data: Data | None
     json_: JSON | None
@@ -44,23 +44,23 @@ def parse_fetch(text: str) -> Request | None:
     signature_split = text.split('"')
 
     if len(signature_split) < 3:
-        return
+        return None
 
     if signature_split[0] != "fetch(":
-        return
+        return None
 
     url, params = parse_url(signature_split[1])
 
     if not signature_split[2].startswith(","):
         # no options specified -- should never be reached
-        return
+        return None
 
     left_brace = text.find("{")
     right_brace = text.rfind("}") + 1
 
     options = json.loads(text[left_brace:right_brace])
 
-    headers: dict[str, str] = options["headers"]
+    headers = options["headers"]
     # referer is spelled wrong in the HTTP header
     # referrer policy is not
     referrer = options.get("referrer")

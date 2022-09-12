@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from requests_toolbelt.multipart import decoder
+from requests_toolbelt.multipart import decoder  # type: ignore[import]
 
 from ..commons import fix_escape_chars, parse_url_encoded
 from ..typings import JSON, Data, Files
@@ -18,15 +18,15 @@ def parse_body(body: str | None, content_type: str | None) -> tuple[Data | None,
     else:
         body = fix_escape_chars(body)
 
-    def is_multipart_form_data() -> bool:
+    def is_multipart_form_data(body: str) -> bool:
         return "------WebKitFormBoundary" in body
 
-    def is_urlencoded() -> bool:
+    def is_urlencoded(body: str) -> bool:
         if not body or "=" not in body:
             return False
         return all(item.count("=") > 0 for item in body.split("&"))
 
-    def is_json() -> bool:
+    def is_json(body: str) -> bool:
         if not body:
             return False
         try:
@@ -35,11 +35,11 @@ def parse_body(body: str | None, content_type: str | None) -> tuple[Data | None,
         except json.JSONDecodeError:
             return False
 
-    if is_multipart_form_data() and content_type:
+    if is_multipart_form_data(body) and content_type:
         data, files = parse_multipart_form_data(body, content_type)
-    elif is_urlencoded():
+    elif is_urlencoded(body):
         data = parse_url_encoded(body)
-    elif is_json():
+    elif is_json(body):
         json_ = parse_json(body)
     return data, json_, files
 

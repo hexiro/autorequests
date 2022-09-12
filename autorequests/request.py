@@ -12,8 +12,7 @@ if t.TYPE_CHECKING:
 
 from .commons import format_json_like, format_string
 
-opts = {}
-
+opts: dict[str, bool] = {}
 if sys.version_info >= (3, 10):
     opts["slots"] = True
 

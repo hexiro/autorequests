@@ -53,7 +53,7 @@ def parse_powershell(text: str) -> Request | None:
     args = parse_args("".join(lines))
 
     if not args or "Uri" not in args:
-        return
+        return None
 
     url, params = parse_url(args["Uri"])
 
