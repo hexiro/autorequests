@@ -13,28 +13,33 @@ click.rich_click.STYLE_METAVAR = "bold red"
 click.rich_click.MAX_WIDTH = 75
 
 
-def get_lines() -> t.Generator[str, None, None]:
-    import sys
+def get_input() -> str:
+    """
+    returns input from stdin
+    """
 
-    """
-    returns a generator of lines from stdin
-    """
-    for line in sys.stdin:
-        line = line.rstrip()
-        if line in ["", "}", ")"]:
-            return
-        yield line
+    lines: list[str] = []
+    line = input()
+
+    while not line.isspace():
+        lines.append(line)
+        line = input()
+
+    return "\n".join(lines)
 
 
 @click.command()
+# Meta Options
 @click.option(
     "-f", "--file", type=click.File("r", encoding="utf-8", errors="replace"), help="Optional file to read from"
 )
+@click.option("-c", "--copy", is_flag=True, default=False, help="Copy the output to the clipboard")
+# Generation Options
 @click.option("-s/-a", "--sync/--async", is_flag=True, default=True, help="Generate synchronous or asynchronous code.")
 @click.option("-h", "--httpx", is_flag=True, default=False, help="Use httpx library to make requests.")
 @click.option("-nh", "--no-headers", is_flag=True, default=False, help="Don't include headers in the output.")
 @click.option("-nc", "--no-cookies", is_flag=True, default=False, help="Don't include cookies in the output.")
-def cli(file: io.TextIOWrapper, sync: bool, httpx: bool, no_headers: bool, no_cookies: bool) -> None:
+def cli(file: io.TextIOWrapper, copy: bool, sync: bool, httpx: bool, no_headers: bool, no_cookies: bool) -> None:
     """
     Main entry point for the cli.
     """
@@ -50,8 +55,8 @@ def cli(file: io.TextIOWrapper, sync: bool, httpx: bool, no_headers: bool, no_co
         unparsed_input = file.read()
 
     if unparsed_input is None:
-        console.print("[magenta][AUTOREQUESTS][/magenta] Enter browser request data (and press enter when done):")
-        unparsed_input = "\n".join(get_lines())
+        console.print("[#4bff9f][AutoRequests][/#4bff9f] Enter browser request data (and press enter when done):")
+        unparsed_input = get_input()
 
     parsed_input = parse_input(unparsed_input)
 
@@ -65,6 +70,12 @@ def cli(file: io.TextIOWrapper, sync: bool, httpx: bool, no_headers: bool, no_co
     code = parsed_input.generate_code(sync=sync, httpx=httpx, no_headers=no_headers, no_cookies=no_cookies)
 
     console.print(Syntax(code, "python"))
+
+    if copy:
+        import pyperclip
+
+        pyperclip.copy(code)
+        console.print("[green]Copied to clipboard.[/green]")
 
 
 if __name__ == "__main__":
