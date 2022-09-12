@@ -16,4 +16,4 @@ dist/
 *.txt
 
 # example files
-example*
+example*.txt
