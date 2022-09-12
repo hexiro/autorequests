@@ -16,11 +16,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
-      - name: install and configure Poetry
-        uses: snok/install-poetry@v1
+      - name: install and configure poetry
+        uses: abatilo/actions-poetry@v2
         with:
-          version: 1.2
-          virtualenvs-create: true
+          poetry-version: 1.2
       - run: |
           poetry config virtualenvs.create false
           poetry install
