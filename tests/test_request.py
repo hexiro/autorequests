@@ -28,7 +28,7 @@ def test_request_generate_code(req: Request) -> None:
         ast.parse(code)
 
 
-async def aexec_code(code: str) -> httpx.Response | aiohttp.ClientResponse | requests.Response:
+async def aexec_code(code: str) -> httpx.Response | aiohttp.ClientResponse:
     """
     References:
         https://stackoverflow.com/a/53255739/10830115
@@ -40,7 +40,7 @@ async def aexec_code(code: str) -> httpx.Response | aiohttp.ClientResponse | req
 
     try:
         # Get `__ex` from local variables, call it and return the result
-        resp = await locals()["__ex"]()
+        resp: httpx.Response | aiohttp.ClientResponse = await locals()["__ex"]()
         return resp
     except (httpx.NetworkError, aiohttp.ClientConnectionError):
         pytest.skip("Network unavailable")
@@ -58,7 +58,7 @@ def exec_code(code: str) -> httpx.Response | requests.Response:
 
     try:
         # Get `__ex` from local variables, call it and return the result
-        resp = locals()["__ex"]()
+        resp: httpx.Response | requests.Response = locals()["__ex"]()
         return resp
     except (httpx.NetworkError, requests.exceptions.ConnectionError):
         pytest.skip("Network unavailable")
@@ -78,6 +78,7 @@ def test_request_httpbin(sample: str) -> None:
 
     for sync, use_httpx in permutations:
         code = request.generate_code(sync, use_httpx, no_headers=False, no_cookies=False)
+        response: aiohttp.ClientResponse | httpx.Response | requests.Response
         if sync:
             response = exec_code(code)
             assert isinstance(response, (httpx.Response, requests.Response))
