@@ -10,7 +10,7 @@ import httpx
 import pytest
 import requests
 
-from autorequests.parsing import parse_fetch
+from autorequests.parsing import parse_input
 
 from .examples import fetch_examples, httpbin_examples, powershell_examples
 
@@ -64,10 +64,10 @@ def exec_code(code: str) -> httpx.Response | requests.Response:  # type: ignore[
         pytest.skip("Network unavailable")
 
 
-@pytest.mark.parametrize("sample", [httpbin_examples.httpbin_example_one])
+@pytest.mark.parametrize("sample", httpbin_examples)
 def test_request_httpbin(sample: str) -> None:
 
-    request = parse_fetch(sample)
+    request = parse_input(sample)
     assert request is not None
 
     num_arguments = len(["sync", "httpx"])
