@@ -12,7 +12,8 @@ import requests
 
 from autorequests.parsing import parse_input
 
-from .examples import fetch_examples, httpbin_examples, powershell_examples
+from .examples import fetch_examples, powershell_examples
+from .examples.httpbin import httpbin_examples
 
 if t.TYPE_CHECKING:
     from autorequests.request import Request
