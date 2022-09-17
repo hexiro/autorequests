@@ -7,7 +7,7 @@ if t.TYPE_CHECKING:
 
 import rich_click as click
 
-click.rich_click.STYLE_OPTION = "bold magenta"
+click.rich_click.STYLE_OPTION = "bold #4bff9f"
 click.rich_click.STYLE_SWITCH = "bold blue"
 click.rich_click.STYLE_METAVAR = "bold red"
 click.rich_click.MAX_WIDTH = 75
@@ -21,7 +21,7 @@ def get_input() -> str:
     lines: list[str] = []
     line = input()
 
-    while not line.isspace():
+    while line and not line.isspace():
         lines.append(line)
         line = input()
 
@@ -31,7 +31,7 @@ def get_input() -> str:
 @click.command()
 # Meta Options
 @click.option(
-    "-f", "--file", type=click.File("r", encoding="utf-8", errors="replace"), help="Optional file to read from"
+    "-f", "--file", type=click.File("r", encoding="utf-8", errors="replace"), help="Optional file to read input from."
 )
 @click.option("-c", "--copy", is_flag=True, default=False, help="Copy the output to the clipboard")
 # Generation Options
@@ -41,7 +41,7 @@ def get_input() -> str:
 @click.option("-nc", "--no-cookies", is_flag=True, default=False, help="Don't include cookies in the output.")
 def cli(file: io.TextIOWrapper, copy: bool, sync: bool, httpx: bool, no_headers: bool, no_cookies: bool) -> None:
     """
-    Main entry point for the cli.
+    Generate code to recreate a request from your browser.
     """
     from rich.console import Console
     from rich.syntax import Syntax
@@ -51,6 +51,7 @@ def cli(file: io.TextIOWrapper, copy: bool, sync: bool, httpx: bool, no_headers:
     console = Console(markup=True)
 
     unparsed_input: str | None = None
+
     if file:
         unparsed_input = file.read()
 
@@ -74,8 +75,14 @@ def cli(file: io.TextIOWrapper, copy: bool, sync: bool, httpx: bool, no_headers:
     if copy:
         import pyperclip
 
+        if not pyperclip.is_available():
+            console.print(
+                "[red]Copy functionality unavailable. Please view pyperclip documentation to use the --copy option.[/red]"
+            )
+            return
+
         pyperclip.copy(code)
-        console.print("[green]Copied to clipboard.[/green]")
+        console.print("[#4bff9f]Copied to clipboard.[/#4bff9f]")
 
 
 if __name__ == "__main__":
