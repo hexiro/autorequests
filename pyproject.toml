@@ -27,8 +27,8 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-rich = "^10.0.0"
-rich-click = "^1.5.1"
+rich = "^12.5.1"
+rich-click = "^1.5.2"
 requests-toolbelt = "^0.9.1"
 pyperclip = "^1.8.2"
 
