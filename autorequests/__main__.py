@@ -56,7 +56,10 @@ def cli(file: io.TextIOWrapper, copy: bool, sync: bool, httpx: bool, no_headers:
         unparsed_input = file.read()
 
     if unparsed_input is None:
-        console.print("[#4bff9f][AutoRequests][/#4bff9f] Enter browser request data (and press enter when done):")
+        console.print(
+            """[#4bff9f][AutoRequests][/#4bff9f] Enter browser request data (and press enter when done)
+[grey27 italic]*use --file if input data is too long*[/grey27 italic]\n"""
+        )
         unparsed_input = get_input()
 
     parsed_input = parse_input(unparsed_input)
