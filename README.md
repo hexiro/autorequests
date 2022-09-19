@@ -21,7 +21,7 @@
 
 ### 📺 Demo
 
-<img alt="Demo" src="https://user-images.githubusercontent.com/42787085/137994635-cadbafad-4371-4c22-892a-7e9a82785c56.gif"/>
+<img alt="Demo" src="https://user-images.githubusercontent.com/42787085/191134993-85750fc2-b13e-4e70-939b-2dcc2f1785b2.gif"/>
 
 ### 💼 Example Use Cases
 
