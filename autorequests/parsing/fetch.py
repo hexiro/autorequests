@@ -58,7 +58,10 @@ def parse_fetch(text: str) -> Request | None:
     left_brace = text.find("{")
     right_brace = text.rfind("}") + 1
 
-    options = json.loads(text[left_brace:right_brace])
+    try:
+        options = json.loads(text[left_brace:right_brace])
+    except json.JSONDecodeError:
+        return None
 
     headers = options["headers"]
     # referer is spelled wrong in the HTTP header

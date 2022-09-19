@@ -16,8 +16,11 @@ def extract_cookies(headers: dict[str, str]) -> dict[str, str]:
         return {}
     cookie_dict = {}
     for cookie in cookie_header.split("; "):
-        key, value = cookie.split("=", maxsplit=1)
-        cookie_dict[key] = value
+        try:
+            key, value = cookie.split("=", maxsplit=1)
+            cookie_dict[key] = value
+        except ValueError:
+            continue
     return cookie_dict
 
 

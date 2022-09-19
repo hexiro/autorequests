@@ -52,11 +52,12 @@ def parse_powershell(text: str) -> Request | None:
     # parse arguments
     args = parse_args("".join(lines))
 
-    if not args or "Uri" not in args:
+    if not args or ("Uri" not in args) or ("WebSession" not in args) or ("Headers" not in args):
+        return None
+    if not args["Headers"].startswith("@{") or not args["Headers"].endswith("}"):
         return None
 
     url, params = parse_url(args["Uri"])
-
     body = args.get("Body")
 
     if body:
@@ -129,8 +130,11 @@ def parse_args(text: str) -> dict[str, str]:
 def parse_headers(args: dict[str, str], headers: dict[str, str]) -> None:
     headers_string = args["Headers"][3:-2]
     for header in headers_string.split('" "'):
-        key, value = header.split('"="', maxsplit=1)
-        headers[key] = fix_escape_chars(value)
+        try:
+            key, value = header.split('"="', maxsplit=1)
+            headers[key] = fix_escape_chars(value)
+        except ValueError:
+            continue
 
 
 def pre_parse_body(body: str) -> str:

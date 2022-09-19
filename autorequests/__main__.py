@@ -2,10 +2,14 @@ from __future__ import annotations
 
 import typing as t
 
+import rich_click as click
+
+from .parsing import parse_input
+
 if t.TYPE_CHECKING:
     import io
 
-import rich_click as click
+    from .request import Request
 
 click.rich_click.STYLE_OPTION = "bold #4bff9f"
 click.rich_click.STYLE_SWITCH = "bold blue"
@@ -13,7 +17,7 @@ click.rich_click.STYLE_METAVAR = "bold red"
 click.rich_click.MAX_WIDTH = 75
 
 
-def get_input() -> str:
+def get_input() -> Request | None:
     """
     returns input from stdin
     """
@@ -25,7 +29,7 @@ def get_input() -> str:
         lines.append(line)
         line = input()
 
-    return "\n".join(lines)
+    return parse_input("\n".join(lines))
 
 
 @click.command()
@@ -46,23 +50,18 @@ def cli(file: io.TextIOWrapper, copy: bool, sync: bool, httpx: bool, no_headers:
     from rich.console import Console
     from rich.syntax import Syntax
 
-    from .parsing import parse_input
-
     console = Console(markup=True)
 
-    unparsed_input: str | None = None
+    parsed_input: Request | None = None
 
     if file:
-        unparsed_input = file.read()
-
-    if unparsed_input is None:
+        parsed_input = parse_input(file.read())
+    else:
         console.print(
             """[#4bff9f][AutoRequests][/#4bff9f] Enter browser request data (and press enter when done)
-[grey27 italic]*use --file if input data is too long*[/grey27 italic]\n"""
+[grey27 italic]*use --file if input data is too long*[/grey27 italic]"""
         )
-        unparsed_input = get_input()
-
-    parsed_input = parse_input(unparsed_input)
+        parsed_input = get_input()
 
     if not parsed_input:
         console.print(
@@ -78,14 +77,13 @@ def cli(file: io.TextIOWrapper, copy: bool, sync: bool, httpx: bool, no_headers:
     if copy:
         import pyperclip
 
-        if not pyperclip.is_available():
+        try:
+            pyperclip.copy(code)
+            console.print("[#4bff9f]Copied to clipboard.[/#4bff9f]")
+        except pyperclip.PyperclipException:
             console.print(
                 "[red]Copy functionality unavailable. Please view pyperclip documentation to use the --copy option.[/red]"
             )
-            return
-
-        pyperclip.copy(code)
-        console.print("[#4bff9f]Copied to clipboard.[/#4bff9f]")
 
 
 if __name__ == "__main__":
