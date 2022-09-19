@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import json
+import typing as t
 
 from requests_toolbelt.multipart import decoder  # type: ignore[import]
 
 from ..commons import fix_escape_chars, parse_url_encoded
-from ..typings import JSON, Data, Files
+
+if t.TYPE_CHECKING:
+    from ..typings import JSON, Data, Files
 
 
 def parse_body(body: str | None, content_type: str | None) -> tuple[Data | None, JSON | None, Files | None]:
