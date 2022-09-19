@@ -1,7 +1,5 @@
 ## 🐞 Contributing
 
-This project has a lot of room for improvement in optimizing regexps, better OOP, bug fixes, and completing todos. <br/>
-If you make an issue, pr, or suggestion, it'll be very appreciated <3.
+When contributing new features to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
 
-I'd prefer if you opened an issue before making a pull request with new features, <br/>
-but if you find a bug and want to fix it, please feel free to do so :))
+Bug fixes can be submitted without prior discussion.

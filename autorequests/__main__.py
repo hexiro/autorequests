@@ -37,12 +37,12 @@ def get_input() -> Request | None:
 @click.option(
     "-f", "--file", type=click.File("r", encoding="utf-8", errors="replace"), help="Optional file to read input from."
 )
-@click.option("-c", "--copy", is_flag=True, default=False, help="Copy the output to the clipboard")
+@click.option("-c", "--copy", is_flag=True, default=False, help="Copy the output to the clipboard.")
 # Generation Options
 @click.option("-s/-a", "--sync/--async", is_flag=True, default=True, help="Generate synchronous or asynchronous code.")
 @click.option("-h", "--httpx", is_flag=True, default=False, help="Use httpx library to make requests.")
-@click.option("-nh", "--no-headers", is_flag=True, default=False, help="Don't include headers in the output.")
-@click.option("-nc", "--no-cookies", is_flag=True, default=False, help="Don't include cookies in the output.")
+@click.option("-nh", "--no-headers", is_flag=True, default=False, help="Don't include headers in the generated output.")
+@click.option("-nc", "--no-cookies", is_flag=True, default=False, help="Don't include cookies in the generated output.")
 def cli(file: io.TextIOWrapper, copy: bool, sync: bool, httpx: bool, no_headers: bool, no_cookies: bool) -> None:
     """
     Generate code to recreate a request from your browser.
