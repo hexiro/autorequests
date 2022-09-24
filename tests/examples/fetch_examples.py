@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from autorequests.lib import Method, URL, Body
+from autorequests.request import Request
 
-fetch_samples: dict[str, Method] = {}
+fetch_examples: dict[str, Request] = {}
 
 fetch_example_one = """fetch("https://httpbin.org/cookies", {
   "headers": {
@@ -23,11 +23,9 @@ fetch_example_one = """fetch("https://httpbin.org/cookies", {
   "mode": "cors"
 });"""
 
-fetch_samples[fetch_example_one] = Method(
+fetch_examples[fetch_example_one] = Request(
     method="GET",
-    url=URL("https://httpbin.org/cookies"),
-    body=Body(),
-    parameters=None,
+    url="https://httpbin.org/cookies",
     headers={
         "accept": "application/json",
         "accept-language": "en-US,en;q=0.9",
@@ -41,4 +39,8 @@ fetch_samples[fetch_example_one] = Method(
         "referrer-policy": "strict-origin-when-cross-origin",
     },
     cookies={"hello": "world"},
+    params=None,
+    data=None,
+    json=None,
+    files=None,
 )

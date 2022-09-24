@@ -1,14 +1,24 @@
 from __future__ import annotations
 
 import json
+import typing as t
 
-from ..lib import Method, URL, Body
-from ..utilities import extract_cookies
+from ..commons import extract_cookies, parse_url
+from ..request import Request
+from .body import parse_body
 
-__all__ = ("fetch_to_method",)
+if t.TYPE_CHECKING:
+    from ..typings import JSON, Data, Files
 
 
-def fetch_to_method(text: str) -> Method | None:
+__all__ = ("parse_fetch", "is_fetch")
+
+
+def is_fetch(text: str) -> bool:
+    return text.startswith("fetch(")
+
+
+def parse_fetch(text: str) -> Request | None:
     """
     Parses a file that follows this format:
     (with some being optional)
@@ -22,24 +32,36 @@ def fetch_to_method(text: str) -> Method | None:
       "mode": <MODE>
     });
     """
+    method: str
+    url: str
+    headers: dict[str, str]
+    cookies: dict[str, str]
+    params: dict[str, str] | None
+    data: Data | None
+    json_: JSON | None
+    files: Files | None
+
     signature_split = text.split('"')
 
     if len(signature_split) < 3:
-        return
+        return None
 
     if signature_split[0] != "fetch(":
-        return
+        return None
 
-    url = URL(signature_split[1])
+    url, params = parse_url(signature_split[1])
 
     if not signature_split[2].startswith(","):
         # no options specified -- should never be reached
-        return
+        return None
 
     left_brace = text.find("{")
     right_brace = text.rfind("}") + 1
 
-    options = json.loads(text[left_brace:right_brace])
+    try:
+        options = json.loads(text[left_brace:right_brace])
+    except json.JSONDecodeError:
+        return None
 
     headers = options["headers"]
     # referer is spelled wrong in the HTTP header
@@ -54,12 +76,15 @@ def fetch_to_method(text: str) -> Method | None:
     cookies = extract_cookies(headers)
 
     method = options.get("method", "GET")
-    body = Body(options.get("body"))
+    data, json_, files = parse_body(options.get("body"), headers.get("content-type"))
 
-    return Method(
+    return Request(
         method=method,
         url=url,
-        body=body,
         headers=headers,
         cookies=cookies,
+        params=params,
+        data=data,
+        json=json_,
+        files=files,
     )

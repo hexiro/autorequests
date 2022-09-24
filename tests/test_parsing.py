@@ -1,23 +1,22 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import typing as t
 
 import pytest
 
-from autorequests.parsing.fetch import fetch_to_method
-from autorequests.parsing.powershell import powershell_to_method
-from .common.fetch_examples import fetch_samples
-from .common.powershell_examples import powershell_samples
+from autorequests.parsing import parse_fetch, parse_powershell
 
-if TYPE_CHECKING:
-    from autorequests.lib import Method
+from .examples import fetch_examples, powershell_examples
 
-
-@pytest.mark.parametrize("sample,expected", list(powershell_samples.items()))
-def test_parse_powershell_to_method(sample: str, expected: Method) -> None:
-    assert powershell_to_method(sample) == expected
+if t.TYPE_CHECKING:
+    from autorequests.request import Request
 
 
-@pytest.mark.parametrize("sample,expected", list(fetch_samples.items()))
-def test_parse_fetch_to_method(sample: str, expected: Method) -> None:
-    assert fetch_to_method(sample) == expected
+@pytest.mark.parametrize("sample,expected", list(powershell_examples.items()))
+def test_parse_powershell_to_method(sample: str, expected: Request) -> None:
+    assert parse_powershell(sample) == expected
+
+
+@pytest.mark.parametrize("sample,expected", list(fetch_examples.items()))
+def test_parse_fetch_to_method(sample: str, expected: Request) -> None:
+    assert parse_fetch(sample) == expected

@@ -1,0 +1,7 @@
+[flake8]
+ignore = E203, E501
+max-line-length = 121
+min_python_version = 3.7.0
+ban-relative-imports = true
+force-future-annotations = true
+
