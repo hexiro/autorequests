@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "autorequests"
-version = "2.0.0a2"
+version = "2.0.0"
 description = "Generate Python code to recreate a request from your browser."
 authors = ["Hexiro"]
 license = "MIT"
