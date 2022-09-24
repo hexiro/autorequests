@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from autorequests.request import Request
 
-httpbin_method_patch_examples: dict[str, Request] = {}
-
 httpbin_method_patch_fetch = """fetch("http://httpbin.org/patch", {
   "headers": {
     "accept": "application/json",
@@ -62,5 +60,7 @@ httpbin_method_patch_powershell_request = Request(
     files=None,
 )
 
-httpbin_method_patch_examples[httpbin_method_patch_fetch] = httpbin_method_get_patch_request
-httpbin_method_patch_examples[httpbin_method_patch_powershell] = httpbin_method_patch_powershell_request
+httpbin_method_patch_examples: dict[str, Request] = {
+    httpbin_method_patch_fetch: httpbin_method_get_patch_request,
+    httpbin_method_patch_powershell: httpbin_method_patch_powershell_request,
+}

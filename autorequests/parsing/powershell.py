@@ -58,9 +58,7 @@ def parse_powershell(text: str) -> Request | None:
         return None
 
     url, params = parse_url(args["Uri"])
-    body = args.get("Body")
-
-    if body:
+    if body := args.get("Body"):
         body = pre_parse_body(body)
         data, json_, files = parse_body(body, args.get("ContentType"))
 
@@ -105,7 +103,7 @@ def parse_args(text: str) -> dict[str, str]:
 
     # find all possible cli args
     regex = re.compile(r"(?:[\n\r ]\-(?P<name>[a-zA-Z]+))")
-    keys: set[str] = set(x.group("name") for x in regex.finditer(text))
+    keys: set[str] = {x.group("name") for x in regex.finditer(text)}
 
     key: str = ""
 
@@ -161,7 +159,7 @@ def pre_parse_body(body: str) -> str:
             continue
 
         right_paren = part.find(")")
-        ordinal, rest = part[0 : right_paren + 1], part[right_paren + 1 :]
+        ordinal, rest = part[:right_paren + 1], part[right_paren + 1 :]
 
         # remove the `$([char]` from beg and `)` from end
         ordinal = ordinal[7:-1]

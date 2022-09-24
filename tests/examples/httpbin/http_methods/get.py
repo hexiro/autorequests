@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from autorequests.request import Request
 
-httpbin_method_get_examples: dict[str, Request] = {}
-
 httpbin_method_get_fetch = """fetch("http://httpbin.org/get", {
   "headers": {
     "accept": "application/json",
@@ -60,5 +58,7 @@ httpbin_method_get_powershell_request = Request(
     files=None,
 )
 
-httpbin_method_get_examples[httpbin_method_get_fetch] = httpbin_method_get_fetch_request
-httpbin_method_get_examples[httpbin_method_get_powershell] = httpbin_method_get_powershell_request
+httpbin_method_get_examples: dict[str, Request] = {
+    httpbin_method_get_fetch: httpbin_method_get_fetch_request,
+    httpbin_method_get_powershell: httpbin_method_get_powershell_request,
+}

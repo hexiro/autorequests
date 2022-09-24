@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from autorequests.request import Request
 
-httpbin_method_delete_examples: dict[str, Request] = {}
-
 httpbin_method_delete_fetch = """fetch("http://httpbin.org/delete", {
   "headers": {
     "accept": "application/json",
@@ -62,5 +60,7 @@ httpbin_method_delete_powershell_request = Request(
     files=None,
 )
 
-httpbin_method_delete_examples[httpbin_method_delete_fetch] = httpbin_method_delete_fetch_request
-httpbin_method_delete_examples[httpbin_method_delete_powershell] = httpbin_method_delete_powershell_request
+httpbin_method_delete_examples: dict[str, Request] = {
+    httpbin_method_delete_fetch: httpbin_method_delete_fetch_request,
+    httpbin_method_delete_powershell: httpbin_method_delete_powershell_request,
+}

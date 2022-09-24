@@ -47,7 +47,7 @@ async def aexec_code(code: str) -> httpx.Response | aiohttp.ClientResponse:  # t
         pytest.skip("Network unavailable")
 
 
-def exec_code(code: str) -> httpx.Response | requests.Response:  # type: ignore[return]
+def exec_code(code: str) -> httpx.Response | requests.Response:    # type: ignore[return]
     """
     References:
         https://stackoverflow.com/a/53255739/10830115
@@ -58,9 +58,7 @@ def exec_code(code: str) -> httpx.Response | requests.Response:  # type: ignore[
     exec(f"def __ex(): {func_body}\n return resp")
 
     try:
-        # Get `__ex` from local variables, call it and return the result
-        resp: httpx.Response | requests.Response = locals()["__ex"]()
-        return resp
+        return locals()["__ex"]()
     except (httpx.NetworkError, requests.exceptions.ConnectionError):
         pytest.skip("Network unavailable")
 
@@ -83,12 +81,10 @@ def test_request_httpbin(sample: str) -> None:
         if sync:
             response = exec_code(code)
             assert isinstance(response, (httpx.Response, requests.Response))
-            responses.append(response)
         else:
             response = loop.run_until_complete(aexec_code(code))
             assert isinstance(response, (httpx.Response, aiohttp.ClientResponse))
-            responses.append(response)
-
+        responses.append(response)
     print(responses)
 
     for response in responses:
