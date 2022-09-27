@@ -67,7 +67,7 @@ Meta Options
   --copy  -c            Copy the output to the clipboard
 ```
 
-generation options
+Generation options
 
 ```console
   -sync/--async  -s/-a  Generate synchronous or asynchronous code.
