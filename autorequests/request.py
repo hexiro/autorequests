@@ -51,8 +51,8 @@ class Request:
         url = format_string(self.url)
 
         request_data: RequestData = {
-            "headers": self.headers if not no_headers else None,
-            "cookies": self.cookies if not no_cookies else None,
+            "headers": None if no_headers else self.headers,
+            "cookies": None if no_cookies else self.cookies,
             "params": self.params,
             "data": self.data,
             "json": self.json,
@@ -66,26 +66,21 @@ class Request:
             return SYNC_HTTPX.format(method=method, url=url, define_data=define_data, pass_data=pass_data)
         elif sync:
             return SYNC_REQUESTS.format(method=method, url=url, define_data=define_data, pass_data=pass_data)
-        elif not sync and httpx:
+        elif httpx:
             return ASYNC_HTTPX.format(method=method, url=url, define_data=define_data, pass_data=pass_data)
         else:
             return ASYNC_AIOHTTP.format(method=method, url=url, define_data=define_data, pass_data=pass_data)
 
     def define_request_data(self, request_data: RequestData) -> str:
-        defined: str = ""
-        for key, value in request_data.items():
-            if not value:
-                continue
-            defined += f"{key} = {format_json_like(value)}\n"
-        defined = defined.rstrip("\n")
-        return defined
+        defined: str = "".join(
+            f"{key} = {format_json_like(value)}\n"
+            for key, value in request_data.items()
+            if value
+        )
+        return defined.rstrip("\n")
 
     def pass_request_data(self, request_data: RequestData) -> str:
-        pass_list: list[str] = []
-        for key, value in request_data.items():
-            if not value:
-                continue
-            pass_list.append(f"{key}={key}")
-        if not pass_list:
-            return ""
-        return ", ".join(pass_list)
+        pass_list: list[str] = [
+            f"{key}={key}" for key, value in request_data.items() if value
+        ]
+        return ", ".join(pass_list) if pass_list else ""

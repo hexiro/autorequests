@@ -54,11 +54,7 @@ def format_json_like(data: JSON, indent: int | None = 4) -> str:
 
 def format_string(text: str) -> str:
     """formats a string"""
-    if "'" in text or '"' in text:
-        # text contains a quote, so let python escape it optimally
-        return repr(text)
-    # double quotes by default
-    return f'"{text}"'
+    return repr(text) if "'" in text or '"' in text else f'"{text}"'
 
 
 def parse_url_encoded(x: str) -> dict[str, str]:
