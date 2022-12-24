@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import re
 import typing as t
 import urllib.parse
 
