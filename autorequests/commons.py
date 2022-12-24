@@ -36,7 +36,6 @@ def parse_url(url: str) -> tuple[str, dict[str, str] | None]:
 
 
 def format_json_like(data: JSON, indent: int | None = 4) -> str:
-    """format a dictionary"""
     # I'm not sure it's possible to pretty-format this with something like
     # pprint, but if it is possible LMK!
     formatted = json.dumps(data, indent=indent)
@@ -72,32 +71,6 @@ def fix_escape_chars(body: str) -> str:
     """
     replaces escaped \\ followed by a letter to the appropriate char
     (ex. "\\t" --> "\t")
+    (ex. "\\n" --> "\n")
     """
     return body.encode(encoding="utf8", errors="ignore").decode(encoding="unicode_escape", errors="ignore")
-
-
-def fix_fake_escape_chars(body: str) -> str:
-    """
-    replaces powershell's ` escape char with fake python escape chars and then
-    fixes the fake escape chars twice to not only fix the fake ones we added, but the fake ones that powershell added.
-    * could do with improvement in the future.
-    (ex. "`\"" --> "\"")
-    (ex. "\\t" --> "\t")
-    """
-    return fix_escape_chars(fix_escape_chars(body.replace("`", "\\")))
-
-
-def fix_broken_json(text: str) -> str:
-    """
-    References:
-        https://stackoverflow.com/a/60978263
-    """
-    # compile a pattern to match "\"text" OR ""text" which needs replacing with a single doublequote
-    pattern1 = re.compile(r"(?i)(\"\"|\"\\\")")
-    # compile a second pattern to match "te"xt" which needs to be replacing with nothing/blank/just remove
-    pattern2 = re.compile(r"(?i)\b(\")\b")
-
-    text = pattern1.sub('"', text)
-    text = pattern2.sub("", text)
-
-    return text

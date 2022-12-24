@@ -33,10 +33,11 @@ def parse_body(body: str | None, content_type: str | None) -> tuple[Data | None,
         if not body:
             return False
         try:
-            json.loads(body)
-            return True
+            json.loads(body, strict=False)
         except json.JSONDecodeError:
             return False
+        else:
+            return True
 
     if is_multipart_form_data(body) and content_type:
         data, files = parse_multipart_form_data(body, content_type)
@@ -56,7 +57,7 @@ def standardize_newlines(body: str) -> str:
 
 
 def parse_json(body: str) -> JSON | None:
-    return json.loads(body)
+    return json.loads(body, strict=False)
 
 
 def parse_multipart_form_data(body: str, content_type: str) -> tuple[Data | None, Files | None]:

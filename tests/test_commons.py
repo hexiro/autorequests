@@ -27,9 +27,3 @@ def test_fix_escape_chars() -> None:
     assert commons.fix_escape_chars("\\t") == "\t"
     assert commons.fix_escape_chars("\\n") == "\n"
     assert commons.fix_escape_chars("\\r\\n") == "\r\n"
-
-
-def test_fix_fake_escape_chars() -> None:
-    assert commons.fix_fake_escape_chars('`"') == '"'
-    assert commons.fix_fake_escape_chars("\\t") == "\t"
-    assert commons.fix_fake_escape_chars("\\\\t") == "\t"

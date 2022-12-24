@@ -50,7 +50,7 @@ class Request:
         method = self.method.lower()
         url = format_string(self.url)
 
-        request_data = {
+        request_data: RequestData = {
             "headers": self.headers if not no_headers else None,
             "cookies": self.cookies if not no_cookies else None,
             "params": self.params,

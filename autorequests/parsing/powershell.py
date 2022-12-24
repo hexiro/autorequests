@@ -4,7 +4,7 @@ import re
 import typing as t
 from collections import defaultdict
 
-from ..commons import fix_escape_chars, fix_fake_escape_chars, parse_url
+from ..commons import fix_escape_chars, parse_url
 from ..request import Request
 from .body import parse_body
 
@@ -42,8 +42,7 @@ def parse_powershell(text: str) -> Request | None:
     json_: JSON | None = None
     files: Files | None = None
 
-    # parse escape character, `
-    text = text.replace("`", "\\")
+    text = parse_escape_chars(text)
     lines: list[str] = [e.rstrip("\\") for e in text.splitlines()]
 
     # parse custom session
@@ -61,6 +60,7 @@ def parse_powershell(text: str) -> Request | None:
     body = args.get("Body")
 
     if body:
+        body = fix_escape_chars(body)
         body = pre_parse_body(body)
         data, json_, files = parse_body(body, args.get("ContentType"))
 
@@ -94,7 +94,7 @@ def parse_session(lines: list[str], headers: dict[str, str], cookies: dict[str, 
             left_paren = line.rfind("(")
             right_paren = line.find(")")
             # ["hello-from", "autorequests", "/", "httpbin.org"]
-            strings = [fix_fake_escape_chars(x[1:-1]) for x in line[left_paren + 1 : right_paren].split(", ")]
+            strings = [x.strip('"') for x in line[left_paren + 1 : right_paren].split(", ")]
             name, value = strings[:2]
             cookies[name] = value
 
@@ -137,10 +137,22 @@ def parse_headers(args: dict[str, str], headers: dict[str, str]) -> None:
             continue
 
 
+def parse_escape_chars(text: str) -> str:
+    """
+    Parses escape characters in powershell.
+    (ex. '`"' -> '"')
+    (ex. 'hi``123' -> 'hi`123')
+    """
+    match_single_escape_char = re.compile(r"(?<!`)`(?!`)")
+    text = match_single_escape_char.sub("", text)
+    text = text.replace("``", "`")
+    return text
+
+
 def pre_parse_body(body: str) -> str:
     """
     Pre-parse the body to de-powershell the characters.
-    ex: `$([char]13)` -> "\r"
+    (ex. `$([char]13)` -> "\r")
     """
 
     if not body.startswith("([System.Text.Encoding]::UTF8.GetBytes("):
