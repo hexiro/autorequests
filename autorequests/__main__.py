@@ -75,7 +75,7 @@ def cli(file: io.TextIOWrapper, copy: bool, sync: bool, httpx: bool, no_headers:
     console.print(Syntax(code, "python"))
 
     if copy:
-        import pyperclip
+        import pyperclip  # type: ignore[import]
 
         try:
             pyperclip.copy(code)
