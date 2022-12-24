@@ -15,7 +15,8 @@
     <img src="https://img.shields.io/github/license/Hexiro/autorequests?style=for-the-badge&color=390099&labelColor=474747">
   </a>
 
-  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/Hexiro/autorequests/tests?logo=github&style=for-the-badge&label=tests">
+  <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/hexiro/autorequests/tests.yaml?branch=main&logo=github&style=for-the-badge&label=tests">
+  
   <br>
 </p>
 
